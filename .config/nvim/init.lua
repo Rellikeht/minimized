@@ -105,13 +105,13 @@ if vim.fn.has("win32") == 1 then-- {{{
     vim.opt.shellpipe = "| Out-File -Encoding UTF8 %s"
     vim.opt.shellredir = "| Out-File -Encoding UTF8 %s"
 
-    local git_executable = "git.exe"
+    GIT_EXECUTABLE = "git.exe"
 
     -- }}}
 else -- {{{
     -- no idea what to put here
     -- vim.opt.shell = "bash"
-    local git_executable = "git"
+    GIT_EXECUTABLE = "git"
 
 end -- }}}
 
@@ -235,7 +235,7 @@ local function bootstrap_pckr()
   local pckr_path = vim.fn.stdpath("data") .. "/pckr/pckr.nvim"
   if not (vim.uv or vim.loop).fs_stat(pckr_path) then
     vim.fn.system({
-      git_executable,
+      GIT_EXECUTABLE,
       "clone",
       "--filter=blob:none",
       "https://github.com/lewis6991/pckr.nvim",
@@ -275,7 +275,7 @@ pckr.add({ -- {{{
     "mbbill/undotree",
     "justinmk/vim-sneak",
     "unblevable/quick-scope",
-    "tpope/vim-surround",
+    "tpope/vim-surround", -- TODO conflict with sneak
     "tpope/vim-tbone",
     "tpope/vim-abolish",
     "tpope/vim-endwise",
