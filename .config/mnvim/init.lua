@@ -1,3 +1,9 @@
+-- helpers {{{
+
+ALL_MODES = {"t", "n", "v", "o", "i"}
+
+--  }}}
+
 -- settings {{{
 
 -- general options {{{
@@ -24,6 +30,7 @@ for _, option in pairs({
     "ttimeout",
     "splitright",
     "splitbelow",
+    "autochdir",
 }) do
     vim.opt[option] = true
 end
@@ -31,6 +38,7 @@ end
 for _, option in pairs({
     "shelltemp",
     "timeout",
+    "autoread",
 }) do
     vim.opt[option] = false
 end
@@ -97,10 +105,13 @@ if vim.fn.has("win32") == 1 then-- {{{
     vim.opt.shellpipe = "| Out-File -Encoding UTF8 %s"
     vim.opt.shellredir = "| Out-File -Encoding UTF8 %s"
 
+    local git_executable = "git.exe"
+
     -- }}}
 else -- {{{
     -- no idea what to put here
     -- vim.opt.shell = "bash"
+    local git_executable = "git"
 
 end -- }}}
 
@@ -139,8 +150,6 @@ hi DiffDelete
 
 -- general {{{
 
-vim.api.nvim_set_keymap("n", "<C-n>", ";", {noremap=true})
-vim.api.nvim_set_keymap("n", "<C-p>", ",", {noremap=true})
 vim.api.nvim_set_keymap("n", ",", "<Nop>", {})
 vim.api.nvim_set_keymap("n", ";", "<Nop>", {})
 vim.g.mapleader = ","
@@ -226,7 +235,7 @@ local function bootstrap_pckr()
   local pckr_path = vim.fn.stdpath("data") .. "/pckr/pckr.nvim"
   if not (vim.uv or vim.loop).fs_stat(pckr_path) then
     vim.fn.system({
-      "git",
+      git_executable,
       "clone",
       "--filter=blob:none",
       "https://github.com/lewis6991/pckr.nvim",
@@ -289,7 +298,9 @@ pckr.add({ -- {{{
         end
     },--  }}}
 
-    "RRethy/nvim-treesitter-endwise",
+    { "RRethy/nvim-treesitter-endwise", --  {{{
+        require = { "nvim-treesitter/nvim-treesitter" },
+    }, --  }}}
 
     { "windwp/nvim-autopairs", -- {{{
         config = function()
@@ -358,7 +369,7 @@ if vim.g.neovide then -- {{{
     -- keybindings {{{
 
     -- for uniform experience
-    for _, mode in pairs({"t", "n", "v"}) do
+    for _, mode in pairs(ALL_MODES) do
         vim.api.nvim_set_keymap(mode, "<C-/>", "<C-_>", {noremap=true})
     end
 
