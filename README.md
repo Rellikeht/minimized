@@ -1,2 +1,3 @@
 # minimized
-My minimized configs and setups
+
+My minimized configs, config supplements and setup scripts
