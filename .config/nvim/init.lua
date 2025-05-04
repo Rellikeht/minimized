@@ -1,11 +1,10 @@
 -- helpers {{{
-
-ALL_MODES = {"t", "n", "v", "o", "i"}
+ALL_MODES = { "t", "n", "v", "o", "i" }
 
 function calc_pumheight()
-    local result = vim.opt.lines._value
-    result = (result - result % 3) / 3
-    return result
+  local result = vim.opt.lines._value
+  result = (result - result % 3) / 3
+  return result
 end
 
 --  }}}
@@ -14,7 +13,8 @@ end
 
 -- general options {{{
 
-for _, option in pairs({
+for _, option in pairs(
+  {
     "expandtab",
     "number",
     "relativenumber",
@@ -37,20 +37,15 @@ for _, option in pairs({
     "splitright",
     "splitbelow",
     "autochdir",
-}) do
-    vim.opt[option] = true
+  }
+) do vim.opt[option] = true end
+
+for _, option in pairs({ "shelltemp", "timeout", "autoread" }) do
+  vim.opt[option] = false
 end
 
-for _, option in pairs({
-    "shelltemp",
-    "timeout",
-    "autoread",
-}) do
-    vim.opt[option] = false
-end
-
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.softtabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.tabstop = 4
 
 vim.opt.shellxquote = ""
@@ -74,7 +69,7 @@ vim.opt.shortmess = "atsOF"
 vim.opt.undolevels = 10000
 vim.opt.history = 10000
 
-vim.opt.formatoptions:remove({"j", "t"})
+vim.opt.formatoptions:remove({ "j", "t" })
 vim.opt.formatoptions:append("croqlwn")
 
 vim.opt.wildchar = string.byte("\t")
@@ -101,24 +96,25 @@ vim.g.loaded_matchit = 1
 
 -- }}}
 
-if vim.fn.has("win32") == 1 then-- {{{
+if vim.fn.has("win32") == 1 then -- {{{
 
-    -- must have really
-    vim.opt.shell = "powershell.exe"
+  -- must have really
+  vim.opt.shell = "powershell.exe"
 
-    -- some nice options
-    vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command "
-    vim.opt.shellquote = ""
-    vim.opt.shellpipe = "| Out-File -Encoding UTF8 %s"
-    vim.opt.shellredir = "| Out-File -Encoding UTF8 %s"
+  -- some nice options
+  vim.opt.shellcmdflag =
+    "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command "
+  vim.opt.shellquote = ""
+  vim.opt.shellpipe = "| Out-File -Encoding UTF8 %s"
+  vim.opt.shellredir = "| Out-File -Encoding UTF8 %s"
 
-    GIT_EXECUTABLE = "git.exe"
+  GIT_EXECUTABLE = "git.exe"
 
-    -- }}}
+  -- }}}
 else -- {{{
-    -- no idea what to put here
-    -- vim.opt.shell = "bash"
-    GIT_EXECUTABLE = "git"
+  -- no idea what to put here
+  -- vim.opt.shell = "bash"
+  GIT_EXECUTABLE = "git"
 
 end -- }}}
 
@@ -128,26 +124,9 @@ end -- }}}
 
 -- colors {{{
 
-vim.cmd.colorscheme("zaibatsu") --elflord
+vim.cmd.colorscheme("zaibatsu")
 
--- diff is weird without that
-vim.cmd[[
-hi CursorLine ctermbg=237 guibg=#4a4a4a cterm=none gui=none
-hi CursorLineNr ctermbg=237 guibg=#404040 cterm=none gui=none
-
-hi DiffAdd
-            \ ctermbg=DarkGreen guibg=#0d5826
-            \ ctermfg=NONE guifg=NONE
-hi DiffText
-            \ ctermbg=Gray guibg=#566670
-            \ ctermfg=NONE guifg=NONE
-hi DiffChange
-            \ ctermbg=DarkBlue guibg=#0f1a7f
-            \ ctermfg=NONE guifg=NONE
-hi DiffDelete
-            \ ctermbg=DarkRed guibg=#800620
-            \ ctermfg=NONE guifg=NONE
-]]
+-- vim.api.nvim_set_hl(0, "DiffDelete", {fg="#c81f16"})
 
 -- }}}
 
@@ -165,19 +144,24 @@ vim.g.mapleader = ","
 vim.g.maplocalleader = "\\"
 
 -- Select whole buffer without plugins
-vim.api.nvim_set_keymap("v", "aee", "gg0oG$", {noremap=true})
-vim.api.nvim_set_keymap("v", "iee", "aee", {noremap=true})
-vim.api.nvim_set_keymap("n", "yaee ", "gg0vG$y`'", {noremap=true})
-
-vim.api.nvim_set_keymap('', '<C-h>', '<C-]>', {})
+vim.api
+  .nvim_set_keymap("v", "aee", "gg0oG$", { noremap = true })
+vim.api.nvim_set_keymap("v", "iee", "aee", { noremap = true })
 vim.api.nvim_set_keymap(
-    "n",
-    "<C-w><C-h>",
-    ":<C-u>exe 'tab tag '.expand('<cword>')<CR>",
-    {noremap=true}
+  "n", "yaee ", "gg0vG$y`'", { noremap = true }
 )
-vim.api.nvim_set_keymap("n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {})
-vim.api.nvim_set_keymap("s", "<BS>", "<BS>i", {noremap=true})
+
+vim.api.nvim_set_keymap("", "<C-h>", "<C-]>", {})
+vim.api.nvim_set_keymap(
+  "n", "<C-w><C-h>",
+  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>",
+  { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {}
+)
+vim.api
+  .nvim_set_keymap("s", "<BS>", "<BS>i", { noremap = true })
 
 -- TODO copying
 
@@ -185,24 +169,30 @@ vim.api.nvim_set_keymap("s", "<BS>", "<BS>i", {noremap=true})
 
 -- terminal {{{
 
-vim.api.nvim_set_keymap("t", "<C-_>", "<C-\\>", {noremap=true})
-vim.api.nvim_set_keymap("t", "<C-\\>n", "<C-\\><C-n>", {noremap=true})
-vim.api.nvim_set_keymap("t", "<C-\\>o", "<C-\\><C-o>", {noremap=true})
+vim.api.nvim_set_keymap(
+  "t", "<C-_>", "<C-\\>", { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "t", "<C-\\>n", "<C-\\><C-n>", { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "t", "<C-\\>o", "<C-\\><C-o>", { noremap = true }
+)
 
-for key_in, key_out in pairs({
+for key_in, key_out in pairs(
+  {
     ["h"] = "<C-w>h",
     ["j"] = "<C-w>j",
     ["k"] = "<C-w>k",
     ["l"] = "<C-w>l",
     ["gt"] = "gt",
     ["gT"] = "gT",
-}) do
-    vim.api.nvim_set_keymap(
-        "t",
-        "<C-\\>"..key_in,
-        "<C-\\><C-n>"..key_out.."<Esc>",
-        {noremap=true}
-    )
+  }
+) do
+  vim.api.nvim_set_keymap(
+    "t", "<C-\\>" .. key_in,
+    "<C-\\><C-n>" .. key_out .. "<Esc>", { noremap = true }
+  )
 end
 
 -- TODO is it better to have vim slime or some manual copying
@@ -211,18 +201,32 @@ end
 
 -- tabs {{{
 
-vim.api.nvim_set_keymap("n", "<Tab>", "<Nop>", {noremap=true})
-vim.api.nvim_set_keymap("n", "<C-j>", "<Tab>", {noremap=true})
-vim.api.nvim_set_keymap("n", "<Tab><Tab>", ":<C-u>tab<Space>", {noremap=true})
-vim.api.nvim_set_keymap("n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {noremap=true})
-vim.api.nvim_set_keymap("n", "<Tab>h", ":<C-u>tab help<Space>", {noremap=true})
-vim.api.nvim_set_keymap("n", "<Tab>H", ":<C-u>-tab help<Space>", {noremap=true})
+vim.api.nvim_set_keymap(
+  "n", "<Tab>", "<Nop>", { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "n", "<C-j>", "<Tab>", { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "n", "<Tab><Tab>", ":<C-u>tab<Space>", { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "n", "<Tab>h", ":<C-u>tab help<Space>", { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "n", "<Tab>H", ":<C-u>-tab help<Space>", { noremap = true }
+)
 
 -- }}}
 
 -- settings {{{
 
-vim.api.nvim_set_keymap("n", "<Space>qh", ":<C-u>set hls!<CR>", {noremap=true})
+vim.api.nvim_set_keymap(
+  "n", "<Space>qh", ":<C-u>set hls!<CR>", { noremap = true }
+)
 
 --  }}}
 
@@ -243,7 +247,7 @@ vim.g["sneak#next"] = false
 
 -- matchup {{{
 
-vim.g.matchup_matchparen_offscreen = {method="popup"}
+vim.g.matchup_matchparen_offscreen = { method = "popup" }
 vim.g.matchup_surround_enabled = true
 vim.g.matchup_delim_noskips = 0
 
@@ -256,13 +260,15 @@ vim.g.matchup_delim_noskips = 0
 local function bootstrap_pckr()
   local pckr_path = vim.fn.stdpath("data") .. "/pckr/pckr.nvim"
   if not (vim.uv or vim.loop).fs_stat(pckr_path) then
-    vim.fn.system({
-      GIT_EXECUTABLE,
-      "clone",
-      "--filter=blob:none",
-      "https://github.com/lewis6991/pckr.nvim",
-      pckr_path
-    })
+    vim.fn.system(
+      {
+        GIT_EXECUTABLE,
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/lewis6991/pckr.nvim",
+        pckr_path,
+      }
+    )
   end
   vim.opt.rtp:prepend(pckr_path)
 end
@@ -273,27 +279,34 @@ local pckr_util = require("pckr.util")
 local pckr_cmd = require("pckr.loader.cmd")
 local pckr_keys = require("pckr.loader.keys")
 
-pckr.setup({
-    pack_dir = pckr_util.join_paths(vim.fn.stdpath("data"), "site"),
+pckr.setup(
+  {
+    pack_dir = pckr_util.join_paths(
+      vim.fn.stdpath("data"), "site"
+    ),
     -- Limit the number of simultaneous jobs. nil means no limit
     max_jobs = nil,
     autoremove = true,
     autoinstall = true,
     git = {
-        cmd = "git",
-        clone_timeout = 60,
-        -- Lua format string used for "aaa/bbb" style plugins
-        default_url_format = "https://github.com/%s"
+      cmd = "git",
+      clone_timeout = 60,
+      -- Lua format string used for "aaa/bbb" style plugins
+      default_url_format = "https://github.com/%s",
     },
     log = { level = "warn" },
     lockfile = {
-        path = pckr_util.join_paths(vim.fn.stdpath("config"), "pckr", "lockfile.lua")
-    }
-})
+      path = pckr_util.join_paths(
+        vim.fn.stdpath("config"), "pckr", "lockfile.lua"
+      ),
+    },
+  }
+)
 
 --  }}}
 
-pckr.add({ -- {{{
+pckr.add(
+  { -- {{{
     "mbbill/undotree",
     "justinmk/vim-sneak",
     "unblevable/quick-scope",
@@ -306,58 +319,71 @@ pckr.add({ -- {{{
     "ryvnf/readline.vim",
     "andymass/vim-matchup",
 
-    { 'nvim-treesitter/nvim-treesitter', --  {{{
-        run = ':TSUpdate',
-        config = function()
-            require'nvim-treesitter.configs'.setup {
-                highlight = { enable = true },
-                indent = { enable = true },
-                incremental_selection = {
-                    enable = true,
-                },
-
-                matchup = {
-                    enable = true,
-                    disable_virtual_text = true,
-                    include_match_words = true,
-                },
-            }
-        end
-    },--  }}}
-
-    { "RRethy/nvim-treesitter-endwise", --  {{{
-        require = { "nvim-treesitter/nvim-treesitter" },
+    {
+      "windwp/nvim-autopairs", -- {{{
+      config = function()
+        require("nvim-autopairs").setup(
+          {
+            disable_filetype = {
+              "markdown",
+              "text",
+              "fzf",
+              "fugitive",
+            },
+            disable_in_macro = true,
+            disable_in_visualblock = false,
+            disable_in_replace_mode = true,
+          }
+        )
+      end,
     }, --  }}}
 
-    { "windwp/nvim-autopairs", -- {{{
-        config = function()
-            require("nvim-autopairs").setup({
-                disable_filetype = {
-                    "markdown",
-                    "text",
-                    "fzf",
-                    "fugitive",
-                },
-                disable_in_macro = true,
-                disable_in_visualblock = false,
-                disable_in_replace_mode = true,
-            })
-        end,
-    },--  }}}
+    {
+      "nvim-treesitter/nvim-treesitter", --  {{{
+      run = ":TSUpdate",
+      config = function()
+        require"nvim-treesitter.configs".setup {
+          highlight = { enable = true },
+          indent = { enable = true },
+          incremental_selection = { enable = true },
+
+          matchup = {
+            enable = true,
+            disable_virtual_text = true,
+            include_match_words = true,
+          },
+        }
+      end,
+    }, --  }}}
+
+    {
+      "RRethy/nvim-treesitter-endwise", --  {{{
+      require = { "nvim-treesitter/nvim-treesitter" },
+    }, --  }}}
+
+    {
+      "junegunn/fzf.vim", --  {{{
+      requires = { "junegunn/fzf" },
+    }, --  }}}
 
     -- rainbow ?
-}) -- }}}
+  }
+) -- }}}
 
 -- post setup {{{
--- TODO
 
 -- sneak & quickscope {{{
 
-vim.g.qs_delay = 30
+vim.g.qs_delay = 40
 vim.g.qs_hi_priority = 2
 vim.g.qs_second_highlight = true
 
-for key_in, key_out in pairs({
+vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#c81f16" })
+vim.api
+  .nvim_set_hl(0, "QuickScopeSecondary", { fg = "#ff5642" })
+
+for key_in, key_out in pairs(
+  {
     ["<C-n>"] = ";",
     ["<C-p>"] = ",",
     ["s"] = "s",
@@ -365,11 +391,16 @@ for key_in, key_out in pairs({
     ["F"] = "F",
     ["t"] = "t",
     ["T"] = "T",
-}) do
-    vim.api.nvim_set_keymap("", key_in, "<Plug>Sneak_"..key_out, {noremap=true})
+  }
+) do
+  vim.api.nvim_set_keymap(
+    "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
+  )
 end
-for _, mode in pairs({"n", "o", "s"}) do
-    vim.api.nvim_set_keymap(mode, "S", "<Plug>Sneak_S", {noremap=true})
+for _, mode in pairs({ "n", "o", "s" }) do
+  vim.api.nvim_set_keymap(
+    mode, "S", "<Plug>Sneak_S", { noremap = true }
+  )
 end
 
 --  }}}
@@ -381,7 +412,33 @@ end
 -- repeat {{{
 
 -- because RepeatDot sometimes fails
-vim.api.nvim_set_keymap("n", ";.", ".", {noremap=true})
+vim.api.nvim_set_keymap("n", ";.", ".", { noremap = true })
+
+--  }}}
+
+-- fzf {{{
+
+vim.g.fzf_layout = { down = "100%" }
+vim.g.fzf_vim = {
+  preview_window = { "down,50%", "ctrl-s" },
+}
+vim.g.fzf_history_dir = vim.fn.stdpath("data") .. "/fzf-history"
+
+vim.g.fzf_colors = {
+  fg = { "fg", "Normal" },
+  bg = { "bg", "Normal" },
+  hl = { "fg", "Comment" },
+  ["fg+"] = { "fg", "CursorLine", "CursorColumn", "Normal" },
+  ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
+  ["hl+"] = { "fg", "Statement" },
+  info = { "fg", "PreProc" },
+  border = { "none" },
+  prompt = { "fg", "Conditional" },
+  pointer = { "fg", "Exception" },
+  marker = { "fg", "Keyword" },
+  spinner = { "fg", "Label" },
+  header = { "fg", "Comment" },
+}
 
 --  }}}
 
@@ -391,6 +448,28 @@ vim.api.nvim_set_keymap("n", ";.", ".", {noremap=true})
 
 -- plugin settings {{{
 
+-- TODO fix coloring of diffs
+-- those below don't work
+vim.cmd [[
+hi DiffAdd
+            \ ctermbg=DarkGreen guibg=#0d5826
+            \ ctermfg=NONE guifg=NONE
+hi DiffText
+            \ ctermbg=Gray guibg=#566670
+            \ ctermfg=NONE guifg=NONE
+hi DiffChange
+            \ ctermbg=DarkBlue guibg=#0f1a7f
+            \ ctermfg=NONE guifg=NONE
+hi DiffDelete
+            \ ctermbg=DarkRed guibg=#800620
+            \ ctermfg=NONE guifg=NONE
+
+"hi DiffAdd ctermbg=DarkGreen guibg=#0d5826
+"hi DiffText ctermbg=Gray guibg=#566670
+"hi DiffChange ctermbg=DarkBlue guibg=#0f1a7f
+"hi DiffDelete ctermbg=DarkRed guibg=#800620
+]]
+
 -- todo in function slime config for nvim terminal
 -- and tmux, selection inside if below
 
@@ -398,28 +477,37 @@ vim.api.nvim_set_keymap("n", ";.", ".", {noremap=true})
 
 if vim.g.neovide then -- {{{
 
-    -- settings {{{
+  -- settings {{{
 
-    vim.g.neovide_refresh_rate_idle = 5
-    vim.g.neovide_cursor_hack = false
-    vim.g.neovide_scale_factor = 0.95
+  vim.g.neovide_refresh_rate_idle = 5
+  vim.g.neovide_cursor_hack = false
+  vim.g.neovide_scale_factor = 0.95
 
-    --  }}}
+  --  }}}
 
-    -- keybindings {{{
+  -- keybindings {{{
 
-    -- for uniform experience
-    for _, mode in pairs(ALL_MODES) do
-        vim.api.nvim_set_keymap(mode, "<C-/>", "<C-_>", {noremap=true})
-    end
+  -- for uniform experience
+  for _, mode in pairs(ALL_MODES) do
+    vim.api.nvim_set_keymap(
+      mode, "<C-/>", "<C-_>", { noremap = true }
+    )
+  end
 
-    --  }}}
+  --  }}}
 
-    -- }}}
+  -- }}}
 else -- {{{
 
-    -- keybindings {{{
+  -- keybindings {{{
 
-    --  }}}
+  --  }}}
 
 end -- }}}
+
+-- additional {{{
+
+_ = pcall(require, "local.lua")
+_ = pcall(require, "code.lua")
+
+--  }}}
