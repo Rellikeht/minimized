@@ -2,6 +2,12 @@
 
 ALL_MODES = {"t", "n", "v", "o", "i"}
 
+function calc_pumheight()
+    local result = vim.opt.lines._value
+    result = (result - result % 3) / 3
+    return result
+end
+
 --  }}}
 
 -- settings {{{
@@ -53,6 +59,7 @@ vim.opt.fileencoding = "utf8"
 vim.opt.ttimeoutlen = 100
 vim.opt.updatetime = 2000
 
+vim.opt.conceallevel = 2
 vim.opt.foldmethod = "marker"
 vim.opt.foldmarker = " {{{, }}}"
 vim.opt.foldlevel = 0
@@ -77,8 +84,8 @@ vim.opt.complete = "w,b,s,i,d,t,.,k"
 vim.opt.completeopt = "menu,menuone,noselect,noinsert,preview"
 
 vim.opt.omnifunc = "syntaxcomplete#Complete"
-vim.opt.pumwidth = 30
--- vim.opt.pumheight = 0
+vim.opt.pumwidth = 20
+vim.opt.pumheight = calc_pumheight()
 vim.opt.cmdwinheight = 25
 
 -- }}}
@@ -150,6 +157,7 @@ hi DiffDelete
 
 -- general {{{
 
+vim.api.nvim_set_keymap("n", "<Space>", "<Nop>", {})
 vim.api.nvim_set_keymap("n", ",", "<Nop>", {})
 vim.api.nvim_set_keymap("n", ";", "<Nop>", {})
 vim.g.mapleader = ","
@@ -212,6 +220,12 @@ vim.api.nvim_set_keymap("n", "<Tab>H", ":<C-u>-tab help<Space>", {noremap=true})
 
 -- }}}
 
+-- settings {{{
+
+vim.api.nvim_set_keymap("n", "<Space>qh", ":<C-u>set hls!<CR>", {noremap=true})
+
+--  }}}
+
 -- }}}
 
 -- plugins {{{
@@ -224,6 +238,14 @@ vim.g["sneak#prompt"] = " <sneak> "
 vim.g["sneak#use_ic_scs"] = true
 vim.g["sneak#label"] = true
 vim.g["sneak#next"] = false
+
+--  }}}
+
+-- matchup {{{
+
+vim.g.matchup_matchparen_offscreen = {method="popup"}
+vim.g.matchup_surround_enabled = true
+vim.g.matchup_delim_noskips = 0
 
 --  }}}
 
@@ -280,6 +302,7 @@ pckr.add({ -- {{{
     "tpope/vim-abolish",
     "tpope/vim-endwise",
     "tpope/vim-fugitive",
+    "tpope/vim-repeat",
     "ryvnf/readline.vim",
     "andymass/vim-matchup",
 
@@ -293,7 +316,11 @@ pckr.add({ -- {{{
                     enable = true,
                 },
 
-                matchup = { enable = true },
+                matchup = {
+                    enable = true,
+                    disable_virtual_text = true,
+                    include_match_words = true,
+                },
             }
         end
     },--  }}}
@@ -326,11 +353,14 @@ pckr.add({ -- {{{
 
 -- sneak & quickscope {{{
 
+vim.g.qs_delay = 30
+vim.g.qs_hi_priority = 2
+vim.g.qs_second_highlight = true
+
 for key_in, key_out in pairs({
     ["<C-n>"] = ";",
     ["<C-p>"] = ",",
     ["s"] = "s",
-    ["S"] = "S",
     ["f"] = "f",
     ["F"] = "F",
     ["t"] = "t",
@@ -338,12 +368,22 @@ for key_in, key_out in pairs({
 }) do
     vim.api.nvim_set_keymap("", key_in, "<Plug>Sneak_"..key_out, {noremap=true})
 end
+for _, mode in pairs({"n", "o", "s"}) do
+    vim.api.nvim_set_keymap(mode, "S", "<Plug>Sneak_S", {noremap=true})
+end
 
 --  }}}
 
 -- undotree {{{
 
 -- }}}
+
+-- repeat {{{
+
+-- because RepeatDot sometimes fails
+vim.api.nvim_set_keymap("n", ";.", ".", {noremap=true})
+
+--  }}}
 
 -- }}}
 
