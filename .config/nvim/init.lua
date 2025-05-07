@@ -1,11 +1,48 @@
 -- helpers {{{
-ALL_MODES = { "t", "n", "v", "o", "i" }
+
+-- general {{{
 
 function calc_pumheight()
   local result = vim.opt.lines._value
   result = (result - result % 3) / 3
   return result
 end
+
+--  }}}
+
+-- commands {{{
+
+vim.api.nvim_create_user_command(
+  "Argument",
+  function (opts)
+    if #opts.fargs == 0 then
+      vim.cmd.argument()
+    else
+      vim.cmd.argedit(opts.fargs[1])
+      vim.cmd.argdedupe()
+    end
+  end,
+  { complete="arglist", nargs="?" }
+)
+
+vim.api.nvim_create_user_command(
+  "Tabe",
+  function (opts)
+    local count = opts.count
+    if count == 0 then
+      count = -1
+    end
+    vim.cmd(opts.count.."tabnew")
+    -- This full lua version is closest to working
+    -- but negative indices are too much for it
+    -- vim.cmd.tabnew({range={count}})
+    vim.cmd.arglocal({bang=true})
+    vim.cmd.args({args=opts.fargs, bang=true})
+  end,
+  { complete="file", nargs="*", count=1 }
+)
+
+--  }}}
 
 --  }}}
 
@@ -75,7 +112,7 @@ vim.opt.formatoptions:append("croqlwn")
 vim.opt.wildchar = string.byte("\t")
 vim.opt.wildmode = "list:longest,full"
 vim.opt.wildoptions = "fuzzy,tagfile,pum"
-vim.opt.complete = "w,b,s,i,d,t,.,k"
+vim.opt.complete = "w,b,s,i,d,.,k"
 vim.opt.completeopt = "menu,menuone,noselect,noinsert,preview"
 
 vim.opt.omnifunc = "syntaxcomplete#Complete"
@@ -140,8 +177,7 @@ vim.api.nvim_set_keymap("n", "<Space>", "<Nop>", {})
 vim.api.nvim_set_keymap("n", ",", "<Nop>", {})
 vim.api.nvim_set_keymap("n", ";", "<Nop>", {})
 vim.g.mapleader = ","
--- TODO which key
-vim.g.maplocalleader = "\\"
+vim.g.maplocalleader = "_"
 
 -- Select whole buffer without plugins
 vim.api
@@ -170,7 +206,7 @@ vim.api
 -- terminal {{{
 
 vim.api.nvim_set_keymap(
-  "t", "<C-_>", "<C-\\>", { noremap = true }
+  "t", "<C-q>", "<C-\\>", { noremap = true }
 )
 vim.api.nvim_set_keymap(
   "t", "<C-\\>n", "<C-\\><C-n>", { noremap = true }
@@ -194,8 +230,6 @@ for key_in, key_out in pairs(
     "<C-\\><C-n>" .. key_out .. "<Esc>", { noremap = true }
   )
 end
-
--- TODO is it better to have vim slime or some manual copying
 
 -- }}}
 
@@ -224,9 +258,29 @@ vim.api.nvim_set_keymap(
 
 -- settings {{{
 
-vim.api.nvim_set_keymap(
-  "n", "<Space>qh", ":<C-u>set hls!<CR>", { noremap = true }
-)
+for key, cmd in pairs({
+  "h", ":<C-u>set hls!<CR>",
+  "w", ":<C-u>setlocal wrap!<CR>",
+  "W", ":<C-u>set wrap!<CR>",
+}) do
+  vim.api.nvim_set_keymap(
+    "n", "<Space>q"..key, cmd, { noremap = true }
+  )
+end
+
+--  }}}
+
+-- info {{{
+
+for key, cmd in pairs({
+  "m", ":<C-u>marks<CR>",
+  "a", ":<C-u>args<CR>",
+  "b", ":<C-u>ls<CR>",
+}) do
+  vim.api.nvim_set_keymap(
+    "n", "<Space>i"..key, cmd, { noremap = true }
+  )
+end
 
 --  }}}
 
@@ -250,6 +304,101 @@ vim.g["sneak#next"] = false
 vim.g.matchup_matchparen_offscreen = { method = "popup" }
 vim.g.matchup_surround_enabled = true
 vim.g.matchup_delim_noskips = 0
+
+--  }}}
+
+-- vim-slime {{{
+
+vim.g.slime_paste_file = vim.fn.tempname()
+vim.g.slime_dont_ask_default = true
+vim.g.slime_bracketed_paste = true
+vim.g.slime_no_mappings = true
+
+vim.api.nvim_set_keymap("n", "gs:", ":<C-u>SlimeConfig<CR>", { noremap = true })
+vim.api.nvim_set_keymap("n", "gss", "<Plug>SlimeLineSend", { noremap = true })
+vim.api.nvim_set_keymap("n", "gs", "<Plug>SlimeMotionSend", { noremap = true })
+vim.api.nvim_set_keymap("n", "gsi", "<Plug>SlimeParagraphSend", { noremap = true })
+vim.api.nvim_set_keymap("x", "gsi", "<Plug>SlimeRegionSend", { noremap = true })
+vim.api.nvim_set_keymap("n", "gs;", ":SlimeSend<CR>", { noremap = true })
+vim.api.nvim_set_keymap("x", "gs;", ":SlimeSend<CR>", { noremap = true })
+
+-- TODO probably too advanced and unnecessary logic for "minimal" 
+-- config
+function slime_setup_tmux()
+  vim.g.slime_tmux_targets = {
+    "{top-right}",
+    "{next}.{top-right}",
+  }
+  vim.g.slime_tmux_target = 0
+
+  vim.api.nvim_create_user_command(
+    "SlimeNextTmuxTarget",
+    function()
+      vim.g.slime_tmux_target =
+        (vim.g.slime_tmux_target+1)%(#vim.g.slime_tmux_targets)
+      vim.g.slime_default_config =
+      {
+        socket_name = vim.g.slime_default_config.socket_name,
+        target_pane =
+          vim.g.slime_tmux_targets[vim.g.slime_tmux_target+1]
+      }
+      for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        has, _ = pcall(
+          vim.api.nvim_buf_get_var,
+          bufnr,
+          "slime_config"
+        )
+        if has then
+          vim.api.nvim_buf_set_var(
+            bufnr,
+            "slime_config",
+            vim.g.slime_default_config
+          )
+        end
+      end
+    end,
+    { nargs=0 }
+  )
+
+  vim.g.slime_target = 'tmux'
+  vim.g.slime_default_config = {
+    socket_name = vim.fn.get(vim.fn.split(vim.env.TMUX, ","), 0),
+    target_pane = vim.g.slime_tmux_targets[1],
+  }
+end
+
+function slime_setup_nvim()
+  vim.g.slime_target = 'neovim'
+  vim.g.slime_suggest_default = false
+  vim.g.slime_menu_config = false
+  vim.g.slime_input_pid = false
+  -- TODO better autoconfig
+
+  -- https://github.com/jpalardy/vim-slime/blob/main/assets/doc/targets/neovim.md
+  vim.g.slime_get_jobid = function()
+    -- iterate over all buffers to find the first terminal with a valid job
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_get_option_value(
+        "buftype", { buf = bufnr }
+      ) == "terminal" then
+        local chan = vim.api.nvim_get_option_value(
+          "channel", { buf = bufnr }
+        )
+        if chan and chan > 0 then return chan end
+      end
+    end
+    return nil
+  end
+end
+
+-- There may be repl running in tmux that
+-- should be reused so this is global even with
+-- gui running
+if vim.env.TMUX then
+  slime_setup_tmux()
+else
+  slime_setup_nvim()
+end
 
 --  }}}
 
@@ -318,6 +467,7 @@ pckr.add(
     "tpope/vim-repeat",
     "ryvnf/readline.vim",
     "andymass/vim-matchup",
+    "jpalardy/vim-slime",
 
     {
       "windwp/nvim-autopairs", -- {{{
@@ -342,17 +492,21 @@ pckr.add(
       "nvim-treesitter/nvim-treesitter", --  {{{
       run = ":TSUpdate",
       config = function()
-        require"nvim-treesitter.configs".setup {
+        require"nvim-treesitter.configs".setup({
           highlight = { enable = true },
           indent = { enable = true },
           incremental_selection = { enable = true },
+          sync_install = false,
+          auto_install = false,
 
           matchup = {
             enable = true,
             disable_virtual_text = true,
             include_match_words = true,
           },
-        }
+        })
+
+        require('nvim-treesitter.install').prefer_git = false
       end,
     }, --  }}}
 
@@ -470,9 +624,6 @@ hi DiffDelete
 "hi DiffDelete ctermbg=DarkRed guibg=#800620
 ]]
 
--- todo in function slime config for nvim terminal
--- and tmux, selection inside if below
-
 --  }}}
 
 if vim.g.neovide then -- {{{
@@ -487,21 +638,19 @@ if vim.g.neovide then -- {{{
 
   -- keybindings {{{
 
-  -- for uniform experience
-  for _, mode in pairs(ALL_MODES) do
-    vim.api.nvim_set_keymap(
-      mode, "<C-/>", "<C-_>", { noremap = true }
-    )
-  end
-
   --  }}}
 
   -- }}}
+
+elseif vim.fn.has("gui_running") then --  {{{
+
+  -- for uniform experience
+  -- "t", "i" don't work anyway
+  for _, mode in pairs({ "n", "o", "v" }) do
+    vim.api.nvim_set_keymap(mode, "<C-/>", "<C-_>", {})
+  end
+
 else -- {{{
-
-  -- keybindings {{{
-
-  --  }}}
 
 end -- }}}
 

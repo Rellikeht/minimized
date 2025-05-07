@@ -1,1 +1,1 @@
-choco install powertoys
+choco install powertoys ag

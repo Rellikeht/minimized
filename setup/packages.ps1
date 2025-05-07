@@ -11,6 +11,6 @@ if (!$(Get-Command "choco.exe" -ErrorAction SilentlyContinue))
 choco feature enable -n allowGlobalConfirmation
 
 # packages
-choco install neovide python git 7zip vifm
+choco install neovide python git 7zip vifm fzf grep ripgrep
 py -m pip install --upgrade pip
 py -m pip install pynvim
