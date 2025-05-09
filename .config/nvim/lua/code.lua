@@ -1,3 +1,8 @@
+local success, val = pcall(function() return CODE_LOADED end)
+if success and val then
+  return
+end
+
 -- plugins {{{
 
 -- pre setup {{{
@@ -118,6 +123,53 @@ end
 pckr.add(
   { -- {{{
     "jpalardy/vim-slime",
+
+    {
+      "norcalli/nvim-colorizer.lua",--  {{{
+      config = function()
+        local color_css_conf = {
+          -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+          css = true,
+          -- Enable all CSS *functions*: rgb_fn, hsl_fn
+          css_fn = true,
+        }
+        local color_vim_conf = { names = true }
+
+        require("colorizer").setup(--  {{{
+            {
+              "*",
+              html = color_css_conf,
+              css = color_css_conf,
+              js = color_css_conf,
+              ts = color_css_conf,
+              vim = color_vim_conf,
+              lua = color_vim_conf,
+          }, {
+            -- #RGB hex codes
+            RGB = true,
+            -- #RRGGBB hex codes
+            RRGGBB = true,
+            -- "Name" codes like Blue
+            names = false,
+            -- #RRGGBBAA hex codes
+            RRGGBBAA = true,
+            -- CSS rgb() and rgba() functions
+            rgb_fn = true,
+            -- CSS hsl() and hsla() functions
+            hsl_fn = true,
+            -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+            css = false,
+            -- Enable all CSS *functions*: rgb_fn, hsl_fn
+            css_fn = false,
+            -- Set the display mode.
+            -- Available modes: foreground, background
+            mode = "background",
+          }
+        )--  }}}
+      end,
+    }, --  }}}
+
+    -- TODO C rainbow ?
   }
 ) -- }}}
 
@@ -145,3 +197,5 @@ if vim.fn.has("win32") == 1 then -- {{{
 else -- {{{
 
 end -- }}}
+
+CODE_LOADED = true

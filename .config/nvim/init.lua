@@ -125,9 +125,9 @@ vim.opt.cmdwinheight = 25
 -- initialization {{{
 
 vim.cmd.filetype("on")
-vim.cmd.syntax("on")
 vim.cmd.filetype("plugin", "on")
 vim.cmd.filetype("indent", "on")
+vim.cmd.syntax("on")
 vim.cmd.runtime("ftplugin/man.vim")
 vim.g.loaded_matchit = 1
 
@@ -159,6 +159,17 @@ if vim.g.neovide then -- {{{
 
 end -- }}}
 
+-- filetypes {{{
+
+vim.g.markdown_minlines = 300
+
+vim.api.nvim_create_autocmd(
+  { "BufRead", "BufNewFile" },
+  { pattern = "*.md", command = "set syntax=markdown" }
+)
+
+--  }}}
+
 -- colors {{{
 
 vim.cmd.colorscheme("zaibatsu")
@@ -173,7 +184,14 @@ vim.cmd.colorscheme("zaibatsu")
 
 -- general {{{
 
+-- search like a pro
+vim.api.nvim_set_keymap("n", "n", "nzzzv", {})
+vim.api.nvim_set_keymap("n", "N", "Nzzzv", {})
+
+-- just in case
 vim.api.nvim_set_keymap("n", "<Space>", "<Nop>", {})
+
+-- opinionated preference for <C-n> and <C-p>
 vim.api.nvim_set_keymap("n", ",", "<Nop>", {})
 vim.api.nvim_set_keymap("n", ";", "<Nop>", {})
 vim.g.mapleader = ","
@@ -217,12 +235,12 @@ vim.api.nvim_set_keymap(
 
 for key_in, key_out in pairs(
   {
-    ["h"] = "<C-w>h",
-    ["j"] = "<C-w>j",
-    ["k"] = "<C-w>k",
-    ["l"] = "<C-w>l",
-    ["gt"] = "gt",
-    ["gT"] = "gT",
+    h = "<C-w>h",
+    j = "<C-w>j",
+    k = "<C-w>k",
+    l = "<C-w>l",
+    gt = "gt",
+    gT = "gT",
   }
 ) do
   vim.api.nvim_set_keymap(
@@ -259,9 +277,9 @@ vim.api.nvim_set_keymap(
 -- settings {{{
 
 for key, cmd in pairs({
-  "h", ":<C-u>set hls!<CR>",
-  "w", ":<C-u>setlocal wrap!<CR>",
-  "W", ":<C-u>set wrap!<CR>",
+  h = ":<C-u>set hls!<CR>",
+  w = ":<C-u>setlocal wrap!<CR>",
+  W = ":<C-u>set wrap!<CR>",
 }) do
   vim.api.nvim_set_keymap(
     "n", "<Space>q"..key, cmd, { noremap = true }
@@ -273,9 +291,9 @@ end
 -- info {{{
 
 for key, cmd in pairs({
-  "m", ":<C-u>marks<CR>",
-  "a", ":<C-u>args<CR>",
-  "b", ":<C-u>ls<CR>",
+  m = ":<C-u>marks<CR>",
+  a = ":<C-u>args<CR>",
+  b = ":<C-u>ls<CR>",
 }) do
   vim.api.nvim_set_keymap(
     "n", "<Space>i"..key, cmd, { noremap = true }
@@ -423,8 +441,6 @@ pckr.add(
       "junegunn/fzf.vim", --  {{{
       requires = { "junegunn/fzf" },
     }, --  }}}
-
-    -- rainbow ?
   }
 ) -- }}}
 
@@ -444,11 +460,11 @@ for key_in, key_out in pairs(
   {
     ["<C-n>"] = ";",
     ["<C-p>"] = ",",
-    ["s"] = "s",
-    ["f"] = "f",
-    ["F"] = "F",
-    ["t"] = "t",
-    ["T"] = "T",
+    s = "s",
+    f = "f",
+    F = "F",
+    t = "t",
+    T = "T",
   }
 ) do
   vim.api.nvim_set_keymap(
@@ -561,13 +577,15 @@ end -- }}}
 
 -- additional {{{
 
-_ = pcall(require, "local")
+pcall(require, "local")
 
 vim.api.nvim_create_user_command(
   "Code",
   function ()
-    -- _ = pcall(require, "code")
-    require("code")
+    local success, _ = pcall(require, "code")
+    if not success then
+      print("Failed to load code module")
+    end
   end,
   { nargs=0 }
 )
