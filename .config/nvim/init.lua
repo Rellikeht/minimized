@@ -307,101 +307,6 @@ vim.g.matchup_delim_noskips = 0
 
 --  }}}
 
--- vim-slime {{{
-
-vim.g.slime_paste_file = vim.fn.tempname()
-vim.g.slime_dont_ask_default = true
-vim.g.slime_bracketed_paste = true
-vim.g.slime_no_mappings = true
-
-vim.api.nvim_set_keymap("n", "gs:", ":<C-u>SlimeConfig<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "gss", "<Plug>SlimeLineSend", { noremap = true })
-vim.api.nvim_set_keymap("n", "gs", "<Plug>SlimeMotionSend", { noremap = true })
-vim.api.nvim_set_keymap("n", "gsi", "<Plug>SlimeParagraphSend", { noremap = true })
-vim.api.nvim_set_keymap("x", "gsi", "<Plug>SlimeRegionSend", { noremap = true })
-vim.api.nvim_set_keymap("n", "gs;", ":SlimeSend<CR>", { noremap = true })
-vim.api.nvim_set_keymap("x", "gs;", ":SlimeSend<CR>", { noremap = true })
-
--- TODO probably too advanced and unnecessary logic for "minimal" 
--- config
-function slime_setup_tmux()
-  vim.g.slime_tmux_targets = {
-    "{top-right}",
-    "{next}.{top-right}",
-  }
-  vim.g.slime_tmux_target = 0
-
-  vim.api.nvim_create_user_command(
-    "SlimeNextTmuxTarget",
-    function()
-      vim.g.slime_tmux_target =
-        (vim.g.slime_tmux_target+1)%(#vim.g.slime_tmux_targets)
-      vim.g.slime_default_config =
-      {
-        socket_name = vim.g.slime_default_config.socket_name,
-        target_pane =
-          vim.g.slime_tmux_targets[vim.g.slime_tmux_target+1]
-      }
-      for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-        has, _ = pcall(
-          vim.api.nvim_buf_get_var,
-          bufnr,
-          "slime_config"
-        )
-        if has then
-          vim.api.nvim_buf_set_var(
-            bufnr,
-            "slime_config",
-            vim.g.slime_default_config
-          )
-        end
-      end
-    end,
-    { nargs=0 }
-  )
-
-  vim.g.slime_target = 'tmux'
-  vim.g.slime_default_config = {
-    socket_name = vim.fn.get(vim.fn.split(vim.env.TMUX, ","), 0),
-    target_pane = vim.g.slime_tmux_targets[1],
-  }
-end
-
-function slime_setup_nvim()
-  vim.g.slime_target = 'neovim'
-  vim.g.slime_suggest_default = false
-  vim.g.slime_menu_config = false
-  vim.g.slime_input_pid = false
-  -- TODO better autoconfig
-
-  -- https://github.com/jpalardy/vim-slime/blob/main/assets/doc/targets/neovim.md
-  vim.g.slime_get_jobid = function()
-    -- iterate over all buffers to find the first terminal with a valid job
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_get_option_value(
-        "buftype", { buf = bufnr }
-      ) == "terminal" then
-        local chan = vim.api.nvim_get_option_value(
-          "channel", { buf = bufnr }
-        )
-        if chan and chan > 0 then return chan end
-      end
-    end
-    return nil
-  end
-end
-
--- There may be repl running in tmux that
--- should be reused so this is global even with
--- gui running
-if vim.env.TMUX then
-  slime_setup_tmux()
-else
-  slime_setup_nvim()
-end
-
---  }}}
-
 --  }}}
 
 -- pckr setup {{{
@@ -423,10 +328,10 @@ local function bootstrap_pckr()
 end
 bootstrap_pckr()
 
-local pckr = require("pckr")
-local pckr_util = require("pckr.util")
-local pckr_cmd = require("pckr.loader.cmd")
-local pckr_keys = require("pckr.loader.keys")
+pckr = require("pckr")
+pckr_util = require("pckr.util")
+pckr_cmd = require("pckr.loader.cmd")
+pckr_keys = require("pckr.loader.keys")
 
 pckr.setup(
   {
@@ -467,7 +372,6 @@ pckr.add(
     "tpope/vim-repeat",
     "ryvnf/readline.vim",
     "andymass/vim-matchup",
-    "jpalardy/vim-slime",
 
     {
       "windwp/nvim-autopairs", -- {{{
@@ -650,13 +554,22 @@ elseif vim.fn.has("gui_running") then --  {{{
     vim.api.nvim_set_keymap(mode, "<C-/>", "<C-_>", {})
   end
 
+  -- }}}
 else -- {{{
 
 end -- }}}
 
 -- additional {{{
 
-_ = pcall(require, "local.lua")
-_ = pcall(require, "code.lua")
+_ = pcall(require, "local")
+
+vim.api.nvim_create_user_command(
+  "Code",
+  function ()
+    -- _ = pcall(require, "code")
+    require("code")
+  end,
+  { nargs=0 }
+)
 
 --  }}}
