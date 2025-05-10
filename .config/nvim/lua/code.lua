@@ -169,6 +169,13 @@ pckr.add(
       end,
     }, --  }}}
 
+    {
+      "neovim/nvim-lspconfig",--  {{{
+      config = function()
+        -- TODO
+      end
+    } --  }}}
+
     -- TODO C rainbow ?
   }
 ) -- }}}

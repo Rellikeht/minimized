@@ -414,21 +414,31 @@ pckr.add(
       "nvim-treesitter/nvim-treesitter", --  {{{
       run = ":TSUpdate",
       config = function()
-        require"nvim-treesitter.configs".setup({
-          highlight = { enable = true },
-          indent = { enable = true },
-          incremental_selection = { enable = true },
-          sync_install = false,
-          auto_install = false,
-
-          matchup = {
-            enable = true,
-            disable_virtual_text = true,
-            include_match_words = true,
-          },
-        })
-
         require('nvim-treesitter.install').prefer_git = false
+        local gid = vim.api.nvim_create_augroup("treesitter_config_group", {})
+        vim.api.nvim_create_autocmd(
+          {"CursorHold"}, {
+            pattern = "*",
+            group = gid,
+            callback = function()
+              vim.api.nvim_del_augroup_by_id(gid)
+
+              require"nvim-treesitter.configs".setup({
+                highlight = { enable = true },
+                indent = { enable = true },
+                incremental_selection = { enable = true },
+                sync_install = false,
+                auto_install = false,
+
+                matchup = {
+                  enable = true,
+                  disable_virtual_text = true,
+                  include_match_words = true,
+                },
+              })
+            end
+          }
+        )
       end,
     }, --  }}}
 
