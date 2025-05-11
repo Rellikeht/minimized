@@ -3,6 +3,10 @@ if success and val then
   return
 end
 
+-- helpers {{{
+
+--  }}}
+
 -- plugins {{{
 
 -- pre setup {{{
@@ -184,7 +188,50 @@ pckr.add(
 
 -- treesitter {{{
 
-local tsinstall = require('nvim-treesitter.install')
+tsinstall = require('nvim-treesitter.install')
+
+do
+  -- This is because FileType is not triggered on first file
+  -- somehow
+  lazy_load_after_startup(function()
+    vim.cmd.filetype("detect")
+  end)
+end
+
+local function lazy_ts_ensure_installed(name, filetypes)
+  if filetypes == nil then
+    filetypes = name
+  end
+  lazy_load_on_filetypes(filetypes, function()
+    -- TODO B failing silently
+    vim.cmd.TSUpdate(name)
+  end)
+end
+
+for key, name in pairs({
+  [{"sh", "bash", "zsh"}] = "bash",
+  "python",
+  "powershell",
+  "go",
+  "rust",
+  "cpp",
+  "c",
+  "html",
+  "css",
+  "java",
+  "elixir",
+  "julia",
+  "ocaml",
+  "haskell",
+  "typst",
+  "latex",
+}) do
+  local filetypes = nil
+  if type(key) == "string" or type(key) == "table" then
+    filetypes = key
+  end
+  lazy_ts_ensure_installed(name, filetypes)
+end
 
 --  }}}
 

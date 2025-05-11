@@ -44,6 +44,53 @@ vim.api.nvim_create_user_command(
 
 --  }}}
 
+-- utility {{{
+
+-- for lexically scoping group id
+do
+  local lazy_group_id = 0
+  function get_lazy_group_id()
+    lazy_group_id = lazy_group_id + 1
+    return lazy_group_id - 1
+  end
+  function get_lazy_group_name()
+    return "lazy_load_group"..get_lazy_group_id()
+  end
+  function get_lazy_group()
+    return vim.api.nvim_create_augroup(get_lazy_group_name(), {})
+  end
+end
+
+function lazy_load_after_startup(func)
+  local gid = get_lazy_group()
+  vim.api.nvim_create_autocmd(
+    {"CursorHold","CursorMoved"}, {
+      pattern = "*",
+      group = gid,
+      callback = function()
+        vim.api.nvim_del_augroup_by_id(gid)
+        func()
+      end
+    }
+  )
+end
+
+function lazy_load_on_filetypes(filetypes, func)
+  local gid = get_lazy_group()
+  vim.api.nvim_create_autocmd(
+    {"FileType"}, {
+      pattern = filetypes,
+      group = gid,
+      callback = function()
+        vim.api.nvim_del_augroup_by_id(gid)
+        func()
+      end
+    }
+  )
+end
+
+--  }}}
+
 --  }}}
 
 -- settings {{{
@@ -128,7 +175,6 @@ vim.cmd.filetype("on")
 vim.cmd.filetype("plugin", "on")
 vim.cmd.filetype("indent", "on")
 vim.cmd.syntax("on")
-vim.cmd.runtime("ftplugin/man.vim")
 vim.g.loaded_matchit = 1
 
 -- }}}
@@ -415,29 +461,22 @@ pckr.add(
       run = ":TSUpdate",
       config = function()
         require('nvim-treesitter.install').prefer_git = false
-        local gid = vim.api.nvim_create_augroup("treesitter_config_group", {})
-        vim.api.nvim_create_autocmd(
-          {"CursorHold"}, {
-            pattern = "*",
-            group = gid,
-            callback = function()
-              vim.api.nvim_del_augroup_by_id(gid)
+        lazy_load_after_startup(
+          function()
+            require"nvim-treesitter.configs".setup({
+              highlight = { enable = true },
+              indent = { enable = true },
+              incremental_selection = { enable = true },
+              sync_install = false,
+              auto_install = false,
 
-              require"nvim-treesitter.configs".setup({
-                highlight = { enable = true },
-                indent = { enable = true },
-                incremental_selection = { enable = true },
-                sync_install = false,
-                auto_install = false,
-
-                matchup = {
-                  enable = true,
-                  disable_virtual_text = true,
-                  include_match_words = true,
-                },
-              })
-            end
-          }
+              matchup = {
+                enable = true,
+                disable_virtual_text = true,
+                include_match_words = true,
+              },
+            })
+          end
         )
       end,
     }, --  }}}
@@ -592,10 +631,11 @@ pcall(require, "local")
 vim.api.nvim_create_user_command(
   "Code",
   function ()
-    local success, _ = pcall(require, "code")
-    if not success then
-      print("Failed to load code module")
-    end
+    require("code")
+    -- local success, _ = pcall(require, "code")
+    -- if not success then
+    --   print("Failed to load code module")
+    -- end
   end,
   { nargs=0 }
 )
