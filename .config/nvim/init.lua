@@ -1,8 +1,6 @@
 -- helpers {{{
-
 -- general {{{
-
-function calc_pumheight()
+local function calc_pumheight()
   local result = vim.opt.lines._value
   result = (result - result % 3) / 3
   return result
@@ -13,81 +11,28 @@ end
 -- commands {{{
 
 vim.api.nvim_create_user_command(
-  "Argument",
-  function (opts)
+  "Argument", function(opts)
     if #opts.fargs == 0 then
       vim.cmd.argument()
     else
       vim.cmd.argedit(opts.fargs[1])
       vim.cmd.argdedupe()
     end
-  end,
-  { complete="arglist", nargs="?" }
+  end, {complete = "arglist", nargs = "?"}
 )
 
 vim.api.nvim_create_user_command(
-  "Tabe",
-  function (opts)
+  "Tabe", function(opts)
     local count = opts.count
-    if count == 0 then
-      count = -1
-    end
-    vim.cmd(opts.count.."tabnew")
+    if count == 0 then count = -1 end
+    vim.cmd(opts.count .. "tabnew")
     -- This full lua version is closest to working
     -- but negative indices are too much for it
     -- vim.cmd.tabnew({range={count}})
-    vim.cmd.arglocal({bang=true})
-    vim.cmd.args({args=opts.fargs, bang=true})
-  end,
-  { complete="file", nargs="*", count=1 }
+    vim.cmd.arglocal({bang = true})
+    vim.cmd.args({args = opts.fargs, bang = true})
+  end, {complete = "file", nargs = "*", count = 1}
 )
-
---  }}}
-
--- utility {{{
-
--- for lexically scoping group id
-do
-  local lazy_group_id = 0
-  function get_lazy_group_id()
-    lazy_group_id = lazy_group_id + 1
-    return lazy_group_id - 1
-  end
-  function get_lazy_group_name()
-    return "lazy_load_group"..get_lazy_group_id()
-  end
-  function get_lazy_group()
-    return vim.api.nvim_create_augroup(get_lazy_group_name(), {})
-  end
-end
-
-function lazy_load_after_startup(func)
-  local gid = get_lazy_group()
-  vim.api.nvim_create_autocmd(
-    {"CursorHold","CursorMoved"}, {
-      pattern = "*",
-      group = gid,
-      callback = function()
-        vim.api.nvim_del_augroup_by_id(gid)
-        func()
-      end
-    }
-  )
-end
-
-function lazy_load_on_filetypes(filetypes, func)
-  local gid = get_lazy_group()
-  vim.api.nvim_create_autocmd(
-    {"FileType"}, {
-      pattern = filetypes,
-      group = gid,
-      callback = function()
-        vim.api.nvim_del_augroup_by_id(gid)
-        func()
-      end
-    }
-  )
-end
 
 --  }}}
 
@@ -124,7 +69,7 @@ for _, option in pairs(
   }
 ) do vim.opt[option] = true end
 
-for _, option in pairs({ "shelltemp", "timeout", "autoread" }) do
+for _, option in pairs({"shelltemp", "timeout", "autoread"}) do
   vim.opt[option] = false
 end
 
@@ -153,7 +98,7 @@ vim.opt.shortmess = "atsOF"
 vim.opt.undolevels = 10000
 vim.opt.history = 10000
 
-vim.opt.formatoptions:remove({ "j", "t" })
+vim.opt.formatoptions:remove({"j", "t"})
 vim.opt.formatoptions:append("croqlwn")
 
 vim.opt.wildchar = string.byte("\t")
@@ -201,24 +146,23 @@ else -- {{{
 
 end -- }}}
 
-if vim.g.neovide then -- {{{
-
-end -- }}}
-
 -- filetypes {{{
 
 vim.g.markdown_minlines = 300
 
 vim.api.nvim_create_autocmd(
-  { "BufRead", "BufNewFile" },
-  { pattern = "*.md", command = "set syntax=markdown" }
+  {"BufRead", "BufNewFile"},
+  {pattern = "*.md", command = "set syntax=markdown"}
 )
 
 --  }}}
 
 -- colors {{{
 
-vim.cmd.colorscheme("zaibatsu")
+-- isn't available sometimes
+local success = pcall(vim.cmd.colorscheme, "zaibatsu")
+if not success then vim.cmd.colorscheme("elflord") end
+-- vim.api.nvim_set_hl(0, "Todo", {fg="#ffcf2f", bg="#0e1224", bold=true})
 
 -- vim.api.nvim_set_hl(0, "DiffDelete", {fg="#c81f16"})
 
@@ -244,24 +188,21 @@ vim.g.mapleader = ","
 vim.g.maplocalleader = "_"
 
 -- Select whole buffer without plugins
-vim.api
-  .nvim_set_keymap("v", "aee", "gg0oG$", { noremap = true })
-vim.api.nvim_set_keymap("v", "iee", "aee", { noremap = true })
+vim.api.nvim_set_keymap("v", "aee", "gg0oG$", {noremap = true})
+vim.api.nvim_set_keymap("v", "iee", "aee", {noremap = true})
 vim.api.nvim_set_keymap(
-  "n", "yaee ", "gg0vG$y`'", { noremap = true }
+  "n", "yaee ", "gg0vG$y`'", {noremap = true}
 )
 
 vim.api.nvim_set_keymap("", "<C-h>", "<C-]>", {})
 vim.api.nvim_set_keymap(
   "n", "<C-w><C-h>",
-  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>",
-  { noremap = true }
+  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", {noremap = true}
 )
 vim.api.nvim_set_keymap(
   "n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {}
 )
-vim.api
-  .nvim_set_keymap("s", "<BS>", "<BS>i", { noremap = true })
+vim.api.nvim_set_keymap("s", "<BS>", "<BS>i", {noremap = true})
 
 -- TODO copying
 
@@ -269,14 +210,12 @@ vim.api
 
 -- terminal {{{
 
+vim.api.nvim_set_keymap("t", "<C-q>", "<C-\\>", {})
 vim.api.nvim_set_keymap(
-  "t", "<C-q>", "<C-\\>", { noremap = true }
+  "t", "<C-\\>n", "<C-\\><C-n>", {noremap = true}
 )
 vim.api.nvim_set_keymap(
-  "t", "<C-\\>n", "<C-\\><C-n>", { noremap = true }
-)
-vim.api.nvim_set_keymap(
-  "t", "<C-\\>o", "<C-\\><C-o>", { noremap = true }
+  "t", "<C-\\>o", "<C-\\><C-o>", {noremap = true}
 )
 
 for key_in, key_out in pairs(
@@ -291,7 +230,7 @@ for key_in, key_out in pairs(
 ) do
   vim.api.nvim_set_keymap(
     "t", "<C-\\>" .. key_in,
-    "<C-\\><C-n>" .. key_out .. "<Esc>", { noremap = true }
+    "<C-\\><C-n>" .. key_out .. "<Esc>", {noremap = true}
   )
 end
 
@@ -299,36 +238,34 @@ end
 
 -- tabs {{{
 
+vim.api.nvim_set_keymap("n", "<Tab>", "<Nop>", {noremap = true})
+vim.api.nvim_set_keymap("n", "<C-j>", "<Tab>", {noremap = true})
 vim.api.nvim_set_keymap(
-  "n", "<Tab>", "<Nop>", { noremap = true }
+  "n", "<Tab><Tab>", ":<C-u>tab<Space>", {noremap = true}
 )
 vim.api.nvim_set_keymap(
-  "n", "<C-j>", "<Tab>", { noremap = true }
+  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {noremap = true}
 )
 vim.api.nvim_set_keymap(
-  "n", "<Tab><Tab>", ":<C-u>tab<Space>", { noremap = true }
+  "n", "<Tab>h", ":<C-u>tab help<Space>", {noremap = true}
 )
 vim.api.nvim_set_keymap(
-  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", { noremap = true }
-)
-vim.api.nvim_set_keymap(
-  "n", "<Tab>h", ":<C-u>tab help<Space>", { noremap = true }
-)
-vim.api.nvim_set_keymap(
-  "n", "<Tab>H", ":<C-u>-tab help<Space>", { noremap = true }
+  "n", "<Tab>H", ":<C-u>-tab help<Space>", {noremap = true}
 )
 
 -- }}}
 
 -- settings {{{
 
-for key, cmd in pairs({
-  h = ":<C-u>set hls!<CR>",
-  w = ":<C-u>setlocal wrap!<CR>",
-  W = ":<C-u>set wrap!<CR>",
-}) do
+for key, cmd in pairs(
+  {
+    h = ":<C-u>set hls!<CR>",
+    w = ":<C-u>setlocal wrap!<CR>",
+    W = ":<C-u>set wrap!<CR>",
+  }
+) do
   vim.api.nvim_set_keymap(
-    "n", "<Space>q"..key, cmd, { noremap = true }
+    "n", "<Space>q" .. key, cmd, {noremap = true}
   )
 end
 
@@ -336,13 +273,15 @@ end
 
 -- info {{{
 
-for key, cmd in pairs({
-  m = ":<C-u>marks<CR>",
-  a = ":<C-u>args<CR>",
-  b = ":<C-u>ls<CR>",
-}) do
+for key, cmd in pairs(
+  {
+    m = ":<C-u>marks<CR>",
+    a = ":<C-u>args<CR>",
+    b = ":<C-u>ls<CR>",
+  }
+) do
   vim.api.nvim_set_keymap(
-    "n", "<Space>i"..key, cmd, { noremap = true }
+    "n", "<Space>i" .. key, cmd, {noremap = true}
   )
 end
 
@@ -365,7 +304,7 @@ vim.g["sneak#next"] = false
 
 -- matchup {{{
 
-vim.g.matchup_matchparen_offscreen = { method = "popup" }
+vim.g.matchup_matchparen_offscreen = {method = "popup"}
 vim.g.matchup_surround_enabled = true
 vim.g.matchup_delim_noskips = 0
 
@@ -412,7 +351,7 @@ pckr.setup(
       -- Lua format string used for "aaa/bbb" style plugins
       default_url_format = "https://github.com/%s",
     },
-    log = { level = "warn" },
+    log = {level = "warn"},
     lockfile = {
       path = pckr_util.join_paths(
         vim.fn.stdpath("config"), "pckr", "lockfile.lua"
@@ -436,6 +375,7 @@ pckr.add(
     "tpope/vim-repeat",
     "ryvnf/readline.vim",
     "andymass/vim-matchup",
+    "Rellikeht/lazy-utils",
 
     {
       "windwp/nvim-autopairs", -- {{{
@@ -458,24 +398,27 @@ pckr.add(
 
     {
       "nvim-treesitter/nvim-treesitter", --  {{{
+      requires = {"Rellikeht/lazy-utils"},
       run = ":TSUpdate",
       config = function()
-        require('nvim-treesitter.install').prefer_git = false
-        lazy_load_after_startup(
+        require("nvim-treesitter.install").prefer_git = false
+        require("lazy_utils").load_on_startup(
           function()
-            require"nvim-treesitter.configs".setup({
-              highlight = { enable = true },
-              indent = { enable = true },
-              incremental_selection = { enable = true },
-              sync_install = false,
-              auto_install = false,
+            require"nvim-treesitter.configs".setup(
+              {
+                highlight = {enable = true},
+                indent = {enable = true},
+                incremental_selection = {enable = true},
+                sync_install = false,
+                auto_install = false,
 
-              matchup = {
-                enable = true,
-                disable_virtual_text = true,
-                include_match_words = true,
-              },
-            })
+                matchup = {
+                  enable = true,
+                  disable_virtual_text = true,
+                  include_match_words = true,
+                },
+              }
+            )
           end
         )
       end,
@@ -483,12 +426,12 @@ pckr.add(
 
     {
       "RRethy/nvim-treesitter-endwise", --  {{{
-      require = { "nvim-treesitter/nvim-treesitter" },
+      require = {"nvim-treesitter/nvim-treesitter"},
     }, --  }}}
 
     {
       "junegunn/fzf.vim", --  {{{
-      requires = { "junegunn/fzf" },
+      requires = {"junegunn/fzf"},
     }, --  }}}
   }
 ) -- }}}
@@ -501,9 +444,8 @@ vim.g.qs_delay = 40
 vim.g.qs_hi_priority = 2
 vim.g.qs_second_highlight = true
 
-vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#c81f16" })
-vim.api
-  .nvim_set_hl(0, "QuickScopeSecondary", { fg = "#ff5642" })
+vim.api.nvim_set_hl(0, "QuickScopePrimary", {fg = "#c81f16"})
+vim.api.nvim_set_hl(0, "QuickScopeSecondary", {fg = "#ff5642"})
 
 for key_in, key_out in pairs(
   {
@@ -517,12 +459,12 @@ for key_in, key_out in pairs(
   }
 ) do
   vim.api.nvim_set_keymap(
-    "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
+    "", key_in, "<Plug>Sneak_" .. key_out, {noremap = true}
   )
 end
-for _, mode in pairs({ "n", "o", "s" }) do
+for _, mode in pairs({"n", "o", "s"}) do
   vim.api.nvim_set_keymap(
-    mode, "S", "<Plug>Sneak_S", { noremap = true }
+    mode, "S", "<Plug>Sneak_S", {noremap = true}
   )
 end
 
@@ -535,32 +477,30 @@ end
 -- repeat {{{
 
 -- because RepeatDot sometimes fails
-vim.api.nvim_set_keymap("n", ";.", ".", { noremap = true })
+vim.api.nvim_set_keymap("n", ";.", ".", {noremap = true})
 
 --  }}}
 
 -- fzf {{{
 
-vim.g.fzf_layout = { down = "100%" }
-vim.g.fzf_vim = {
-  preview_window = { "down,50%", "ctrl-s" },
-}
+vim.g.fzf_layout = {down = "100%"}
+vim.g.fzf_vim = {preview_window = {"down,50%", "ctrl-s"}}
 vim.g.fzf_history_dir = vim.fn.stdpath("data") .. "/fzf-history"
 
 vim.g.fzf_colors = {
-  fg = { "fg", "Normal" },
-  bg = { "bg", "Normal" },
-  hl = { "fg", "Comment" },
-  ["fg+"] = { "fg", "CursorLine", "CursorColumn", "Normal" },
-  ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
-  ["hl+"] = { "fg", "Statement" },
-  info = { "fg", "PreProc" },
-  border = { "none" },
-  prompt = { "fg", "Conditional" },
-  pointer = { "fg", "Exception" },
-  marker = { "fg", "Keyword" },
-  spinner = { "fg", "Label" },
-  header = { "fg", "Comment" },
+  fg = {"fg", "Normal"},
+  bg = {"bg", "Normal"},
+  hl = {"fg", "Comment"},
+  ["fg+"] = {"fg", "CursorLine", "CursorColumn", "Normal"},
+  ["bg+"] = {"bg", "CursorLine", "CursorColumn"},
+  ["hl+"] = {"fg", "Statement"},
+  info = {"fg", "PreProc"},
+  border = {"none"},
+  prompt = {"fg", "Conditional"},
+  pointer = {"fg", "Exception"},
+  marker = {"fg", "Keyword"},
+  spinner = {"fg", "Label"},
+  header = {"fg", "Comment"},
 }
 
 --  }}}
@@ -615,7 +555,7 @@ elseif vim.fn.has("gui_running") then --  {{{
 
   -- for uniform experience
   -- "t", "i" don't work anyway
-  for _, mode in pairs({ "n", "o", "v" }) do
+  for _, mode in pairs({"n", "o", "v"}) do
     vim.api.nvim_set_keymap(mode, "<C-/>", "<C-_>", {})
   end
 
@@ -629,15 +569,13 @@ end -- }}}
 pcall(require, "local")
 
 vim.api.nvim_create_user_command(
-  "Code",
-  function ()
+  "Code", function()
     require("code")
     -- local success, _ = pcall(require, "code")
     -- if not success then
     --   print("Failed to load code module")
     -- end
-  end,
-  { nargs=0 }
+  end, {nargs = 0}
 )
 
 --  }}}
