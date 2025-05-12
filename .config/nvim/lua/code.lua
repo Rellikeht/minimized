@@ -175,10 +175,16 @@ pckr.add(
 
     {
       "neovim/nvim-lspconfig",--  {{{
+      requires = {"Rellikeht/lazy-utils"},
       config = function()
         -- TODO
       end
-    } --  }}}
+    }, --  }}}
+
+    {
+      "Rellikeht/nvim-lsp-config",
+      requires="neovim/nvim-lspconfig",
+    },
 
     -- TODO C rainbow ?
   }
@@ -186,14 +192,16 @@ pckr.add(
 
 -- post setup {{{
 
+local lazy_utils = require("lazy_utils")
+
 -- treesitter {{{
 
-tsinstall = require('nvim-treesitter.install')
+local tsinstall = require('nvim-treesitter.install')
 
 do
   -- This is because FileType is not triggered on first file
   -- somehow
-  lazy_load_after_startup(function()
+  lazy_utils.load_on_startup(function()
     vim.cmd.filetype("detect")
   end)
 end
@@ -202,7 +210,7 @@ local function lazy_ts_ensure_installed(name, filetypes)
   if filetypes == nil then
     filetypes = name
   end
-  lazy_load_on_filetypes(filetypes, function()
+  lazy_utils.load_on_filetypes(filetypes, function()
     -- TODO B failing silently
     vim.cmd.TSUpdate(name)
   end)
