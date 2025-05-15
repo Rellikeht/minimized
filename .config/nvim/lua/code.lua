@@ -5,6 +5,16 @@ end
 
 -- helpers {{{
 
+local function commandRep(fn)
+  return function() for _ = 1, vim.v.count1 do fn() end end
+end
+
+local function copy_table(tbl)
+  result = {}
+  for k, v in pairs(tbl) do result[k] = v end
+  return result
+end
+
 --  }}}
 
 -- plugins {{{
@@ -35,24 +45,24 @@ vim.api.nvim_create_user_command(
   { nargs=0 }
 )
 
-local function slime_tmux_uniform_config()
-  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    has, _ = pcall(
-      vim.api.nvim_buf_get_var,
-      bufnr,
-      "slime_config"
-    )
-    if has then
-      vim.api.nvim_buf_set_var(
+function slime_setup_tmux()
+  local function slime_tmux_uniform_config()
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+      has, _ = pcall(
+        vim.api.nvim_buf_get_var,
         bufnr,
-        "slime_config",
-        vim.g.slime_default_config
+        "slime_config"
       )
+      if has then
+        vim.api.nvim_buf_set_var(
+          bufnr,
+          "slime_config",
+          vim.g.slime_default_config
+        )
+      end
     end
   end
-end
 
-function slime_setup_tmux()
   vim.api.nvim_create_user_command(
     "SlimeTmuxPane",
     function(opts)
@@ -177,14 +187,176 @@ pckr.add(
       "neovim/nvim-lspconfig",--  {{{
       requires = {"Rellikeht/lazy-utils"},
       config = function()
-        -- TODO
+
+        if vim.fn.has("nvim-0.11") == 1 then -- {{{
+          -- for backwards compatibility
+          function NvimDiagPrev()
+            vim.diagnostic.jump({count = -1, float = true})
+          end
+          function NvimDiagNext()
+            vim.diagnostic.jump({count = 1, float = true})
+          end
+        else
+          function NvimDiagNext() vim.diagnostic.goto_next() end
+          function NvimDiagPrev() vim.diagnostic.goto_prev() end
+        end --  }}}
+
+        local lspconfig = require("lspconfig")
+        lspconfig.util.default_config = vim.tbl_extend(
+          "force",
+          lspconfig.util.default_config,
+          {message_level = nil}
+        )
+
+        -- nvim configuration with lua is easy they say...
+        vim.opt.completeopt:remove({"preview"})
+        local completeopt = vim.opt.completeopt._value
+        vim.opt.completeopt:append({"preview"})
+        vim.bo.completeopt = completeopt
+
+        -- commands {{{
+
+        vim.keymap.set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>", {})
+        vim.keymap.set( "n", "<Leader>dql", ":<C-u>LspLog<CR>", {})
+        vim.keymap.set( "n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {})
+
+        vim.keymap.set(
+          "n",
+          "<Leader>df",
+          vim.diagnostic.open_float,
+          {desc="show diagnostics"}
+        )
+
+        vim.keymap.set(
+          "n",
+          "<Leader>dp",
+          commandRep(NvimDiagPrev),
+          {desc="next diagnostics"}
+        )
+        vim.keymap.set(
+          "n",
+          "<Leader>dn",
+          commandRep(NvimDiagNext),
+          {desc="next diagnostics"}
+        )
+
+        -- }}}
+
+        vim.api.nvim_create_autocmd( -- {{{
+          "LspAttach", {
+            group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+            callback = function(args)
+
+              -- helpers {{{
+
+              local bufnr = args.buf
+              local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+              -- }}}
+
+              -- insert mode {{{
+
+              if client and
+                client.server_capabilities.completionProvider then
+                -- Enable completion triggered by <c-x><c-o>
+                vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
+              end
+              if client and
+                client.server_capabilities.definitionProvider then
+                vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
+              end
+
+              --  }}}
+
+              -- navigation {{{
+
+              vim.keymap.set(
+                "n",
+                "<Leader>dd",
+                vim.lsp.buf.definition,
+                {desc="go to definition", buffer=bufnr}
+              )
+              vim.keymap.set(
+                "n",
+                "<Leader>dD",
+                vim.lsp.buf.declaration,
+                {desc="go to declaration", buffer=bufnr}
+              )
+              vim.keymap.set(
+                "n",
+                "<Leader>di",
+                vim.lsp.buf.implementation,
+                {desc="go to implementation", buffer=bufnr}
+              )
+              vim.keymap.set(
+                "n",
+                "<Leader>dt",
+                vim.lsp.buf.type_definition,
+                {desc="go to type definition", buffer=bufnr}
+              )
+
+              --  }}}
+
+              -- info {{{
+
+              vim.keymap.set(
+                "n",
+                "<Leader>ds",
+                vim.lsp.buf.signature_help,
+                {desc="signature help", buffer=bufnr}
+              )
+              vim.keymap.set(
+                "n",
+                "<Leader>dh",
+                vim.lsp.buf.hover,
+                {desc="display hover information about the symbol under the cursor", buffer=bufnr}
+              )
+
+              vim.keymap.set(
+                "n",
+                "<Leader>dlr",
+                vim.lsp.buf.references,
+                {desc="populate quickfix list with references", buffer=bufnr}
+              )
+
+              -- }}}
+
+              -- actions {{{
+
+              vim.keymap.set(
+                "n",
+                "<Leader>dr",
+                vim.lsp.buf.rename,
+                {desc="rename symbol under cursor", buffer=bufnr}
+              )
+              vim.keymap.set(
+                "n",
+                "<Leader>dF",
+                function() vim.lsp.buf.format({async = true}) end,
+                {desc="format buffer using lsp", buffer=bufnr}
+              )
+              vim.keymap.set(
+                "n",
+                "<Leader>da",
+                vim.lsp.buf.code_action,
+                {desc="execute code action", buffer=bufnr}
+              )
+
+              -- }}}
+
+            end,
+          }
+        ) -- }}}
       end
-    }, --  }}}
+    },
 
     {
       "Rellikeht/nvim-lsp-config",
-      requires="neovim/nvim-lspconfig",
-    },
+      requires={
+        "neovim/nvim-lspconfig",
+        "Rellikeht/lazy-utils",
+      },
+    }, --  }}}
 
     -- TODO C rainbow ?
   }
