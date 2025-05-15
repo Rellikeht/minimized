@@ -42,7 +42,7 @@ vim.api.nvim_create_user_command(
     vim.cmd.SlimeConfig()
     vim.g.slime_default_config = vim.b.slime_config
   end,
-  { nargs=0 }
+  { nargs = 0 }
 )
 
 function slime_setup_tmux()
@@ -73,7 +73,7 @@ function slime_setup_tmux()
       }
       slime_tmux_uniform_config()
     end,
-    { nargs=1 }
+    { nargs = 1 }
   )
   vim.api.nvim_create_user_command(
     "SlimeTmuxSocket",
@@ -85,7 +85,7 @@ function slime_setup_tmux()
       }
       slime_tmux_uniform_config()
     end,
-    { nargs=1 }
+    { nargs = 1 }
   )
 
   vim.g.slime_target = 'tmux'
@@ -106,8 +106,8 @@ function slime_setup_nvim()
     -- iterate over all buffers to find the first terminal with a valid job
     for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_get_option_value(
-        "buftype", { buf = bufnr }
-      ) == "terminal" then
+            "buftype", { buf = bufnr }
+          ) == "terminal" then
         local chan = vim.api.nvim_get_option_value(
           "channel", { buf = bufnr }
         )
@@ -139,7 +139,7 @@ pckr.add(
     "jpalardy/vim-slime",
 
     {
-      "norcalli/nvim-colorizer.lua",--  {{{
+      "norcalli/nvim-colorizer.lua", --  {{{
       config = function()
         local color_css_conf = {
           -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
@@ -149,15 +149,15 @@ pckr.add(
         }
         local color_vim_conf = { names = true }
 
-        require("colorizer").setup(--  {{{
-            {
-              "*",
-              html = color_css_conf,
-              css = color_css_conf,
-              js = color_css_conf,
-              ts = color_css_conf,
-              vim = color_vim_conf,
-              lua = color_vim_conf,
+        require("colorizer").setup( --  {{{
+          {
+            "*",
+            html = color_css_conf,
+            css = color_css_conf,
+            js = color_css_conf,
+            ts = color_css_conf,
+            vim = color_vim_conf,
+            lua = color_vim_conf,
           }, {
             -- #RGB hex codes
             RGB = true,
@@ -179,25 +179,26 @@ pckr.add(
             -- Available modes: foreground, background
             mode = "background",
           }
-        )--  }}}
+        ) --  }}}
       end,
-    }, --  }}}
+    },    --  }}}
 
     {
-      "neovim/nvim-lspconfig",--  {{{
-      requires = {"Rellikeht/lazy-utils"},
+      "neovim/nvim-lspconfig", --  {{{
+      requires = { "Rellikeht/lazy-utils" },
       config = function()
-
         if vim.fn.has("nvim-0.11") == 1 then -- {{{
           -- for backwards compatibility
           function NvimDiagPrev()
-            vim.diagnostic.jump({count = -1, float = true})
+            vim.diagnostic.jump({ count = -1, float = true })
           end
+
           function NvimDiagNext()
-            vim.diagnostic.jump({count = 1, float = true})
+            vim.diagnostic.jump({ count = 1, float = true })
           end
         else
           function NvimDiagNext() vim.diagnostic.goto_next() end
+
           function NvimDiagPrev() vim.diagnostic.goto_prev() end
         end --  }}}
 
@@ -205,39 +206,39 @@ pckr.add(
         lspconfig.util.default_config = vim.tbl_extend(
           "force",
           lspconfig.util.default_config,
-          {message_level = nil}
+          { message_level = nil }
         )
 
         -- nvim configuration with lua is easy they say...
-        vim.opt.completeopt:remove({"preview"})
+        vim.opt.completeopt:remove({ "preview" })
         local completeopt = vim.opt.completeopt._value
-        vim.opt.completeopt:append({"preview"})
+        vim.opt.completeopt:append({ "preview" })
         vim.bo.completeopt = completeopt
 
         -- commands {{{
 
         vim.keymap.set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>", {})
-        vim.keymap.set( "n", "<Leader>dql", ":<C-u>LspLog<CR>", {})
-        vim.keymap.set( "n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {})
+        vim.keymap.set("n", "<Leader>dql", ":<C-u>LspLog<CR>", {})
+        vim.keymap.set("n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {})
 
         vim.keymap.set(
           "n",
           "<Leader>df",
           vim.diagnostic.open_float,
-          {desc="show diagnostics"}
+          { desc = "show diagnostics" }
         )
 
         vim.keymap.set(
           "n",
           "<Leader>dp",
           commandRep(NvimDiagPrev),
-          {desc="next diagnostics"}
+          { desc = "[N] prev diagnostics" }
         )
         vim.keymap.set(
           "n",
           "<Leader>dn",
           commandRep(NvimDiagNext),
-          {desc="next diagnostics"}
+          { desc = "[N] next diagnostics" }
         )
 
         -- }}}
@@ -246,7 +247,6 @@ pckr.add(
           "LspAttach", {
             group = vim.api.nvim_create_augroup("UserLspConfig", {}),
             callback = function(args)
-
               -- helpers {{{
 
               local bufnr = args.buf
@@ -257,12 +257,12 @@ pckr.add(
               -- insert mode {{{
 
               if client and
-                client.server_capabilities.completionProvider then
+                  client.server_capabilities.completionProvider then
                 -- Enable completion triggered by <c-x><c-o>
                 vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
               end
               if client and
-                client.server_capabilities.definitionProvider then
+                  client.server_capabilities.definitionProvider then
                 vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
               end
 
@@ -274,25 +274,25 @@ pckr.add(
                 "n",
                 "<Leader>dd",
                 vim.lsp.buf.definition,
-                {desc="go to definition", buffer=bufnr}
+                { desc = "go to definition", buffer = bufnr }
               )
               vim.keymap.set(
                 "n",
                 "<Leader>dD",
                 vim.lsp.buf.declaration,
-                {desc="go to declaration", buffer=bufnr}
+                { desc = "go to declaration", buffer = bufnr }
               )
               vim.keymap.set(
                 "n",
                 "<Leader>di",
                 vim.lsp.buf.implementation,
-                {desc="go to implementation", buffer=bufnr}
+                { desc = "go to implementation", buffer = bufnr }
               )
               vim.keymap.set(
                 "n",
                 "<Leader>dt",
                 vim.lsp.buf.type_definition,
-                {desc="go to type definition", buffer=bufnr}
+                { desc = "go to type definition", buffer = bufnr }
               )
 
               --  }}}
@@ -303,20 +303,20 @@ pckr.add(
                 "n",
                 "<Leader>ds",
                 vim.lsp.buf.signature_help,
-                {desc="signature help", buffer=bufnr}
+                { desc = "signature help", buffer = bufnr }
               )
               vim.keymap.set(
                 "n",
                 "<Leader>dh",
                 vim.lsp.buf.hover,
-                {desc="display hover information about the symbol under the cursor", buffer=bufnr}
+                { desc = "display hover information about the symbol under the cursor", buffer = bufnr }
               )
 
               vim.keymap.set(
                 "n",
                 "<Leader>dlr",
                 vim.lsp.buf.references,
-                {desc="populate quickfix list with references", buffer=bufnr}
+                { desc = "populate quickfix list with references", buffer = bufnr }
               )
 
               -- }}}
@@ -327,23 +327,22 @@ pckr.add(
                 "n",
                 "<Leader>dr",
                 vim.lsp.buf.rename,
-                {desc="rename symbol under cursor", buffer=bufnr}
+                { desc = "rename symbol under cursor", buffer = bufnr }
               )
               vim.keymap.set(
                 "n",
                 "<Leader>dF",
-                function() vim.lsp.buf.format({async = true}) end,
-                {desc="format buffer using lsp", buffer=bufnr}
+                function() vim.lsp.buf.format({ async = true }) end,
+                { desc = "format buffer using lsp", buffer = bufnr }
               )
               vim.keymap.set(
                 "n",
                 "<Leader>da",
                 vim.lsp.buf.code_action,
-                {desc="execute code action", buffer=bufnr}
+                { desc = "execute code action", buffer = bufnr }
               )
 
               -- }}}
-
             end,
           }
         ) -- }}}
@@ -352,7 +351,7 @@ pckr.add(
 
     {
       "Rellikeht/nvim-lsp-config",
-      requires={
+      requires = {
         "neovim/nvim-lspconfig",
         "Rellikeht/lazy-utils",
       },
@@ -389,7 +388,7 @@ local function lazy_ts_ensure_installed(name, filetypes)
 end
 
 for key, name in pairs({
-  [{"sh", "bash", "zsh"}] = "bash",
+  [{ "sh", "bash", "zsh" }] = "bash",
   "python",
   "powershell",
   "go",
@@ -424,12 +423,11 @@ end
 --  }}}
 
 if vim.fn.has("win32") == 1 then -- {{{
-
   tsinstall.compilers = { "zig", "cl", "cc", "gcc", "clang" }
 
   -- }}}
 else -- {{{
 
-end -- }}}
+end  -- }}}
 
 CODE_LOADED = true
