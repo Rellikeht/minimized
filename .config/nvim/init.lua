@@ -1,5 +1,7 @@
 -- helpers {{{
+
 -- general {{{
+
 local function calc_pumheight()
   local result = vim.opt.lines._value
   result = (result - result % 3) / 3
@@ -182,6 +184,10 @@ if not success then vim.cmd.colorscheme("elflord") end
 vim.keymap.set("n", "n", "nzzzv", {})
 vim.keymap.set("n", "N", "Nzzzv", {})
 
+-- move lines in visual mode
+vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv")
+
 -- just in case
 vim.keymap.set("n", "<Space>", "<Nop>", {})
 
@@ -198,6 +204,7 @@ vim.keymap.set(
   "n", "yaee ", "gg0vG$y`'", { noremap = true }
 )
 
+vim.keymap.set("n", "Q", "<Nop>", {})
 vim.keymap.set("", "<C-h>", "<C-]>", {})
 vim.keymap.set(
   "n", "<C-w><C-h>",
@@ -207,8 +214,6 @@ vim.keymap.set(
   "n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {}
 )
 vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
-
--- TODO copying
 
 -- }}}
 
@@ -512,6 +517,13 @@ vim.g.fzf_colors = {
   spinner = { "fg", "Label" },
   header = { "fg", "Comment" },
 }
+
+--  }}}
+
+-- fugitive {{{
+
+-- TODO more ??
+vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
 
 --  }}}
 
