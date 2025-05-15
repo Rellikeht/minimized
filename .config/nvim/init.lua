@@ -48,7 +48,6 @@ for _, option in pairs(
     "number",
     "relativenumber",
     "ruler",
-    "hlsearch",
     "incsearch",
     "ignorecase",
     "smartcase",
@@ -66,10 +65,17 @@ for _, option in pairs(
     "splitright",
     "splitbelow",
     "autochdir",
+    "undofile",
   }
 ) do vim.opt[option] = true end
 
-for _, option in pairs({ "shelltemp", "timeout", "autoread" }) do
+for _, option in pairs({
+  "shelltemp",
+  "timeout",
+  "autoread",
+  "swapfile",
+  "hlsearch",
+}) do
   vim.opt[option] = false
 end
 
@@ -173,34 +179,34 @@ if not success then vim.cmd.colorscheme("elflord") end
 -- general {{{
 
 -- search like a pro
-vim.api.nvim_set_keymap("n", "n", "nzzzv", {})
-vim.api.nvim_set_keymap("n", "N", "Nzzzv", {})
+vim.keymap.set("n", "n", "nzzzv", {})
+vim.keymap.set("n", "N", "Nzzzv", {})
 
 -- just in case
-vim.api.nvim_set_keymap("n", "<Space>", "<Nop>", {})
+vim.keymap.set("n", "<Space>", "<Nop>", {})
 
 -- opinionated preference for <C-n> and <C-p>
-vim.api.nvim_set_keymap("n", ",", "<Nop>", {})
-vim.api.nvim_set_keymap("n", ";", "<Nop>", {})
+vim.keymap.set("n", ",", "<Nop>", {})
+vim.keymap.set("n", ";", "<Nop>", {})
 vim.g.mapleader = ","
 vim.g.maplocalleader = "_"
 
 -- Select whole buffer without plugins
-vim.api.nvim_set_keymap("v", "aee", "gg0oG$", { noremap = true })
-vim.api.nvim_set_keymap("v", "iee", "aee", { noremap = true })
-vim.api.nvim_set_keymap(
+vim.keymap.set("v", "aee", "gg0oG$", { noremap = true })
+vim.keymap.set("v", "iee", "aee", { noremap = true })
+vim.keymap.set(
   "n", "yaee ", "gg0vG$y`'", { noremap = true }
 )
 
-vim.api.nvim_set_keymap("", "<C-h>", "<C-]>", {})
-vim.api.nvim_set_keymap(
+vim.keymap.set("", "<C-h>", "<C-]>", {})
+vim.keymap.set(
   "n", "<C-w><C-h>",
   ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", { noremap = true }
 )
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {}
 )
-vim.api.nvim_set_keymap("s", "<BS>", "<BS>i", { noremap = true })
+vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
 
 -- TODO copying
 
@@ -208,17 +214,17 @@ vim.api.nvim_set_keymap("s", "<BS>", "<BS>i", { noremap = true })
 
 -- terminal {{{
 
-vim.api.nvim_set_keymap("t", "<C-q>", "<C-\\>", {})
-vim.api.nvim_set_keymap(
+vim.keymap.set("t", "<C-q>", "<C-\\>", {})
+vim.keymap.set(
   "t", "<C-q><C-q>", "<C-q>", { noremap = true }
 )
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "t", "<C-\\>n", "<C-\\><C-n>", { noremap = true }
 )
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "t", "<C-\\>o", "<C-\\><C-o>", { noremap = true }
 )
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "t", "<C-\\>:", "<C-\\><C-n>:", { noremap = true }
 )
 
@@ -232,7 +238,7 @@ for key_in, key_out in pairs(
     gT = "gT",
   }
 ) do
-  vim.api.nvim_set_keymap(
+  vim.keymap.set(
     "t", "<C-\\>" .. key_in,
     "<C-\\><C-n>" .. key_out .. "<Esc>", { noremap = true }
   )
@@ -242,18 +248,18 @@ end
 
 -- tabs {{{
 
-vim.api.nvim_set_keymap("n", "<Tab>", "<Nop>", { noremap = true })
-vim.api.nvim_set_keymap("n", "<C-j>", "<Tab>", { noremap = true })
-vim.api.nvim_set_keymap(
+vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<C-j>", "<Tab>", { noremap = true })
+vim.keymap.set(
   "n", "<Tab><Tab>", ":<C-u>tab<Space>", { noremap = true }
 )
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", { noremap = true }
 )
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "n", "<Tab>h", ":<C-u>tab help<Space>", { noremap = true }
 )
-vim.api.nvim_set_keymap(
+vim.keymap.set(
   "n", "<Tab>H", ":<C-u>-tab help<Space>", { noremap = true }
 )
 
@@ -268,7 +274,7 @@ for key, cmd in pairs(
     W = ":<C-u>set wrap!<CR>",
   }
 ) do
-  vim.api.nvim_set_keymap(
+  vim.keymap.set(
     "n", "<Space>q" .. key, cmd, { noremap = true }
   )
 end
@@ -284,7 +290,7 @@ for key, cmd in pairs(
     b = ":<C-u>ls<CR>",
   }
 ) do
-  vim.api.nvim_set_keymap(
+  vim.keymap.set(
     "n", "<Space>i" .. key, cmd, { noremap = true }
   )
 end
@@ -462,12 +468,12 @@ for key_in, key_out in pairs(
     T = "T",
   }
 ) do
-  vim.api.nvim_set_keymap(
+  vim.keymap.set(
     "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
   )
 end
 for _, mode in pairs({ "n", "o", "s" }) do
-  vim.api.nvim_set_keymap(
+  vim.keymap.set(
     mode, "S", "<Plug>Sneak_S", { noremap = true }
   )
 end
@@ -481,7 +487,7 @@ end
 -- repeat {{{
 
 -- because RepeatDot sometimes fails
-vim.api.nvim_set_keymap("n", ";.", ".", { noremap = true })
+vim.keymap.set("n", ";.", ".", { noremap = true })
 
 --  }}}
 
@@ -557,7 +563,7 @@ elseif vim.fn.has("gui_running") then --  {{{
   -- for uniform experience
   -- "t", "i" don't work anyway
   for _, mode in pairs({ "n", "o", "v" }) do
-    vim.api.nvim_set_keymap(mode, "<C-/>", "<C-_>", {})
+    vim.keymap.set(mode, "<C-/>", "<C-_>", {})
   end
 
   -- }}}

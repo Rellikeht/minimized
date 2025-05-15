@@ -1,7 +1,5 @@
 local success, val = pcall(function() return CODE_LOADED end)
-if success and val then
-  return
-end
+if success and val then return end
 
 -- helpers {{{
 
@@ -9,8 +7,9 @@ local function commandRep(fn)
   return function() for _ = 1, vim.v.count1 do fn() end end
 end
 
+---@diagnostic disable-next-line: unused-local, unused-function
 local function copy_table(tbl)
-  result = {}
+  local result = {}
   for k, v in pairs(tbl) do result[k] = v end
   return result
 end
@@ -28,75 +27,77 @@ vim.g.slime_dont_ask_default = true
 vim.g.slime_bracketed_paste = true
 vim.g.slime_no_mappings = true
 
-vim.api.nvim_set_keymap("n", "gs:", ":<C-u>SlimeConfigAll<CR>", { noremap = true })
-vim.api.nvim_set_keymap("n", "gss", "<Plug>SlimeLineSend", { noremap = true })
-vim.api.nvim_set_keymap("n", "gs", "<Plug>SlimeMotionSend", { noremap = true })
-vim.api.nvim_set_keymap("n", "gsi", "<Plug>SlimeParagraphSend", { noremap = true })
-vim.api.nvim_set_keymap("x", "gsi", "<Plug>SlimeRegionSend", { noremap = true })
-vim.api.nvim_set_keymap("n", "gs;", ":SlimeSend<CR>", { noremap = true })
-vim.api.nvim_set_keymap("x", "gs;", ":SlimeSend<CR>", { noremap = true })
-
-vim.api.nvim_create_user_command(
-  "SlimeConfigAll",
-  function(opts)
-    vim.cmd.SlimeConfig()
-    vim.g.slime_default_config = vim.b.slime_config
-  end,
-  { nargs = 0 }
+vim.keymap.set(
+  "n", "gs:", ":<C-u>SlimeConfigAll<CR>", { noremap = true }
+)
+vim.keymap.set(
+  "n", "gss", "<Plug>SlimeLineSend", { noremap = true }
+)
+vim.keymap.set(
+  "n", "gs", "<Plug>SlimeMotionSend", { noremap = true }
+)
+vim.keymap.set(
+  "n", "gsi", "<Plug>SlimeParagraphSend", { noremap = true }
+)
+vim.keymap.set(
+  "x", "gsi", "<Plug>SlimeRegionSend", { noremap = true }
+)
+vim.keymap.set(
+  "n", "gs;", ":SlimeSend<CR>", { noremap = true }
+)
+vim.keymap.set(
+  "x", "gs;", ":SlimeSend<CR>", { noremap = true }
 )
 
-function slime_setup_tmux()
+vim.api.nvim_create_user_command(
+  "SlimeConfigAll", function(_)
+    vim.cmd.SlimeConfig()
+    vim.g.slime_default_config = vim.b.slime_config
+  end, { nargs = 0 }
+)
+
+function Slime_setup_tmux()
   local function slime_tmux_uniform_config()
     for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-      has, _ = pcall(
-        vim.api.nvim_buf_get_var,
-        bufnr,
-        "slime_config"
+      local has, _ = pcall(
+        vim.api.nvim_buf_get_var, bufnr, "slime_config"
       )
       if has then
         vim.api.nvim_buf_set_var(
-          bufnr,
-          "slime_config",
-          vim.g.slime_default_config
+          bufnr, "slime_config", vim.g.slime_default_config
         )
       end
     end
   end
 
   vim.api.nvim_create_user_command(
-    "SlimeTmuxPane",
-    function(opts)
-      vim.g.slime_default_config =
-      {
+    "SlimeTmuxPane", function(opts)
+      vim.g.slime_default_config = {
         socket_name = vim.g.slime_default_config.socket_name,
-        target_pane = opts.fargs[1]
+        target_pane = opts.fargs[1],
       }
       slime_tmux_uniform_config()
-    end,
-    { nargs = 1 }
+    end, { nargs = 1 }
   )
   vim.api.nvim_create_user_command(
-    "SlimeTmuxSocket",
-    function(opts)
-      vim.g.slime_default_config =
-      {
+    "SlimeTmuxSocket", function(opts)
+      vim.g.slime_default_config = {
         socket_name = opts.fargs[1],
         target_pane = vim.g.slime_default_config.target_pane,
       }
       slime_tmux_uniform_config()
-    end,
-    { nargs = 1 }
+    end, { nargs = 1 }
   )
 
-  vim.g.slime_target = 'tmux'
+  vim.g.slime_target = "tmux"
   vim.g.slime_default_config = {
     socket_name = vim.fn.get(vim.fn.split(vim.env.TMUX, ","), 0),
-    target_pane = "{top-right}"
+    target_pane = "{top-right}",
   }
 end
 
-function slime_setup_nvim()
-  vim.g.slime_target = 'neovim'
+function Slime_setup_nvim()
+  vim.g.slime_target = "neovim"
   vim.g.slime_suggest_default = false
   vim.g.slime_menu_config = false
   vim.g.slime_input_pid = false
@@ -105,9 +106,8 @@ function slime_setup_nvim()
   vim.g.slime_get_jobid = function()
     -- iterate over all buffers to find the first terminal with a valid job
     for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_get_option_value(
-            "buftype", { buf = bufnr }
-          ) == "terminal" then
+      if vim.api.nvim_get_option_value("buftype", { buf = bufnr }) ==
+          "terminal" then
         local chan = vim.api.nvim_get_option_value(
           "channel", { buf = bufnr }
         )
@@ -125,9 +125,9 @@ end
 -- should be reused so this is global even with
 -- gui running
 if vim.env.TMUX then
-  slime_setup_tmux()
+  Slime_setup_tmux()
 else
-  slime_setup_nvim()
+  Slime_setup_nvim()
 end
 
 --  }}}
@@ -197,15 +197,20 @@ pckr.add(
             vim.diagnostic.jump({ count = 1, float = true })
           end
         else
-          function NvimDiagNext() vim.diagnostic.goto_next() end
+          function NvimDiagNext()
+            ---@diagnostic disable-next-line: deprecated
+            vim.diagnostic.goto_next()
+          end
 
-          function NvimDiagPrev() vim.diagnostic.goto_prev() end
+          function NvimDiagPrev()
+            ---@diagnostic disable-next-line: deprecated
+            vim.diagnostic.goto_prev()
+          end
         end --  }}}
 
         local lspconfig = require("lspconfig")
         lspconfig.util.default_config = vim.tbl_extend(
-          "force",
-          lspconfig.util.default_config,
+          "force", lspconfig.util.default_config,
           { message_level = nil }
         )
 
@@ -217,27 +222,25 @@ pckr.add(
 
         -- commands {{{
 
-        vim.keymap.set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>", {})
-        vim.keymap.set("n", "<Leader>dql", ":<C-u>LspLog<CR>", {})
-        vim.keymap.set("n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {})
+        vim.keymap
+            .set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>", {})
+        vim.keymap
+            .set("n", "<Leader>dql", ":<C-u>LspLog<CR>", {})
+        vim.keymap.set(
+          "n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {}
+        )
 
         vim.keymap.set(
-          "n",
-          "<Leader>df",
-          vim.diagnostic.open_float,
+          "n", "<Leader>df", vim.diagnostic.open_float,
           { desc = "show diagnostics" }
         )
 
         vim.keymap.set(
-          "n",
-          "<Leader>dp",
-          commandRep(NvimDiagPrev),
+          "n", "<Leader>dp", commandRep(NvimDiagPrev),
           { desc = "[N] prev diagnostics" }
         )
         vim.keymap.set(
-          "n",
-          "<Leader>dn",
-          commandRep(NvimDiagNext),
+          "n", "<Leader>dn", commandRep(NvimDiagNext),
           { desc = "[N] next diagnostics" }
         )
 
@@ -245,12 +248,15 @@ pckr.add(
 
         vim.api.nvim_create_autocmd( -- {{{
           "LspAttach", {
-            group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+            group = vim.api
+                .nvim_create_augroup("UserLspConfig", {}),
             callback = function(args)
               -- helpers {{{
 
               local bufnr = args.buf
-              local client = vim.lsp.get_client_by_id(args.data.client_id)
+              local client = vim.lsp.get_client_by_id(
+                args.data.client_id
+              )
 
               -- }}}
 
@@ -271,27 +277,19 @@ pckr.add(
               -- navigation {{{
 
               vim.keymap.set(
-                "n",
-                "<Leader>dd",
-                vim.lsp.buf.definition,
+                "n", "<Leader>dd", vim.lsp.buf.definition,
                 { desc = "go to definition", buffer = bufnr }
               )
               vim.keymap.set(
-                "n",
-                "<Leader>dD",
-                vim.lsp.buf.declaration,
+                "n", "<Leader>dD", vim.lsp.buf.declaration,
                 { desc = "go to declaration", buffer = bufnr }
               )
               vim.keymap.set(
-                "n",
-                "<Leader>di",
-                vim.lsp.buf.implementation,
+                "n", "<Leader>di", vim.lsp.buf.implementation,
                 { desc = "go to implementation", buffer = bufnr }
               )
               vim.keymap.set(
-                "n",
-                "<Leader>dt",
-                vim.lsp.buf.type_definition,
+                "n", "<Leader>dt", vim.lsp.buf.type_definition,
                 { desc = "go to type definition", buffer = bufnr }
               )
 
@@ -300,23 +298,21 @@ pckr.add(
               -- info {{{
 
               vim.keymap.set(
-                "n",
-                "<Leader>ds",
-                vim.lsp.buf.signature_help,
+                "n", "<Leader>ds", vim.lsp.buf.signature_help,
                 { desc = "signature help", buffer = bufnr }
               )
               vim.keymap.set(
-                "n",
-                "<Leader>dh",
-                vim.lsp.buf.hover,
-                { desc = "display hover information about the symbol under the cursor", buffer = bufnr }
+                "n", "<Leader>dh", vim.lsp.buf.hover, {
+                  desc = "display hover information about the symbol under the cursor",
+                  buffer = bufnr,
+                }
               )
 
               vim.keymap.set(
-                "n",
-                "<Leader>dlr",
-                vim.lsp.buf.references,
-                { desc = "populate quickfix list with references", buffer = bufnr }
+                "n", "<Leader>dlr", vim.lsp.buf.references, {
+                  desc = "populate quickfix list with references",
+                  buffer = bufnr,
+                }
               )
 
               -- }}}
@@ -324,21 +320,21 @@ pckr.add(
               -- actions {{{
 
               vim.keymap.set(
-                "n",
-                "<Leader>dr",
-                vim.lsp.buf.rename,
-                { desc = "rename symbol under cursor", buffer = bufnr }
+                "n", "<Leader>dr", vim.lsp.buf.rename, {
+                  desc = "rename symbol under cursor",
+                  buffer = bufnr,
+                }
               )
               vim.keymap.set(
-                "n",
-                "<Leader>dF",
-                function() vim.lsp.buf.format({ async = true }) end,
-                { desc = "format buffer using lsp", buffer = bufnr }
+                "n", "<Leader>dF", function()
+                  vim.lsp.buf.format({ async = true })
+                end, {
+                  desc = "format buffer using lsp",
+                  buffer = bufnr,
+                }
               )
               vim.keymap.set(
-                "n",
-                "<Leader>da",
-                vim.lsp.buf.code_action,
+                "n", "<Leader>da", vim.lsp.buf.code_action,
                 { desc = "execute code action", buffer = bufnr }
               )
 
@@ -346,7 +342,7 @@ pckr.add(
             end,
           }
         ) -- }}}
-      end
+      end,
     },
 
     {
@@ -367,44 +363,46 @@ local lazy_utils = require("lazy_utils")
 
 -- treesitter {{{
 
-local tsinstall = require('nvim-treesitter.install')
+local tsinstall = require("nvim-treesitter.install")
 
 do
   -- This is because FileType is not triggered on first file
   -- somehow
-  lazy_utils.load_on_startup(function()
-    vim.cmd.filetype("detect")
-  end)
+  lazy_utils.load_on_startup(
+    function() vim.cmd.filetype("detect") end
+  )
 end
 
 local function lazy_ts_ensure_installed(name, filetypes)
-  if filetypes == nil then
-    filetypes = name
-  end
-  lazy_utils.load_on_filetypes(filetypes, function()
-    -- TODO B failing silently
-    vim.cmd.TSUpdate(name)
-  end)
+  if filetypes == nil then filetypes = name end
+  lazy_utils.load_on_filetypes(
+    filetypes, function()
+      -- TODO B failing silently
+      vim.cmd.TSUpdate(name)
+    end
+  )
 end
 
-for key, name in pairs({
-  [{ "sh", "bash", "zsh" }] = "bash",
-  "python",
-  "powershell",
-  "go",
-  "rust",
-  "cpp",
-  "c",
-  "html",
-  "css",
-  "java",
-  "elixir",
-  "julia",
-  "ocaml",
-  "haskell",
-  "typst",
-  "latex",
-}) do
+for key, name in pairs(
+  {
+    [{ "sh", "bash", "zsh" }] = "bash",
+    "python",
+    "powershell",
+    "go",
+    "rust",
+    "cpp",
+    "c",
+    "html",
+    "css",
+    "java",
+    "elixir",
+    "julia",
+    "ocaml",
+    "haskell",
+    "typst",
+    "latex",
+  }
+) do
   local filetypes = nil
   if type(key) == "string" or type(key) == "table" then
     filetypes = key
