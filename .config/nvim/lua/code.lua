@@ -5,6 +5,16 @@ end
 
 -- helpers {{{
 
+local function commandRep(fn)
+  return function() for _ = 1, vim.v.count1 do fn() end end
+end
+
+local function copy_table(tbl)
+  result = {}
+  for k, v in pairs(tbl) do result[k] = v end
+  return result
+end
+
 --  }}}
 
 -- plugins {{{
@@ -35,24 +45,24 @@ vim.api.nvim_create_user_command(
   { nargs=0 }
 )
 
-local function slime_tmux_uniform_config()
-  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-    has, _ = pcall(
-      vim.api.nvim_buf_get_var,
-      bufnr,
-      "slime_config"
-    )
-    if has then
-      vim.api.nvim_buf_set_var(
+function slime_setup_tmux()
+  local function slime_tmux_uniform_config()
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+      has, _ = pcall(
+        vim.api.nvim_buf_get_var,
         bufnr,
-        "slime_config",
-        vim.g.slime_default_config
+        "slime_config"
       )
+      if has then
+        vim.api.nvim_buf_set_var(
+          bufnr,
+          "slime_config",
+          vim.g.slime_default_config
+        )
+      end
     end
   end
-end
 
-function slime_setup_tmux()
   vim.api.nvim_create_user_command(
     "SlimeTmuxPane",
     function(opts)

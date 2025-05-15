@@ -211,11 +211,15 @@ vim.api.nvim_set_keymap("s", "<BS>", "<BS>i", {noremap = true})
 -- terminal {{{
 
 vim.api.nvim_set_keymap("t", "<C-q>", "<C-\\>", {})
+vim.api.nvim_set_keymap("t", "<C-q><C-q>", "<C-q>", {noremap=true})
 vim.api.nvim_set_keymap(
   "t", "<C-\\>n", "<C-\\><C-n>", {noremap = true}
 )
 vim.api.nvim_set_keymap(
   "t", "<C-\\>o", "<C-\\><C-o>", {noremap = true}
+)
+vim.api.nvim_set_keymap(
+  "t", "<C-\\>:", "<C-\\><C-n>:", {noremap = true}
 )
 
 for key_in, key_out in pairs(
