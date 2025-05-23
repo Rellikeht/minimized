@@ -113,7 +113,8 @@ vim.opt.wildchar = string.byte("\t")
 vim.opt.wildmode = "list:longest,full"
 vim.opt.wildoptions = "fuzzy,tagfile,pum"
 vim.opt.complete = "w,b,s,i,d,.,k"
-vim.opt.completeopt = "menu,menuone,noselect,noinsert,preview"
+vim.opt.completeopt = "menu,menuone,noselect,noinsert"
+-- vim.opt.completeopt:append({ "preview" })
 
 vim.opt.omnifunc = "syntaxcomplete#Complete"
 vim.opt.pumwidth = 20

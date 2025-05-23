@@ -215,10 +215,10 @@ pckr.add(
         )
 
         -- nvim configuration with lua is easy they say...
-        vim.opt.completeopt:remove({ "preview" })
-        local completeopt = vim.opt.completeopt._value
-        vim.opt.completeopt:append({ "preview" })
-        vim.bo.completeopt = completeopt
+        -- vim.opt.completeopt:remove({ "preview" })
+        -- local completeopt = vim.opt.completeopt._value
+        -- vim.opt.completeopt:append({ "preview" })
+        -- vim.bo.completeopt = completeopt
 
         -- commands {{{
 
@@ -350,6 +350,7 @@ pckr.add(
       requires = {
         "neovim/nvim-lspconfig",
         "Rellikeht/lazy-utils",
+        "mfussenegger/nvim-jdtls",
       },
     }, --  }}}
 
