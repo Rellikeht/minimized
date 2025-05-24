@@ -214,12 +214,6 @@ pckr.add(
           { message_level = nil }
         )
 
-        -- nvim configuration with lua is easy they say...
-        -- vim.opt.completeopt:remove({ "preview" })
-        -- local completeopt = vim.opt.completeopt._value
-        -- vim.opt.completeopt:append({ "preview" })
-        -- vim.bo.completeopt = completeopt
-
         -- commands {{{
 
         vim.keymap

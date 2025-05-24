@@ -114,7 +114,6 @@ vim.opt.wildmode = "list:longest,full"
 vim.opt.wildoptions = "fuzzy,tagfile,pum"
 vim.opt.complete = "w,b,s,i,d,.,k"
 vim.opt.completeopt = "menu,menuone,noselect,noinsert"
--- vim.opt.completeopt:append({ "preview" })
 
 vim.opt.omnifunc = "syntaxcomplete#Complete"
 vim.opt.pumwidth = 20
@@ -148,10 +147,8 @@ if vim.fn.has("win32") == 1 then -- {{{
 
   -- }}}
 else -- {{{
-  -- no idea what to put here
-  -- vim.opt.shell = "bash"
   GIT_EXECUTABLE = "git"
-end -- }}}
+end  -- }}}
 
 -- filetypes {{{
 
@@ -169,6 +166,7 @@ vim.api.nvim_create_autocmd(
 -- isn't available sometimes
 local success = pcall(vim.cmd.colorscheme, "zaibatsu")
 if not success then vim.cmd.colorscheme("elflord") end
+
 -- vim.api.nvim_set_hl(0, "Todo", {fg="#ffcf2f", bg="#0e1224", bold=true})
 
 -- vim.api.nvim_set_hl(0, "DiffDelete", {fg="#c81f16"})
@@ -607,10 +605,6 @@ pcall(require, "local")
 vim.api.nvim_create_user_command(
   "Code", function()
     require("code")
-    -- local success, _ = pcall(require, "code")
-    -- if not success then
-    --   print("Failed to load code module")
-    -- end
   end, { nargs = 0 }
 )
 
