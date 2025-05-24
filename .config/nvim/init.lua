@@ -173,6 +173,14 @@ if not success then vim.cmd.colorscheme("elflord") end
 
 -- vim.api.nvim_set_hl(0, "DiffDelete", {fg="#c81f16"})
 
+-- simple yet effective
+vim.api.nvim_set_hl(0, "NormalFloat", { link = "CursorLine" })
+
+-- acceptable for now
+vim.api.nvim_set_hl(0, "Pmenu", { link = "CursorColumn" })
+vim.api.nvim_set_hl(0, "PmenuKind", { link = "SignColumn" })
+vim.api.nvim_set_hl(0, "PmenuExtra", { link = "SignColumn" })
+
 -- }}}
 
 -- }}}
@@ -386,7 +394,6 @@ pckr.add(
     "tpope/vim-surround", -- TODO conflict with sneak
     "tpope/vim-tbone",
     "tpope/vim-abolish",
-    "tpope/vim-endwise",
     "tpope/vim-fugitive",
     "tpope/vim-repeat",
     "ryvnf/readline.vim",
@@ -441,16 +448,50 @@ pckr.add(
     }, --  }}}
 
     {
-      "RRethy/nvim-treesitter-endwise", --  {{{
-      require = { "nvim-treesitter/nvim-treesitter" },
-    },                                  --  }}}
+      "ibhagwan/fzf-lua", --  {{{
+      config = function()
+        require("fzf-lua").setup({
+          { "fzf-vim" },
 
-    {
-      "junegunn/fzf.vim", --  {{{
-      requires = { "junegunn/fzf" },
-    },                    --  }}}
+          winopts = { --  {{{
+            border = "none",
+            fullscreen = true,
+            preview = {
+              border = "none",
+              layout = "vertical",
+              vertical = "down:50%",
+              hidden = false,
+            },
+          },             --  }}}
+
+          fzf_colors = { --  {{{
+            true,
+            fg      = { "fg", "CursorLine" },
+            bg      = { "bg", "Normal" },
+            hl      = { "fg", "Comment" },
+            ["fg+"] = { "fg", "CursorLine" },
+            ["bg+"] = { "bg", { "CursorLine", "Normal" } },
+            ["hl+"] = { "fg", "Statement" },
+
+            info    = { "fg", "PreProc" },
+            border  = { "none" },
+            prompt  = { "fg", "Conditional" },
+            pointer = { "fg", "Exception" },
+            marker  = { "fg", "Keyword" },
+            spinner = { "fg", "Label" },
+            header  = { "fg", "Comment" },
+            -- gutter  = "-1",
+          }, --  }}}
+
+          treesitter = {
+            enable = false,
+          },
+        })
+      end
+    }, --  }}}
+
   }
-)                         -- }}}
+) -- }}}
 
 -- post setup {{{
 
@@ -468,6 +509,7 @@ for key_in, key_out in pairs(
     ["<C-n>"] = ";",
     ["<C-p>"] = ",",
     s = "s",
+    S = "S",
     f = "f",
     F = "F",
     t = "t",
@@ -478,11 +520,9 @@ for key_in, key_out in pairs(
     "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
   )
 end
-for _, mode in pairs({ "n", "o", "s" }) do
-  vim.keymap.set(
-    mode, "S", "<Plug>Sneak_S", { noremap = true }
-  )
-end
+
+vim.keymap.set("v", "<C-s>", "<Plug>VSurround", {})
+vim.keymap.set("v", "g<C-s>", "<Plug>VgSurround", {})
 
 --  }}}
 
@@ -494,30 +534,6 @@ end
 
 -- because RepeatDot sometimes fails
 vim.keymap.set("n", ";.", ".", { noremap = true })
-
---  }}}
-
--- fzf {{{
-
-vim.g.fzf_layout = { down = "100%" }
-vim.g.fzf_vim = { preview_window = { "down,50%", "ctrl-s" } }
-vim.g.fzf_history_dir = vim.fn.stdpath("data") .. "/fzf-history"
-
-vim.g.fzf_colors = {
-  fg = { "fg", "Normal" },
-  bg = { "bg", "Normal" },
-  hl = { "fg", "Comment" },
-  ["fg+"] = { "fg", "CursorLine", "CursorColumn", "Normal" },
-  ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
-  ["hl+"] = { "fg", "Statement" },
-  info = { "fg", "PreProc" },
-  border = { "none" },
-  prompt = { "fg", "Conditional" },
-  pointer = { "fg", "Exception" },
-  marker = { "fg", "Keyword" },
-  spinner = { "fg", "Label" },
-  header = { "fg", "Comment" },
-}
 
 --  }}}
 
