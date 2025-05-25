@@ -187,6 +187,9 @@ PCKR.add(
       "neovim/nvim-lspconfig", --  {{{
       requires = { "Rellikeht/lazy-utils" },
       config = function()
+        if vim.fn.has("nvim-0.10") == 0 then
+          return
+        end
         if vim.fn.has("nvim-0.11") == 1 then -- {{{
           -- for backwards compatibility
           function NvimDiagPrev()
@@ -345,6 +348,7 @@ PCKR.add(
         "neovim/nvim-lspconfig",
         "Rellikeht/lazy-utils",
         "mfussenegger/nvim-jdtls",
+        "p00f/clangd_extensions.nvim",
       },
     }, --  }}}
 
@@ -362,7 +366,9 @@ local tsinstall = require("nvim-treesitter.install")
 
 do
   -- This is because FileType is not triggered on first file
-  -- somehow
+  -- sometimes
+  -- TODO is this proper solution
+  vim.cmd.filetype("detect")
   lazy_utils.load_on_startup(
     function() vim.cmd.filetype("detect") end
   )
@@ -406,8 +412,6 @@ for key, name in pairs(
 end
 
 --  }}}
-
--- TODO lsp
 
 -- TODO formatters
 

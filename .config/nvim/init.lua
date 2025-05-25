@@ -165,7 +165,7 @@ vim.api.nvim_create_autocmd(
 
 -- isn't available sometimes
 local success = pcall(vim.cmd.colorscheme, "zaibatsu")
-if not success then vim.cmd.colorscheme("elflord") end
+if not success then vim.cmd.colorscheme("retrobox") end
 
 -- vim.api.nvim_set_hl(0, "Todo", {fg="#ffcf2f", bg="#0e1224", bold=true})
 
@@ -186,8 +186,8 @@ vim.api.nvim_set_hl(0, "PmenuExtra", { link = "SignColumn" })
 -- general {{{
 
 -- search like a pro
-vim.keymap.set("n", "n", "nzzzv", {})
-vim.keymap.set("n", "N", "Nzzzv", {})
+vim.keymap.set("n", "n", "nzzzv", { noremap = true })
+vim.keymap.set("n", "N", "Nzzzv", { noremap = true })
 
 -- move lines in visual mode
 vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv")
@@ -197,8 +197,8 @@ vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set("n", "<Space>", "<Nop>", {})
 
 -- opinionated preference for <C-n> and <C-p>
-vim.keymap.set("n", ",", "<Nop>", {})
-vim.keymap.set("n", ";", "<Nop>", {})
+vim.keymap.set("n", ",", "<Nop>", { remap = true })
+vim.keymap.set("n", ";", "<Nop>", { remap = true })
 vim.g.mapleader = ","
 vim.g.maplocalleader = "_"
 
@@ -209,11 +209,11 @@ vim.keymap.set(
   "n", "yaee ", "gg0vG$y`'", { noremap = true }
 )
 
-vim.keymap.set("n", "Q", "<Nop>", {})
-vim.keymap.set("", "<C-h>", "<C-]>", {})
+vim.keymap.set("n", "Q", "<Nop>", { remap = true })
+vim.keymap.set("", "<C-h>", "<C-]>", { remap = true })
 vim.keymap.set(
   "n", "<C-w><C-h>",
-  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", { noremap = true }
+  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", {}
 )
 vim.keymap.set(
   "n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {}
@@ -230,7 +230,7 @@ vim.keymap.set("n", "<Space>e", ":<C-u>Argument<Space>", {})
 
 -- terminal {{{
 
-vim.keymap.set("t", "<C-q>", "<C-\\>", {})
+vim.keymap.set("t", "<C-q>", "<C-\\>", { remap = true })
 vim.keymap.set(
   "t", "<C-q><C-q>", "<C-q>", { noremap = true }
 )
@@ -267,16 +267,16 @@ end
 vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<C-j>", "<Tab>", { noremap = true })
 vim.keymap.set(
-  "n", "<Tab><Tab>", ":<C-u>tab<Space>", { noremap = true }
+  "n", "<Tab><Tab>", ":<C-u>tab<Space>", {}
 )
 vim.keymap.set(
-  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", { noremap = true }
+  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {}
 )
 vim.keymap.set(
-  "n", "<Tab>h", ":<C-u>tab help<Space>", { noremap = true }
+  "n", "<Tab>h", ":<C-u>tab help<Space>", {}
 )
 vim.keymap.set(
-  "n", "<Tab>H", ":<C-u>-tab help<Space>", { noremap = true }
+  "n", "<Tab>H", ":<C-u>-tab help<Space>", {}
 )
 
 -- }}}
@@ -291,7 +291,7 @@ for key, cmd in pairs(
   }
 ) do
   vim.keymap.set(
-    "n", "<Space>q" .. key, cmd, { noremap = true }
+    "n", "<Space>q" .. key, cmd, {}
   )
 end
 
@@ -307,7 +307,7 @@ for key, cmd in pairs(
   }
 ) do
   vim.keymap.set(
-    "n", "<Space>i" .. key, cmd, { noremap = true }
+    "n", "<Space>i" .. key, cmd, {}
   )
 end
 
@@ -590,12 +590,7 @@ if vim.g.neovide then -- {{{
   --  }}}
 
   -- }}}
-elseif vim.fn.has("gui_running") then --  {{{
-  -- for uniform experience
-  -- "t", "i" don't work anyway
-  for _, mode in pairs({ "n", "o", "v" }) do
-    vim.keymap.set(mode, "<C-/>", "<C-_>", {})
-  end
+elseif vim.fn.has("gui_running") == 1 then --  {{{
 
   -- }}}
 else -- {{{
