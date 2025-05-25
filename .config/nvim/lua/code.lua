@@ -134,7 +134,7 @@ end
 
 --  }}}
 
-pckr.add(
+PCKR.add(
   { -- {{{
     "jpalardy/vim-slime",
 
@@ -225,7 +225,7 @@ pckr.add(
         )
 
         vim.keymap.set(
-          "n", "<Leader>df", vim.diagnostic.open_float,
+          "n", "<Leader>de", vim.diagnostic.open_float,
           { desc = "show diagnostics" }
         )
 
@@ -320,7 +320,7 @@ pckr.add(
                 }
               )
               vim.keymap.set(
-                "n", "<Leader>dF", function()
+                "n", "<Leader>df", function()
                   vim.lsp.buf.format({ async = true })
                 end, {
                   desc = "format buffer using lsp",

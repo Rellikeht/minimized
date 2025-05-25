@@ -169,8 +169,6 @@ if not success then vim.cmd.colorscheme("elflord") end
 
 -- vim.api.nvim_set_hl(0, "Todo", {fg="#ffcf2f", bg="#0e1224", bold=true})
 
--- vim.api.nvim_set_hl(0, "DiffDelete", {fg="#c81f16"})
-
 -- simple yet effective
 vim.api.nvim_set_hl(0, "NormalFloat", { link = "CursorLine" })
 
@@ -221,6 +219,12 @@ vim.keymap.set(
   "n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {}
 )
 vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
+
+-- Temporary but needed
+vim.keymap.set("n", "<Space>n", ":<C-u>next<CR>", {})
+vim.keymap.set("n", "<Space>p", ":<C-u>prev<CR>", {})
+vim.keymap.set("n", "<Space>o", ":<C-u>argedit<Space>", {})
+vim.keymap.set("n", "<Space>e", ":<C-u>Argument<Space>", {})
 
 -- }}}
 
@@ -353,14 +357,14 @@ local function bootstrap_pckr()
 end
 bootstrap_pckr()
 
-pckr = require("pckr")
-pckr_util = require("pckr.util")
-pckr_cmd = require("pckr.loader.cmd")
-pckr_keys = require("pckr.loader.keys")
+PCKR = require("pckr")
+PCKR_UTIL = require("pckr.util")
+PCKR_CMD = require("pckr.loader.cmd")
+PCKR_KEYS = require("pckr.loader.keys")
 
-pckr.setup(
+PCKR.setup(
   {
-    pack_dir = pckr_util.join_paths(
+    pack_dir = PCKR_UTIL.join_paths(
       vim.fn.stdpath("data"), "site"
     ),
     -- Limit the number of simultaneous jobs. nil means no limit
@@ -375,7 +379,7 @@ pckr.setup(
     },
     log = { level = "warn" },
     lockfile = {
-      path = pckr_util.join_paths(
+      path = PCKR_UTIL.join_paths(
         vim.fn.stdpath("config"), "pckr", "lockfile.lua"
       ),
     },
@@ -384,12 +388,12 @@ pckr.setup(
 
 --  }}}
 
-pckr.add(
+PCKR.add(
   { -- {{{
     "mbbill/undotree",
     "justinmk/vim-sneak",
     "unblevable/quick-scope",
-    "tpope/vim-surround", -- TODO conflict with sneak
+    "tpope/vim-surround",
     "tpope/vim-tbone",
     "tpope/vim-abolish",
     "tpope/vim-fugitive",
@@ -519,8 +523,8 @@ for key_in, key_out in pairs(
   )
 end
 
-vim.keymap.set("v", "<C-s>", "<Plug>VSurround", {})
-vim.keymap.set("v", "g<C-s>", "<Plug>VgSurround", {})
+vim.keymap.set("x", "<C-s>", "<Plug>VSurround", {})
+vim.keymap.set("x", "g<C-s>", "<Plug>VgSurround", {})
 
 --  }}}
 
