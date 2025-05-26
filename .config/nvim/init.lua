@@ -230,35 +230,9 @@ vim.keymap.set("n", "<Space>e", ":<C-u>Argument<Space>", {})
 
 -- terminal {{{
 
-vim.keymap.set("t", "<C-q>", "<C-\\>", { remap = true })
-vim.keymap.set(
-  "t", "<C-q><C-q>", "<C-q>", { noremap = true }
-)
-vim.keymap.set(
-  "t", "<C-\\>n", "<C-\\><C-n>", { noremap = true }
-)
-vim.keymap.set(
-  "t", "<C-\\>o", "<C-\\><C-o>", { noremap = true }
-)
-vim.keymap.set(
-  "t", "<C-\\>:", "<C-\\><C-n>:", { noremap = true }
-)
-
-for key_in, key_out in pairs(
-  {
-    h = "<C-w>h",
-    j = "<C-w>j",
-    k = "<C-w>k",
-    l = "<C-w>l",
-    gt = "gt",
-    gT = "gT",
-  }
-) do
-  vim.keymap.set(
-    "t", "<C-\\>" .. key_in,
-    "<C-\\><C-n>" .. key_out .. "<Esc>", { noremap = true }
-  )
-end
+vim.keymap.set("t", "<C-w>", "<C-\\><C-n><C-w>", { remap = true })
+vim.keymap.set("t", "<C-q><C-w>", "<C-w>", { noremap = true })
+vim.keymap.set("t", "<C-q><C-q>", "<C-q>", { noremap = true })
 
 -- }}}
 
@@ -591,11 +565,10 @@ if vim.g.neovide then -- {{{
 
   -- }}}
 elseif vim.fn.has("gui_running") == 1 then --  {{{
-
   -- }}}
-else -- {{{
+else                                       -- {{{
 
-end  -- }}}
+end                                        -- }}}
 
 -- additional {{{
 
