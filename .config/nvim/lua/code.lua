@@ -324,7 +324,7 @@ PCKR.add(
               )
               vim.keymap.set(
                 "n", "<Leader>df", function()
-                  vim.lsp.buf.format({ async = true })
+                  vim.lsp.buf.format({ async = false })
                   vim.cmd.norm("zv")
                 end, {
                   desc = "format buffer using lsp",

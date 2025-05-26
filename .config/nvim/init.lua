@@ -507,6 +507,28 @@ vim.g.fzf_colors = {
   header = { "fg", "Comment" },
 }
 
+vim.g.fzf_action = {
+  ["alt-t"] = function(lines)
+    vim.cmd.Tabe()
+    vim.cmd.args(lines)
+  end,
+  ["alt-T"] = "Tabe",
+  ["alt-v"] = "view",
+}
+
+vim.env.FZF_DEFAULT_OPTS = [[
+--bind 'alt-k:preview-up,alt-j:preview-down'
+--bind 'ctrl-k:kill-line,ctrl-j:ignore'
+--bind 'ctrl-s:change-preview-window(hidden|)'
+--bind 'alt-K:preview-half-page-up,alt-J:preview-half-page-down'
+--bind 'alt-U:half-page-up,alt-D:half-page-down'
+--bind 'ctrl-c:cancel,ctrl-g:clear-selection'
+--bind 'alt-p:prev-history,alt-n:next-history'
+--bind 'alt-P:prev-selected,alt-N:next-selected'
+--bind 'ctrl-p:up,ctrl-n:down'
+--bind 'ctrl-t:toggle'
+]]
+
 --  }}}
 
 -- }}}
@@ -539,25 +561,19 @@ hi DiffDelete
 
 --  }}}
 
-if vim.g.neovide then -- {{{
-  -- settings {{{
-
+if vim.g.neovide then
+  -- {{{
   vim.g.neovide_refresh_rate_idle = 5
   vim.g.neovide_cursor_hack = false
   vim.g.neovide_scale_factor = 0.95
 
-  --  }}}
-
-  -- keybindings {{{
-
-  --  }}}
-
   -- }}}
-elseif vim.fn.has("gui_running") == 1 then --  {{{
+elseif vim.fn.has("gui_running") == 1 then
+  -- {{{
   -- }}}
-else                                       -- {{{
-
-end                                        -- }}}
+else
+  -- {{{
+end -- }}}
 
 -- additional {{{
 
