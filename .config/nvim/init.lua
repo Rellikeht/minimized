@@ -426,8 +426,24 @@ PCKR.add(
     {
       "ibhagwan/fzf-lua", --  {{{
       config = function()
-        require("fzf-lua").setup({
+        local fzf_lua = require("fzf-lua")
+        local fzf_actions = fzf_lua.actions
+        fzf_lua.setup({
           { "fzf-vim" },
+
+          -- fzf_args = [[
+          --   --bind 'alt-k:preview-up,alt-j:preview-down'
+          --   --bind 'ctrl-k:kill-line'
+          --   --bind 'ctrl-s:change-preview-window(hidden|)'
+          --   --bind 'alt-K:preview-half-page-up'
+          --   --bind 'alt-J:preview-half-page-down'
+          --   --bind 'alt-U:half-page-up,alt-D:half-page-down'
+          --   --bind 'ctrl-c:cancel,ctrl-g:clear-selection'
+          --   --bind 'alt-p:prev-history,alt-n:next-history'
+          --   --bind 'alt-P:prev-selected,alt-N:next-selected'
+          --   --bind 'ctrl-p:up,ctrl-n:down'
+          --   --bind 'ctrl-t:toggle'
+          -- ]],
 
           winopts = { --  {{{
             border = "none",
@@ -457,6 +473,12 @@ PCKR.add(
             spinner = { "fg", "Label" },
             header  = { "fg", "Comment" },
             -- gutter  = "-1",
+          },          --  }}}
+
+          actions = { --  {{{
+            files = {
+              ["ctrl-t"] = false,
+            },
           }, --  }}}
 
           treesitter = {
