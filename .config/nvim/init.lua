@@ -429,72 +429,11 @@ PCKR.add(
     }, --  }}}
 
     {
-      "ibhagwan/fzf-lua", --  {{{
-      config = function()
-        local fzf_lua = require("fzf-lua")
-        local fzf_actions = fzf_lua.actions
-        fzf_lua.setup({
-          { "fzf-vim" },
-
-          -- fzf_args = [[
-          --   --bind 'alt-k:preview-up,alt-j:preview-down'
-          --   --bind 'ctrl-k:kill-line'
-          --   --bind 'ctrl-s:change-preview-window(hidden|)'
-          --   --bind 'alt-K:preview-half-page-up'
-          --   --bind 'alt-J:preview-half-page-down'
-          --   --bind 'alt-U:half-page-up,alt-D:half-page-down'
-          --   --bind 'ctrl-c:cancel,ctrl-g:clear-selection'
-          --   --bind 'alt-p:prev-history,alt-n:next-history'
-          --   --bind 'alt-P:prev-selected,alt-N:next-selected'
-          --   --bind 'ctrl-p:up,ctrl-n:down'
-          --   --bind 'ctrl-t:toggle'
-          -- ]],
-
-          winopts = { --  {{{
-            border = "none",
-            fullscreen = true,
-            preview = {
-              border = "none",
-              layout = "vertical",
-              vertical = "down:50%",
-              hidden = false,
-            },
-          },             --  }}}
-
-          fzf_colors = { --  {{{
-            true,
-            fg      = { "fg", "CursorLine" },
-            bg      = { "bg", "Normal" },
-            hl      = { "fg", "Comment" },
-            ["fg+"] = { "fg", "CursorLine" },
-            ["bg+"] = { "bg", { "CursorLine", "Normal" } },
-            ["hl+"] = { "fg", "Statement" },
-
-            info    = { "fg", "PreProc" },
-            border  = { "none" },
-            prompt  = { "fg", "Conditional" },
-            pointer = { "fg", "Exception" },
-            marker  = { "fg", "Keyword" },
-            spinner = { "fg", "Label" },
-            header  = { "fg", "Comment" },
-            -- gutter  = "-1",
-          },          --  }}}
-
-          actions = { --  {{{
-            files = {
-              ["ctrl-t"] = false,
-            },
-          }, --  }}}
-
-          treesitter = {
-            enable = false,
-          },
-        })
-      end
-    }, --  }}}
-
+      "junegunn/fzf.vim", --  {{{
+      requires = { "junegunn/fzf" },
+    },                    --  }}}
   }
-) -- }}}
+)                         -- }}}
 
 -- post setup {{{
 
@@ -542,8 +481,31 @@ vim.keymap.set("n", ";.", ".", { noremap = true })
 
 -- fugitive {{{
 
--- TODO more ??
 vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
+
+--  }}}
+
+-- fzf {{{
+
+vim.g.fzf_layout = { down = "100%" }
+vim.g.fzf_vim = { preview_window = { "down,50%", "ctrl-s" } }
+vim.g.fzf_history_dir = vim.fn.stdpath("data") .. "/fzf-history"
+
+vim.g.fzf_colors = {
+  fg = { "fg", "Normal" },
+  bg = { "bg", "Normal" },
+  hl = { "fg", "Comment" },
+  ["fg+"] = { "fg", "CursorLine", "CursorColumn", "Normal" },
+  ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
+  ["hl+"] = { "fg", "Statement" },
+  info = { "fg", "PreProc" },
+  border = { "none" },
+  prompt = { "fg", "Conditional" },
+  pointer = { "fg", "Exception" },
+  marker = { "fg", "Keyword" },
+  spinner = { "fg", "Label" },
+  header = { "fg", "Comment" },
+}
 
 --  }}}
 
