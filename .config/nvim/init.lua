@@ -482,13 +482,41 @@ vim.keymap.set("n", ";.", ".", { noremap = true })
 -- fugitive {{{
 
 vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
+vim.keymap.set("n", "<Leader>g<Space>", ":<C-u>g<Space>", {})
 
 --  }}}
 
 -- fzf {{{
 
+-- slighty longer than in original :D
+-- https://github.com/junegunn/fzf.vim/blob/master/README.md#status-line-of-terminal-buffer
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = "fzf",
+    callback = function()
+      local previous = {
+        laststatus = vim.opt.laststatus._value,
+        showmode = vim.opt.showmode._value,
+        ruler = vim.opt.ruler._value,
+      }
+      vim.opt.laststatus = 0
+      vim.opt.showmode = false
+      vim.opt.ruler = false
+      vim.api.nvim_create_autocmd(
+        "BufLeave", {
+          pattern = "<buffer>",
+          callback = function()
+            vim.opt.laststatus = previous.laststatus
+            vim.opt.showmode = previous.showmode
+            vim.opt.ruler = previous.ruler
+          end
+        })
+    end
+  }
+)
+
 vim.g.fzf_layout = { down = "100%" }
-vim.g.fzf_vim = { preview_window = { "down,50%", "ctrl-s" } }
+vim.g.fzf_vim = { preview_window = { "down,50%,border-none" } }
 vim.g.fzf_history_dir = vim.fn.stdpath("data") .. "/fzf-history"
 
 vim.g.fzf_colors = {
@@ -499,7 +527,6 @@ vim.g.fzf_colors = {
   ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
   ["hl+"] = { "fg", "Statement" },
   info = { "fg", "PreProc" },
-  border = { "none" },
   prompt = { "fg", "Conditional" },
   pointer = { "fg", "Exception" },
   marker = { "fg", "Keyword" },
@@ -516,7 +543,10 @@ vim.g.fzf_action = {
   ["alt-v"] = "view",
 }
 
+-- because those are nice and this config should be as
+-- self contained as it is possible
 vim.env.FZF_DEFAULT_OPTS = [[
+--border=none
 --bind 'alt-k:preview-up,alt-j:preview-down'
 --bind 'ctrl-k:kill-line,ctrl-j:ignore'
 --bind 'ctrl-s:change-preview-window(hidden|)'
