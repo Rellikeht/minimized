@@ -463,8 +463,8 @@ for key_in, key_out in pairs(
   )
 end
 
-vim.keymap.set("x", "<C-s>", "<Plug>VSurround", {})
-vim.keymap.set("x", "g<C-s>", "<Plug>VgSurround", {})
+vim.keymap.set("x", "<Space>s", "<Plug>VSurround", {})
+vim.keymap.set("x", "<Space>S", "<Plug>VgSurround", {})
 
 --  }}}
 

@@ -3,8 +3,8 @@ if success and val then return end
 
 -- helpers {{{
 
-local function commandRep(fn)
-  return function() for _ = 1, vim.v.count1 do fn() end end
+local function commandRep(fn, arg)
+  return function() for _ = 1, vim.v.count1 do fn(arg) end end
 end
 
 ---@diagnostic disable-next-line: unused-local, unused-function
@@ -42,12 +42,8 @@ vim.keymap.set(
 vim.keymap.set(
   "x", "gsi", "<Plug>SlimeRegionSend", { noremap = true }
 )
-vim.keymap.set(
-  "n", "gs;", ":SlimeSend<CR>", { noremap = true }
-)
-vim.keymap.set(
-  "x", "gs;", ":SlimeSend<CR>", { noremap = true }
-)
+vim.keymap.set("n", "gs;", ":SlimeSend<CR>", { noremap = true })
+vim.keymap.set("x", "gs;", ":SlimeSend<CR>", { noremap = true })
 
 vim.api.nvim_create_user_command(
   "SlimeConfigAll", function(_)
@@ -185,11 +181,9 @@ PCKR.add(
 
     {
       "neovim/nvim-lspconfig", --  {{{
-      requires = { "Rellikeht/lazy-utils" },
+      requires = {},
       config = function()
-        if vim.fn.has("nvim-0.10") == 0 then
-          return
-        end
+        if vim.fn.has("nvim-0.10") == 0 then return end
         if vim.fn.has("nvim-0.11") == 1 then -- {{{
           -- for backwards compatibility
           function NvimDiagPrev()
@@ -226,19 +220,64 @@ PCKR.add(
         vim.keymap.set(
           "n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {}
         )
-
         vim.keymap.set(
           "n", "<Leader>de", vim.diagnostic.open_float,
           { desc = "show diagnostics" }
         )
 
         vim.keymap.set(
-          "n", "<Leader>dp", commandRep(NvimDiagPrev),
-          { desc = "[N] prev diagnostics" }
+          "n", "<Leader>dp", commandRep(
+            NvimDiagPrev, {
+              severity = {
+                vim.diagnostic.severity.ERROR,
+                vim.diagnostic.severity.WARN,
+              },
+            }
+          ), { desc = "[N] prev error or warning" }
         )
         vim.keymap.set(
-          "n", "<Leader>dn", commandRep(NvimDiagNext),
-          { desc = "[N] next diagnostics" }
+          "n", "<Leader>dn", commandRep(
+            NvimDiagNext, {
+              severity = {
+                vim.diagnostic.severity.ERROR,
+                vim.diagnostic.severity.WARN,
+              },
+            }
+          ), { desc = "[N] next error or warning" }
+        )
+
+        vim.keymap.set(
+          "n", "<Leader>dP", commandRep(
+            NvimDiagPrev,
+            { severity = { vim.diagnostic.severity.ERROR } }
+          ), { desc = "[N] prev error" }
+        )
+        vim.keymap.set(
+          "n", "<Leader>dN", commandRep(
+            NvimDiagNext,
+            { severity = { vim.diagnostic.severity.ERROR } }
+          ), { desc = "[N] next error" }
+        )
+
+        vim.keymap.set(
+          "n", "<Leader>d<C-p>", commandRep(
+            NvimDiagPrev, {
+              severity = {
+                vim.diagnostic.severity.INFO,
+                vim.diagnostic.severity.HINT,
+              },
+            }
+          ), { desc = "[N] prev hint/info" }
+        )
+        vim.keymap.set(
+          "n", "<Leader>d<C-n>", commandRep(
+            NvimDiagNext, {
+              severity = {
+                vim.diagnostic.severity.INFO,
+                vim.diagnostic.severity.HINT,
+              },
+            }
+          ), { desc = "[N] next hint/info" }
         )
 
         -- }}}
