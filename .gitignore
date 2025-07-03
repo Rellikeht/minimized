@@ -4,6 +4,7 @@
 *.bck
 *.local
 *_local
+*-local
 local/
 .local*
 *hist
