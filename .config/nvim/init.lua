@@ -46,21 +46,16 @@ vim.api.nvim_create_user_command(
 
 for _, option in pairs(
   {
-    "expandtab",
-    "number",
-    "relativenumber",
     "ruler",
     "incsearch",
     "ignorecase",
     "smartcase",
     "showmatch",
-    "cursorline",
     "hidden",
     "secure",
     "wrap", -- TODO ??
     "autoindent",
     "cindent",
-    "smarttab",
     "wildmenu",
     "termguicolors",
     "ttimeout",
@@ -228,19 +223,6 @@ vim.keymap.set("n", "<Space>e", ":<C-u>Argument<Space>", {})
 
 -- }}}
 
--- terminal {{{
-
-vim.keymap.set("t", "<C-w>", "<C-\\><C-n><C-w>", { remap = true })
-vim.keymap.set("t", "<C-q><C-w>", "<C-w>", { noremap = true })
-vim.keymap.set("t", "<C-q><C-q>", "<C-q>", { noremap = true })
-vim.keymap.set(
-  "t", "<C-q><C-n>", "<C-\\><C-n>", { noremap = true }
-)
-vim.keymap.set(
-  "t", "<C-q><C-o>", "<C-\\><C-o>", { noremap = true }
-)
--- }}}
-
 -- tabs {{{
 
 vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
@@ -296,24 +278,12 @@ end
 
 -- plugins {{{
 
--- pre setup {{{
-
 -- sneak & quickscope {{{
 
 vim.g["sneak#prompt"] = " <sneak> "
 vim.g["sneak#use_ic_scs"] = true
 vim.g["sneak#label"] = true
 vim.g["sneak#next"] = false
-
---  }}}
-
--- matchup {{{
-
-vim.g.matchup_matchparen_offscreen = { method = "popup" }
-vim.g.matchup_surround_enabled = true
-vim.g.matchup_delim_noskips = 0
-
---  }}}
 
 --  }}}
 
@@ -369,17 +339,110 @@ PCKR.setup(
 
 PCKR.add(
   { -- {{{
-    "mbbill/undotree",
     "justinmk/vim-sneak",
     "unblevable/quick-scope",
     "tpope/vim-surround",
     "tpope/vim-tbone",
     "tpope/vim-abolish",
-    "tpope/vim-fugitive",
     "tpope/vim-repeat",
-    "ryvnf/readline.vim",
-    "andymass/vim-matchup",
+  }
+) -- }}}
+
+-- post setup {{{
+
+-- sneak & quickscope {{{
+
+vim.g.qs_delay = 40
+vim.g.qs_hi_priority = 2
+vim.g.qs_second_highlight = true
+
+vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#c81f16" })
+vim.api.nvim_set_hl(0, "QuickScopeSecondary", { fg = "#ff5642" })
+
+for key_in, key_out in pairs(
+  {
+    ["<C-n>"] = ";",
+    ["<C-p>"] = ",",
+    s = "s",
+    S = "S",
+    f = "f",
+    F = "F",
+    t = "t",
+    T = "T",
+  }
+) do
+  vim.keymap.set(
+    "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
+  )
+end
+
+vim.keymap.set("x", "<Space>a", "<Plug>VSurround", {})
+vim.keymap.set("x", "<Space>A", "<Plug>VgSurround", {})
+
+--  }}}
+
+-- repeat {{{
+
+-- because RepeatDot sometimes fails
+vim.keymap.set("n", "<Space>.", ".", { noremap = true })
+
+--  }}}
+
+-- }}}
+
+if vim.g.vscode then
+  --  {{{
+
+  VSCODE = require("vscode")
+  vim.keymap.set("x", "gc", function()
+    VSCODE.call("editor.action.commentLine")
+    VSCODE.call("vscode-neovim.escape", { key = "v" })
+  end)
+  vim.keymap.set({ "n", "x" }, "+", function()
+    VSCODE.call("workbench.action.editor.nextChange")
+  end)
+  vim.keymap.set({ "n", "x" }, "-", function()
+    VSCODE.call("workbench.action.editor.previousChange")
+  end)
+  vim.keymap.set("n", "<Leader>gu", function()
+    VSCODE.call("git.revertSelectedRanges")
+  end)
+  vim.keymap.set("n", "<Leader>gn", function()
+    VSCODE.call("editor.action.dirtydiff.next")
+  end)
+  vim.keymap.set("n", "<Leader>gp", function()
+    VSCODE.call("editor.action.dirtydiff.previous")
+  end)
+
+  vim.keymap.set("n", "<Leader>sf", function()
+    VSCODE.call("workbench.action.quickOpen")
+  end)
+  vim.keymap.set("n", "<Leader>sc", function()
+    VSCODE.call("workbench.action.showCommands")
+  end)
+  vim.keymap.set("n", "<Leader>ss", function()
+    VSCODE.call("workbench.action.findInFiles")
+  end)
+
+  return
+  -- }}}
+end
+
+-- matchup {{{
+
+vim.g.matchup_matchparen_offscreen = { method = "popup" }
+vim.g.matchup_surround_enabled = true
+vim.g.matchup_delim_noskips = 0
+
+--  }}}
+
+PCKR.add(
+  { --  {{{
     "Rellikeht/lazy-utils",
+    "mbbill/undotree",
+    "andymass/vim-matchup",
+    "tpope/vim-fugitive",
+    "ryvnf/readline.vim",
 
     {
       "windwp/nvim-autopairs", -- {{{
@@ -431,58 +494,18 @@ PCKR.add(
     {
       "junegunn/fzf.vim", --  {{{
       requires = { "junegunn/fzf" },
-    },                    --  }}}
-  }
-)                         -- }}}
+    },                  --  }}}
 
--- post setup {{{
-
--- sneak & quickscope {{{
-
-vim.g.qs_delay = 40
-vim.g.qs_hi_priority = 2
-vim.g.qs_second_highlight = true
-
-vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#c81f16" })
-vim.api.nvim_set_hl(0, "QuickScopeSecondary", { fg = "#ff5642" })
-
-for key_in, key_out in pairs(
-  {
-    ["<C-n>"] = ";",
-    ["<C-p>"] = ",",
-    s = "s",
-    S = "S",
-    f = "f",
-    F = "F",
-    t = "t",
-    T = "T",
-  }
-) do
-  vim.keymap.set(
-    "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
-  )
-end
-
-vim.keymap.set("x", "<Space>s", "<Plug>VSurround", {})
-vim.keymap.set("x", "<Space>S", "<Plug>VgSurround", {})
-
---  }}}
+  })                    --  }}}
 
 -- undotree {{{
 
 -- }}}
 
--- repeat {{{
-
--- because RepeatDot sometimes fails
-vim.keymap.set("n", ";.", ".", { noremap = true })
-
---  }}}
-
 -- fugitive {{{
 
 vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
-vim.keymap.set("n", "<Leader>g<Space>", ":<C-u>g<Space>", {})
+vim.keymap.set("n", "<Leader>g<Space>", ":<C-u>G<Space>", {})
 
 --  }}}
 
@@ -561,11 +584,7 @@ vim.env.FZF_DEFAULT_OPTS = [[
 
 --  }}}
 
--- }}}
-
--- }}}
-
--- plugin settings {{{
+-- other {{{
 
 -- TODO fix coloring of diffs
 -- those below don't work
@@ -591,8 +610,35 @@ hi DiffDelete
 
 --  }}}
 
+-- }}}
+
+-- other settings {{{
+
+for _, option in pairs(
+  {
+    "number",
+    "relativenumber",
+    "cursorline",
+    "expandtab",
+    "smarttab",
+  }
+) do vim.opt[option] = true end
+
+vim.keymap.set("t", "<C-w>", "<C-\\><C-n><C-w>", { remap = true })
+vim.keymap.set("t", "<C-q><C-w>", "<C-w>", { noremap = true })
+vim.keymap.set("t", "<C-q><C-q>", "<C-q>", { noremap = true })
+vim.keymap.set(
+  "t", "<C-q><C-n>", "<C-\\><C-n>", { noremap = true }
+)
+vim.keymap.set(
+  "t", "<C-q><C-o>", "<C-\\><C-o>", { noremap = true }
+)
+
+-- }}}
+
 if vim.g.neovide then
   -- {{{
+
   vim.g.neovide_refresh_rate_idle = 5
   vim.g.neovide_cursor_hack = false
   vim.g.neovide_scale_factor = 0.95
