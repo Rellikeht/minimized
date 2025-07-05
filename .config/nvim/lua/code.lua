@@ -133,6 +133,7 @@ end
 PCKR.add(
   { -- {{{
     "jpalardy/vim-slime",
+    "mhinz/vim-signify",
 
     {
       "norcalli/nvim-colorizer.lua", --  {{{
@@ -260,7 +261,7 @@ PCKR.add(
         )
 
         vim.keymap.set(
-          "n", "<Leader>d<C-p>", commandRep(
+          "n", "<Leader>dk", commandRep(
             NvimDiagPrev, {
               severity = {
                 vim.diagnostic.severity.INFO,
@@ -270,7 +271,7 @@ PCKR.add(
           ), { desc = "[N] prev hint/info" }
         )
         vim.keymap.set(
-          "n", "<Leader>d<C-n>", commandRep(
+          "n", "<Leader>dj", commandRep(
             NvimDiagNext, {
               severity = {
                 vim.diagnostic.severity.INFO,
@@ -450,6 +451,28 @@ for key, name in pairs(
   end
   lazy_ts_ensure_installed(name, filetypes)
 end
+
+--  }}}
+
+-- signify {{{
+
+vim.keymap.set("n", "+", "<Plug>(signify-next-hunk)", { noremap = true })
+vim.keymap.set("n", "-", "<Plug>(signify-prev-hunk)", { noremap = true })
+vim.keymap.set("n", "<Leader>gt", vim.cmd.SignifyToggle, { noremap = true })
+vim.keymap.set("n", "<Leader>gs", vim.cmd.SignifyDiff, { noremap = true })
+vim.keymap.set("n", "<Leader>gu", vim.cmd.SignifyUndo, { noremap = true })
+vim.keymap.set("n", "<Leader>gR", vim.cmd.SignifyRefresh, { noremap = true })
+vim.keymap.set("n", "<Leader>gh", vim.cmd.SignifyToggleHighlight, { noremap = true })
+
+vim.api.nvim_create_autocmd(
+  "User", {
+    pattern = "SignifyHunk",
+    callback = function()
+      local h = vim.fn["sy#util#get_hunk_stats"]()
+      print("[Hunk" .. h.current_hunk .. "/" .. h.total_hunks .. "]")
+    end
+  }
+)
 
 --  }}}
 

@@ -108,7 +108,10 @@ vim.opt.wildchar = string.byte("\t")
 vim.opt.wildmode = "list:longest,full"
 vim.opt.wildoptions = "fuzzy,tagfile,pum"
 vim.opt.complete = "w,b,s,i,d,.,k"
-vim.opt.completeopt = "menu,menuone,noselect,noinsert"
+vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
+if vim.fn.has("nvim-0.11") == 1 then
+  vim.opt.completeopt:append("fuzzy")
+end
 
 vim.opt.omnifunc = "syntaxcomplete#Complete"
 vim.opt.pumwidth = 20
@@ -160,7 +163,7 @@ vim.api.nvim_create_autocmd(
 
 -- isn't available sometimes
 local success = pcall(vim.cmd.colorscheme, "zaibatsu")
-if not success then vim.cmd.colorscheme("retrobox") end
+if not success then pcall(vim.cmd.colorscheme, "retrobox") end
 
 -- vim.api.nvim_set_hl(0, "Todo", {fg="#ffcf2f", bg="#0e1224", bold=true})
 
@@ -190,10 +193,9 @@ vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv")
 
 -- just in case
 vim.keymap.set("n", "<Space>", "<Nop>", {})
-
--- opinionated preference for <C-n> and <C-p>
 vim.keymap.set("n", ",", "<Nop>", { remap = true })
 vim.keymap.set("n", ";", "<Nop>", { remap = true })
+
 vim.g.mapleader = ","
 vim.g.maplocalleader = "_"
 
@@ -214,6 +216,11 @@ vim.keymap.set(
   "n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {}
 )
 vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
+
+vim.keymap.set("n", "<Space>y", "\"+y", { noremap = true })
+vim.keymap.set("n", "<Space>Y", "\"+Y", { noremap = true })
+vim.keymap.set("n", "<Space>u", "\"+p", { noremap = true })
+vim.keymap.set("n", "<Space>U", "\"+P", { noremap = true })
 
 -- Temporary but needed
 vim.keymap.set("n", "<Space>n", ":<C-u>next<CR>", {})
