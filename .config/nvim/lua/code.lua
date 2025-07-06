@@ -459,8 +459,9 @@ end
 vim.keymap.set("n", "+", "<Plug>(signify-next-hunk)", { noremap = true })
 vim.keymap.set("n", "-", "<Plug>(signify-prev-hunk)", { noremap = true })
 vim.keymap.set("n", "<Leader>gt", vim.cmd.SignifyToggle, { noremap = true })
-vim.keymap.set("n", "<Leader>gs", vim.cmd.SignifyDiff, { noremap = true })
-vim.keymap.set("n", "<Leader>gu", vim.cmd.SignifyUndo, { noremap = true })
+vim.keymap.set("n", "<Leader>gs", vim.cmd.SignifyHunkDiff, { noremap = true })
+vim.keymap.set("n", "<Leader>gS", vim.cmd.SignifyDiff, { noremap = true })
+vim.keymap.set("n", "<Leader>gu", vim.cmd.SignifyHunkUndo, { noremap = true })
 vim.keymap.set("n", "<Leader>gR", vim.cmd.SignifyRefresh, { noremap = true })
 vim.keymap.set("n", "<Leader>gh", vim.cmd.SignifyToggleHighlight, { noremap = true })
 
@@ -469,7 +470,9 @@ vim.api.nvim_create_autocmd(
     pattern = "SignifyHunk",
     callback = function()
       local h = vim.fn["sy#util#get_hunk_stats"]()
-      print("[Hunk" .. h.current_hunk .. "/" .. h.total_hunks .. "]")
+      if vim.fn.empty(h) == 0 then
+        print("[Hunk " .. h.current_hunk .. "/" .. h.total_hunks .. "]")
+      end
     end
   }
 )
@@ -477,6 +480,7 @@ vim.api.nvim_create_autocmd(
 --  }}}
 
 -- TODO formatters
+-- TODO snippets ?
 
 --  }}}
 
