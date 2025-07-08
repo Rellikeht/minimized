@@ -8,6 +8,17 @@ local function calc_pumheight()
   return result
 end
 
+vim.g.B = function(n)
+  if n == nil then
+    n = 1
+  end
+  local s = ""
+  for _ = 1, n do
+    s = s .. "../"
+  end
+  return s
+end
+
 --  }}}
 
 -- commands {{{
@@ -352,6 +363,7 @@ PCKR.add(
     "tpope/vim-tbone",
     "tpope/vim-abolish",
     "tpope/vim-repeat",
+    "wellle/targets.vim",
   }
 ) -- }}}
 
@@ -501,9 +513,9 @@ PCKR.add(
     {
       "junegunn/fzf.vim", --  {{{
       requires = { "junegunn/fzf" },
-    },                  --  }}}
+    },                    --  }}}
 
-  })                    --  }}}
+  })                      --  }}}
 
 -- undotree {{{
 
@@ -588,6 +600,8 @@ vim.env.FZF_DEFAULT_OPTS = [[
 --bind 'ctrl-p:up,ctrl-n:down'
 --bind 'ctrl-t:toggle'
 ]]
+
+-- TODO add commands
 
 --  }}}
 

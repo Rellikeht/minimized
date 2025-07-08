@@ -2,6 +2,7 @@
 *.swo
 *.tmp
 *.bck
+bck.*
 *.local
 *_local
 *-local
