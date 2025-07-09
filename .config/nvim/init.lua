@@ -367,7 +367,17 @@ PCKR.setup(
 
 --  }}}
 
-local plugin_configs = {  -- {{{
+local plugin_configs = { -- {{{
+  "tpope/vim-tbone",
+  "tpope/vim-abolish",
+  "wellle/targets.vim",
+
+  {
+    "Rellikeht/arglist-plus", --  {{{
+    config = function()
+    end
+  }, --  }}}
+
   {
     "justinmk/vim-sneak", --  {{{
     config = function()
@@ -417,11 +427,7 @@ local plugin_configs = {  -- {{{
       vim.keymap.set("n", "<Space>.", ".", { noremap = true })
     end
   }, --  }}}
-
-  "tpope/vim-tbone",
-  "tpope/vim-abolish",
-  "wellle/targets.vim",
-} -- }}}
+}    -- }}}
 
 --  }}}
 

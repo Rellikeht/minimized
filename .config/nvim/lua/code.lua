@@ -132,8 +132,39 @@ end
 
 PCKR.add(
   { -- {{{
-    "jpalardy/vim-slime",
-    "mhinz/vim-signify",
+    "Rellikeht/vim-compiler-collection",
+    "Konfekt/vim-compilers",
+
+    {
+      "jpalardy/vim-slime", --  {{{
+
+    },                    --  }}}
+
+    {
+      "mhinz/vim-signify", --  {{{
+      config = function()
+        vim.keymap.set("n", "+", "<Plug>(signify-next-hunk)", { noremap = true })
+        vim.keymap.set("n", "-", "<Plug>(signify-prev-hunk)", { noremap = true })
+        vim.keymap.set("n", "<Leader>gt", vim.cmd.SignifyToggle, { noremap = true })
+        vim.keymap.set("n", "<Leader>gs", vim.cmd.SignifyHunkDiff, { noremap = true })
+        vim.keymap.set("n", "<Leader>gS", vim.cmd.SignifyDiff, { noremap = true })
+        vim.keymap.set("n", "<Leader>gu", vim.cmd.SignifyHunkUndo, { noremap = true })
+        vim.keymap.set("n", "<Leader>gR", vim.cmd.SignifyRefresh, { noremap = true })
+        vim.keymap.set("n", "<Leader>gh", vim.cmd.SignifyToggleHighlight, { noremap = true })
+
+        vim.api.nvim_create_autocmd(
+          "User", {
+            pattern = "SignifyHunk",
+            callback = function()
+              local h = vim.fn["sy#util#get_hunk_stats"]()
+              if vim.fn.empty(h) == 0 then
+                print("[Hunk " .. h.current_hunk .. "/" .. h.total_hunks .. "]")
+              end
+            end
+          }
+        )
+      end
+    }, --  }}}
 
     {
       "norcalli/nvim-colorizer.lua", --  {{{
@@ -394,6 +425,8 @@ PCKR.add(
     }, --  }}}
 
     -- TODO C rainbow ?
+    -- TODO formatters
+    -- TODO snippets ?
   }
 ) -- }}}
 
@@ -453,34 +486,6 @@ for key, name in pairs(
 end
 
 --  }}}
-
--- signify {{{
-
-vim.keymap.set("n", "+", "<Plug>(signify-next-hunk)", { noremap = true })
-vim.keymap.set("n", "-", "<Plug>(signify-prev-hunk)", { noremap = true })
-vim.keymap.set("n", "<Leader>gt", vim.cmd.SignifyToggle, { noremap = true })
-vim.keymap.set("n", "<Leader>gs", vim.cmd.SignifyHunkDiff, { noremap = true })
-vim.keymap.set("n", "<Leader>gS", vim.cmd.SignifyDiff, { noremap = true })
-vim.keymap.set("n", "<Leader>gu", vim.cmd.SignifyHunkUndo, { noremap = true })
-vim.keymap.set("n", "<Leader>gR", vim.cmd.SignifyRefresh, { noremap = true })
-vim.keymap.set("n", "<Leader>gh", vim.cmd.SignifyToggleHighlight, { noremap = true })
-
-vim.api.nvim_create_autocmd(
-  "User", {
-    pattern = "SignifyHunk",
-    callback = function()
-      local h = vim.fn["sy#util#get_hunk_stats"]()
-      if vim.fn.empty(h) == 0 then
-        print("[Hunk " .. h.current_hunk .. "/" .. h.total_hunks .. "]")
-      end
-    end
-  }
-)
-
---  }}}
-
--- TODO formatters
--- TODO snippets ?
 
 --  }}}
 
