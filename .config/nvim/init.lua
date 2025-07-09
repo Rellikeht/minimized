@@ -8,6 +8,12 @@ local function calc_pumheight()
   return result
 end
 
+function UpdateTable(t1, t2)
+  for k, v in pairs(t2) do
+    table.insert(t1, k, v)
+  end
+end
+
 vim.g.B = function(n)
   if n == nil then
     n = 1
@@ -294,14 +300,20 @@ end
 
 -- }}}
 
--- plugins {{{
+-- common plugins {{{
 
--- sneak & quickscope {{{
+-- pre setup {{{
 
+-- sneak & quickscope
 vim.g["sneak#prompt"] = " <sneak> "
 vim.g["sneak#use_ic_scs"] = true
 vim.g["sneak#label"] = true
 vim.g["sneak#next"] = false
+
+-- matchup
+vim.g.matchup_matchparen_offscreen = { method = "popup" }
+vim.g.matchup_surround_enabled = true
+vim.g.matchup_delim_noskips = 0
 
 --  }}}
 
@@ -355,59 +367,63 @@ PCKR.setup(
 
 --  }}}
 
-PCKR.add(
-  { -- {{{
-    "justinmk/vim-sneak",
-    "unblevable/quick-scope",
-    "tpope/vim-surround",
-    "tpope/vim-tbone",
-    "tpope/vim-abolish",
-    "tpope/vim-repeat",
-    "wellle/targets.vim",
-  }
-) -- }}}
-
--- post setup {{{
-
--- sneak & quickscope {{{
-
-vim.g.qs_delay = 40
-vim.g.qs_hi_priority = 2
-vim.g.qs_second_highlight = true
-
-vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#c81f16" })
-vim.api.nvim_set_hl(0, "QuickScopeSecondary", { fg = "#ff5642" })
-
-for key_in, key_out in pairs(
+local plugin_configs = {  -- {{{
   {
-    ["<C-n>"] = ";",
-    ["<C-p>"] = ",",
-    s = "s",
-    S = "S",
-    f = "f",
-    F = "F",
-    t = "t",
-    T = "T",
-  }
-) do
-  vim.keymap.set(
-    "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
-  )
-end
+    "justinmk/vim-sneak", --  {{{
+    config = function()
+      for key_in, key_out in pairs(
+        {
+          ["<C-n>"] = ";",
+          ["<C-p>"] = ",",
+          s = "s",
+          S = "S",
+          f = "f",
+          F = "F",
+          t = "t",
+          T = "T",
+        }
+      ) do
+        vim.keymap.set(
+          "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
+        )
+      end
+    end
+  }, --  }}}
 
-vim.keymap.set("x", "<Space>a", "<Plug>VSurround", {})
-vim.keymap.set("x", "<Space>A", "<Plug>VgSurround", {})
+  {
+    "unblevable/quick-scope", --  {{{
+    config = function()
+      vim.g.qs_delay = 40
+      vim.g.qs_hi_priority = 2
+      vim.g.qs_second_highlight = true
+
+      vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#c81f16" })
+      vim.api.nvim_set_hl(0, "QuickScopeSecondary", { fg = "#ff5642" })
+    end
+  }, --  }}}
+
+  {
+    "tpope/vim-surround", --  {{{
+    config = function()
+      vim.keymap.set("x", "<Space>a", "<Plug>VSurround", {})
+      vim.keymap.set("x", "<Space>A", "<Plug>VgSurround", {})
+    end
+  }, --  }}}
+
+  {
+    "tpope/vim-repeat", --  {{{
+    config = function()
+      -- because RepeatDot sometimes fails
+      vim.keymap.set("n", "<Space>.", ".", { noremap = true })
+    end
+  }, --  }}}
+
+  "tpope/vim-tbone",
+  "tpope/vim-abolish",
+  "wellle/targets.vim",
+} -- }}}
 
 --  }}}
-
--- repeat {{{
-
--- because RepeatDot sometimes fails
-vim.keymap.set("n", "<Space>.", ".", { noremap = true })
-
---  }}}
-
--- }}}
 
 if vim.g.vscode then
   --  {{{
@@ -443,25 +459,31 @@ if vim.g.vscode then
     VSCODE.call("workbench.action.findInFiles")
   end)
 
+  PCKR.add(plugin_configs)
   return
   -- }}}
 end
 
--- matchup {{{
-
-vim.g.matchup_matchparen_offscreen = { method = "popup" }
-vim.g.matchup_surround_enabled = true
-vim.g.matchup_delim_noskips = 0
-
---  }}}
-
-PCKR.add(
+UpdateTable(
+  plugin_configs,
   { --  {{{
     "Rellikeht/lazy-utils",
-    "mbbill/undotree",
     "andymass/vim-matchup",
-    "tpope/vim-fugitive",
     "ryvnf/readline.vim",
+
+    {
+      "tpope/vim-fugitive", --  {{{
+      config = function()
+        vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
+        vim.keymap.set("n", "<Leader>g<Space>", ":<C-u>G<Space>", {})
+      end
+    }, --  }}}
+
+    {
+      "mbbill/undotree", --  {{{
+      config = function()
+      end
+    }, --  }}}
 
     {
       "windwp/nvim-autopairs", -- {{{
@@ -513,81 +535,65 @@ PCKR.add(
     {
       "junegunn/fzf.vim", --  {{{
       requires = { "junegunn/fzf" },
-    },                    --  }}}
+      config = function()
+        -- slighty longer than in original :D
+        -- https://github.com/junegunn/fzf.vim/blob/master/README.md#status-line-of-terminal-buffer
+        vim.api.nvim_create_autocmd(
+          "FileType", {
+            pattern = "fzf",
+            callback = function()
+              local previous = {
+                laststatus = vim.opt.laststatus._value,
+                showmode = vim.opt.showmode._value,
+                ruler = vim.opt.ruler._value,
+              }
+              vim.opt.laststatus = 0
+              vim.opt.showmode = false
+              vim.opt.ruler = false
+              vim.api.nvim_create_autocmd(
+                "BufLeave", {
+                  pattern = "<buffer>",
+                  callback = function()
+                    vim.opt.laststatus = previous.laststatus
+                    vim.opt.showmode = previous.showmode
+                    vim.opt.ruler = previous.ruler
+                  end
+                })
+            end
+          }
+        )
 
-  })                      --  }}}
+        vim.g.fzf_layout = { down = "100%" }
+        vim.g.fzf_vim = { preview_window = { "down,50%,border-none" } }
+        vim.g.fzf_history_dir = vim.fn.stdpath("data") .. "/fzf-history"
 
--- undotree {{{
+        vim.g.fzf_colors = {
+          fg = { "fg", "Normal" },
+          bg = { "bg", "Normal" },
+          hl = { "fg", "Comment" },
+          ["fg+"] = { "fg", "CursorLine", "CursorColumn", "Normal" },
+          ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
+          ["hl+"] = { "fg", "Statement" },
+          info = { "fg", "PreProc" },
+          prompt = { "fg", "Conditional" },
+          pointer = { "fg", "Exception" },
+          marker = { "fg", "Keyword" },
+          spinner = { "fg", "Label" },
+          header = { "fg", "Comment" },
+        }
 
--- }}}
+        vim.g.fzf_action = {
+          ["alt-t"] = function(lines)
+            vim.cmd.Tabe()
+            vim.cmd.args(lines)
+          end,
+          ["alt-T"] = "Tabe",
+          ["alt-v"] = "view",
+        }
 
--- fugitive {{{
-
-vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
-vim.keymap.set("n", "<Leader>g<Space>", ":<C-u>G<Space>", {})
-
---  }}}
-
--- fzf {{{
-
--- slighty longer than in original :D
--- https://github.com/junegunn/fzf.vim/blob/master/README.md#status-line-of-terminal-buffer
-vim.api.nvim_create_autocmd(
-  "FileType", {
-    pattern = "fzf",
-    callback = function()
-      local previous = {
-        laststatus = vim.opt.laststatus._value,
-        showmode = vim.opt.showmode._value,
-        ruler = vim.opt.ruler._value,
-      }
-      vim.opt.laststatus = 0
-      vim.opt.showmode = false
-      vim.opt.ruler = false
-      vim.api.nvim_create_autocmd(
-        "BufLeave", {
-          pattern = "<buffer>",
-          callback = function()
-            vim.opt.laststatus = previous.laststatus
-            vim.opt.showmode = previous.showmode
-            vim.opt.ruler = previous.ruler
-          end
-        })
-    end
-  }
-)
-
-vim.g.fzf_layout = { down = "100%" }
-vim.g.fzf_vim = { preview_window = { "down,50%,border-none" } }
-vim.g.fzf_history_dir = vim.fn.stdpath("data") .. "/fzf-history"
-
-vim.g.fzf_colors = {
-  fg = { "fg", "Normal" },
-  bg = { "bg", "Normal" },
-  hl = { "fg", "Comment" },
-  ["fg+"] = { "fg", "CursorLine", "CursorColumn", "Normal" },
-  ["bg+"] = { "bg", "CursorLine", "CursorColumn" },
-  ["hl+"] = { "fg", "Statement" },
-  info = { "fg", "PreProc" },
-  prompt = { "fg", "Conditional" },
-  pointer = { "fg", "Exception" },
-  marker = { "fg", "Keyword" },
-  spinner = { "fg", "Label" },
-  header = { "fg", "Comment" },
-}
-
-vim.g.fzf_action = {
-  ["alt-t"] = function(lines)
-    vim.cmd.Tabe()
-    vim.cmd.args(lines)
-  end,
-  ["alt-T"] = "Tabe",
-  ["alt-v"] = "view",
-}
-
--- because those are nice and this config should be as
--- self contained as it is possible
-vim.env.FZF_DEFAULT_OPTS = [[
+        -- because those are nice and this config should be as
+        -- self contained as it is possible
+        vim.env.FZF_DEFAULT_OPTS = [[
 --border=none
 --bind 'alt-k:preview-up,alt-j:preview-down'
 --bind 'ctrl-k:kill-line,ctrl-j:ignore'
@@ -601,37 +607,14 @@ vim.env.FZF_DEFAULT_OPTS = [[
 --bind 'ctrl-t:toggle'
 ]]
 
--- TODO add commands
+        -- TODO add commands
+      end
+    }, --  }}}
 
---  }}}
+  }
+) --  }}}
 
--- other {{{
-
--- TODO fix coloring of diffs
--- those below don't work
-vim.cmd [[
-hi DiffAdd
-            \ ctermbg=DarkGreen guibg=#0d5826
-            \ ctermfg=NONE guifg=NONE
-hi DiffText
-            \ ctermbg=Gray guibg=#566670
-            \ ctermfg=NONE guifg=NONE
-hi DiffChange
-            \ ctermbg=DarkBlue guibg=#0f1a7f
-            \ ctermfg=NONE guifg=NONE
-hi DiffDelete
-            \ ctermbg=DarkRed guibg=#800620
-            \ ctermfg=NONE guifg=NONE
-
-"hi DiffAdd ctermbg=DarkGreen guibg=#0d5826
-"hi DiffText ctermbg=Gray guibg=#566670
-"hi DiffChange ctermbg=DarkBlue guibg=#0f1a7f
-"hi DiffDelete ctermbg=DarkRed guibg=#800620
-]]
-
---  }}}
-
--- }}}
+PCKR.add(plugin_configs)
 
 -- other settings {{{
 
@@ -654,6 +637,28 @@ vim.keymap.set(
 vim.keymap.set(
   "t", "<C-q><C-o>", "<C-\\><C-o>", { noremap = true }
 )
+
+-- TODO fix coloring of diffs
+-- those below don't work
+vim.cmd [[
+hi DiffAdd
+            \ ctermbg=DarkGreen guibg=#0d5826
+            \ ctermfg=NONE guifg=NONE
+hi DiffText
+            \ ctermbg=Gray guibg=#566670
+            \ ctermfg=NONE guifg=NONE
+hi DiffChange
+            \ ctermbg=DarkBlue guibg=#0f1a7f
+            \ ctermfg=NONE guifg=NONE
+hi DiffDelete
+            \ ctermbg=DarkRed guibg=#800620
+            \ ctermfg=NONE guifg=NONE
+
+"hi DiffAdd ctermbg=DarkGreen guibg=#0d5826
+"hi DiffText ctermbg=Gray guibg=#566670
+"hi DiffChange ctermbg=DarkBlue guibg=#0f1a7f
+"hi DiffDelete ctermbg=DarkRed guibg=#800620
+]]
 
 -- }}}
 
