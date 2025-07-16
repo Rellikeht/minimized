@@ -30,17 +30,6 @@ end
 -- commands {{{
 
 vim.api.nvim_create_user_command(
-  "Argument", function(opts)
-    if #opts.fargs == 0 then
-      vim.cmd.argument()
-    else
-      vim.cmd.argedit(opts.fargs[1])
-      vim.cmd.argdedupe()
-    end
-  end, { complete = "arglist", nargs = "?" }
-)
-
-vim.api.nvim_create_user_command(
   "Tabe", function(opts)
     local count = opts.count
     if count == 0 then count = -1 end
@@ -186,6 +175,7 @@ if not success then pcall(vim.cmd.colorscheme, "retrobox") end
 
 -- simple yet effective
 vim.api.nvim_set_hl(0, "NormalFloat", { link = "CursorLine" })
+vim.api.nvim_set_hl(0, "MatchParen", { bold = true })
 
 -- acceptable for now
 vim.api.nvim_set_hl(0, "Pmenu", { link = "CursorColumn" })
@@ -239,12 +229,6 @@ vim.keymap.set("n", "<Space>Y", "\"+Y", { noremap = true })
 vim.keymap.set("n", "<Space>u", "\"+p", { noremap = true })
 vim.keymap.set("n", "<Space>U", "\"+P", { noremap = true })
 
--- Temporary but needed
-vim.keymap.set("n", "<Space>n", ":<C-u>next<CR>", {})
-vim.keymap.set("n", "<Space>p", ":<C-u>prev<CR>", {})
-vim.keymap.set("n", "<Space>o", ":<C-u>argedit<Space>", {})
-vim.keymap.set("n", "<Space>e", ":<C-u>Argument<Space>", {})
-
 -- }}}
 
 -- tabs {{{
@@ -287,7 +271,6 @@ end
 for key, cmd in pairs(
   {
     m = ":<C-u>marks<CR>",
-    a = ":<C-u>args<CR>",
     b = ":<C-u>ls<CR>",
   }
 ) do
@@ -375,6 +358,12 @@ local plugin_configs = { -- {{{
   {
     "Rellikeht/arglist-plus", --  {{{
     config = function()
+      -- TODO replace
+      vim.keymap.set("n", "<Space>n", "<Plug>ArgNext", {})
+      vim.keymap.set("n", "<Space>p", "<Plug>ArgPrev", {})
+      vim.keymap.set("n", "<Space>ia", "<Plug>ArgList", {})
+      vim.keymap.set("n", "<Space>e", ":<C-u>ArgGo<Space>", {})
+      vim.keymap.set("n", "<Space>o", ":<C-u>argedit<Space>", {})
     end
   }, --  }}}
 
@@ -591,6 +580,7 @@ UpdateTable(
         vim.g.fzf_action = {
           ["alt-t"] = function(lines)
             vim.cmd.Tabe()
+            -- TODO incorporate arglist-plus
             vim.cmd.args(lines)
           end,
           ["alt-T"] = "Tabe",
