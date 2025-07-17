@@ -358,12 +358,14 @@ local plugin_configs = { -- {{{
   {
     "Rellikeht/arglist-plus", --  {{{
     config = function()
-      -- TODO replace
-      vim.keymap.set("n", "<Space>n", "<Plug>ArgNext", {})
-      vim.keymap.set("n", "<Space>p", "<Plug>ArgPrev", {})
-      vim.keymap.set("n", "<Space>ia", "<Plug>ArgList", {})
-      vim.keymap.set("n", "<Space>e", ":<C-u>ArgGo<Space>", {})
-      vim.keymap.set("n", "<Space>o", ":<C-u>argedit<Space>", {})
+      vim.keymap.set("n", "<Space>n", "<Plug>ANext", {})
+      vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
+      vim.keymap.set("n", "<Space>ll", "<Plug>AAList", {})
+      vim.keymap.set("n", "<Space>le", ":<C-u>AGo<Space>", {})
+      vim.keymap.set("n", "<Space>lo", ":AEdit<Space>", {})
+      vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
+      vim.keymap.set("n", "<Space>ld", ":<C-u>ADel<Space>", {})
+      vim.keymap.set("n", "<Space>lc", "<Plug>AGtoL", {})
     end
   }, --  }}}
 
