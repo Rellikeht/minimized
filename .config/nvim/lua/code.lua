@@ -18,127 +18,120 @@ end
 
 -- plugins {{{
 
--- pre setup {{{
-
--- vim-slime {{{
-
-vim.g.slime_paste_file = vim.fn.tempname()
-vim.g.slime_dont_ask_default = true
-vim.g.slime_bracketed_paste = true
-vim.g.slime_no_mappings = true
-
-vim.keymap.set(
-  "n", "gs:", ":<C-u>SlimeConfigAll<CR>", { noremap = true }
-)
-vim.keymap.set(
-  "n", "gss", "<Plug>SlimeLineSend", { noremap = true }
-)
-vim.keymap.set(
-  "n", "gs", "<Plug>SlimeMotionSend", { noremap = true }
-)
-vim.keymap.set(
-  "n", "gsi", "<Plug>SlimeParagraphSend", { noremap = true }
-)
-vim.keymap.set(
-  "x", "gsi", "<Plug>SlimeRegionSend", { noremap = true }
-)
-vim.keymap.set("n", "gs;", ":SlimeSend<CR>", { noremap = true })
-vim.keymap.set("x", "gs;", ":SlimeSend<CR>", { noremap = true })
-
-vim.api.nvim_create_user_command(
-  "SlimeConfigAll", function(_)
-    vim.cmd.SlimeConfig()
-    vim.g.slime_default_config = vim.b.slime_config
-  end, { nargs = 0 }
-)
-
-function Slime_setup_tmux()
-  local function slime_tmux_uniform_config()
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-      local has, _ = pcall(
-        vim.api.nvim_buf_get_var, bufnr, "slime_config"
-      )
-      if has then
-        vim.api.nvim_buf_set_var(
-          bufnr, "slime_config", vim.g.slime_default_config
-        )
-      end
-    end
-  end
-
-  vim.api.nvim_create_user_command(
-    "SlimeTmuxPane", function(opts)
-      vim.g.slime_default_config = {
-        socket_name = vim.g.slime_default_config.socket_name,
-        target_pane = opts.fargs[1],
-      }
-      slime_tmux_uniform_config()
-    end, { nargs = 1 }
-  )
-  vim.api.nvim_create_user_command(
-    "SlimeTmuxSocket", function(opts)
-      vim.g.slime_default_config = {
-        socket_name = opts.fargs[1],
-        target_pane = vim.g.slime_default_config.target_pane,
-      }
-      slime_tmux_uniform_config()
-    end, { nargs = 1 }
-  )
-
-  vim.g.slime_target = "tmux"
-  vim.g.slime_default_config = {
-    socket_name = vim.fn.get(vim.fn.split(vim.env.TMUX, ","), 0),
-    target_pane = "{top-right}",
-  }
-end
-
-function Slime_setup_nvim()
-  vim.g.slime_target = "neovim"
-  vim.g.slime_suggest_default = false
-  vim.g.slime_menu_config = false
-  vim.g.slime_input_pid = false
-
-  -- https://github.com/jpalardy/vim-slime/blob/main/assets/doc/targets/neovim.md
-  vim.g.slime_get_jobid = function()
-    -- iterate over all buffers to find the first terminal with a valid job
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_get_option_value("buftype", { buf = bufnr }) ==
-          "terminal" then
-        local chan = vim.api.nvim_get_option_value(
-          "channel", { buf = bufnr }
-        )
-        if chan and chan > 0 then return chan end
-      end
-    end
-    return nil
-  end
-
-  pcall(vim.api.nvim_del_user_command, "SlimeTmuxPane")
-  pcall(vim.api.nvim_del_user_command, "SlimeTmuxSocket")
-end
-
--- There may be repl running in tmux that
--- should be reused so this is global even with
--- gui running
-if vim.env.TMUX then
-  Slime_setup_tmux()
-else
-  Slime_setup_nvim()
-end
-
---  }}}
-
---  }}}
-
 PCKR.add(
   { -- {{{
-    "Rellikeht/vim-compiler-collection",
-    "Konfekt/vim-compilers",
 
     {
-      "jpalardy/vim-slime", --  {{{
+      "jpalardy/vim-slime",   --  {{{
 
-    },                    --  }}}
+      config_pre = function() --  {{{
+        vim.g.slime_paste_file = vim.fn.tempname()
+        vim.g.slime_dont_ask_default = true
+        vim.g.slime_bracketed_paste = true
+        vim.g.slime_no_mappings = true
+      end,                --  }}}
+
+      config = function() --  {{{
+        vim.keymap.set(
+          "n", "gs:", ":<C-u>SlimeConfigAll<CR>", { noremap = true }
+        )
+        vim.keymap.set(
+          "n", "gss", "<Plug>SlimeLineSend", { noremap = true }
+        )
+        vim.keymap.set(
+          "n", "gs", "<Plug>SlimeMotionSend", { noremap = true }
+        )
+        vim.keymap.set(
+          "n", "gsi", "<Plug>SlimeParagraphSend", { noremap = true }
+        )
+        vim.keymap.set(
+          "x", "gsi", "<Plug>SlimeRegionSend", { noremap = true }
+        )
+        vim.keymap.set("n", "gs;", ":SlimeSend<CR>", { noremap = true })
+        vim.keymap.set("x", "gs;", ":SlimeSend<CR>", { noremap = true })
+
+        vim.api.nvim_create_user_command(
+          "SlimeConfigAll", function(_)
+            vim.cmd.SlimeConfig()
+            vim.g.slime_default_config = vim.b.slime_config
+          end, { nargs = 0 }
+        )
+
+        function Slime_setup_tmux()
+          local function slime_tmux_uniform_config()
+            for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+              local has, _ = pcall(
+                vim.api.nvim_buf_get_var, bufnr, "slime_config"
+              )
+              if has then
+                vim.api.nvim_buf_set_var(
+                  bufnr, "slime_config", vim.g.slime_default_config
+                )
+              end
+            end
+          end
+
+          vim.api.nvim_create_user_command(
+            "SlimeTmuxPane", function(opts)
+              vim.g.slime_default_config = {
+                socket_name = vim.g.slime_default_config.socket_name,
+                target_pane = opts.fargs[1],
+              }
+              slime_tmux_uniform_config()
+            end, { nargs = 1 }
+          )
+          vim.api.nvim_create_user_command(
+            "SlimeTmuxSocket", function(opts)
+              vim.g.slime_default_config = {
+                socket_name = opts.fargs[1],
+                target_pane = vim.g.slime_default_config.target_pane,
+              }
+              slime_tmux_uniform_config()
+            end, { nargs = 1 }
+          )
+
+          vim.g.slime_target = "tmux"
+          vim.g.slime_default_config = {
+            socket_name = vim.fn.get(vim.fn.split(vim.env.TMUX, ","), 0),
+            target_pane = "{top-right}",
+          }
+        end
+
+        function Slime_setup_nvim()
+          vim.g.slime_target = "neovim"
+          vim.g.slime_suggest_default = false
+          vim.g.slime_menu_config = false
+          vim.g.slime_input_pid = false
+
+          -- https://github.com/jpalardy/vim-slime/blob/main/assets/doc/targets/neovim.md
+          vim.g.slime_get_jobid = function()
+            -- iterate over all buffers to find the first terminal with a valid job
+            for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+              if vim.api.nvim_get_option_value("buftype", { buf = bufnr }) ==
+                  "terminal" then
+                local chan = vim.api.nvim_get_option_value(
+                  "channel", { buf = bufnr }
+                )
+                if chan and chan > 0 then return chan end
+              end
+            end
+            return nil
+          end
+
+          pcall(vim.api.nvim_del_user_command, "SlimeTmuxPane")
+          pcall(vim.api.nvim_del_user_command, "SlimeTmuxSocket")
+        end
+
+        -- There may be repl running in tmux that
+        -- should be reused so this is global even with
+        -- gui running
+        if vim.env.TMUX then
+          Slime_setup_tmux()
+        else
+          Slime_setup_nvim()
+        end
+      end --  }}}
+    },    --  }}}
 
     {
       "mhinz/vim-signify", --  {{{

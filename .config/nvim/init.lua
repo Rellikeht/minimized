@@ -285,21 +285,6 @@ end
 
 -- common plugins {{{
 
--- pre setup {{{
-
--- sneak & quickscope
-vim.g["sneak#prompt"] = " <sneak> "
-vim.g["sneak#use_ic_scs"] = true
-vim.g["sneak#label"] = true
-vim.g["sneak#next"] = false
-
--- matchup
-vim.g.matchup_matchparen_offscreen = { method = "popup" }
-vim.g.matchup_surround_enabled = true
-vim.g.matchup_delim_noskips = 0
-
---  }}}
-
 -- pckr setup {{{
 
 local function bootstrap_pckr()
@@ -370,8 +355,17 @@ local plugin_configs = { -- {{{
   }, --  }}}
 
   {
-    "justinmk/vim-sneak", --  {{{
-    config = function()
+    "justinmk/vim-sneak",   --  {{{
+
+    config_pre = function() --  {{{
+      -- sneak & quickscope
+      vim.g["sneak#prompt"] = " <sneak> "
+      vim.g["sneak#use_ic_scs"] = true
+      vim.g["sneak#label"] = true
+      vim.g["sneak#next"] = false
+    end,                --  }}}
+
+    config = function() --  {{{
       for key_in, key_out in pairs(
         {
           ["<C-n>"] = ";",
@@ -388,8 +382,8 @@ local plugin_configs = { -- {{{
           "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
         )
       end
-    end
-  }, --  }}}
+    end --  }}}
+  },    --  }}}
 
   {
     "unblevable/quick-scope", --  {{{
@@ -465,8 +459,16 @@ UpdateTable(
   plugin_configs,
   { --  {{{
     "Rellikeht/lazy-utils",
-    "andymass/vim-matchup",
     "ryvnf/readline.vim",
+
+    {
+      "andymass/vim-matchup", --  {{{
+      config_pre = function()
+        vim.g.matchup_matchparen_offscreen = { method = "popup" }
+        vim.g.matchup_surround_enabled = true
+        vim.g.matchup_delim_noskips = 0
+      end,
+    }, --  }}}
 
     {
       "tpope/vim-fugitive", --  {{{
