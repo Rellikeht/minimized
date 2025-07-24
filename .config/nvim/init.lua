@@ -37,8 +37,7 @@ vim.api.nvim_create_user_command(
     -- This full lua version is closest to working
     -- but negative indices are too much for it
     -- vim.cmd.tabnew({range={count}})
-    vim.cmd.arglocal({ bang = true })
-    vim.cmd.args({ args = opts.fargs, bang = true })
+    vim.cmd.arglocal({ args = opts.fargs, bang = true })
   end, { complete = "file", nargs = "*", count = 1 }
 )
 
@@ -338,19 +337,26 @@ PCKR.setup(
 local plugin_configs = { -- {{{
   "tpope/vim-tbone",
   "tpope/vim-abolish",
+  "tpope/vim-eunuch",
   "wellle/targets.vim",
 
   {
     "Rellikeht/arglist-plus", --  {{{
+    config_pre = function()
+    end,
     config = function()
       vim.keymap.set("n", "<Space>n", "<Plug>ANext", {})
       vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
-      vim.keymap.set("n", "<Space>ll", "<Plug>AAList", {})
+      vim.keymap.set("n", "<Space>ll", "<Plug>AList", {})
       vim.keymap.set("n", "<Space>le", ":<C-u>AGo<Space>", {})
       vim.keymap.set("n", "<Space>lo", ":AEdit<Space>", {})
+      vim.keymap.set("n", "<Space>lO", ":AEditBuf<Space>", {})
       vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
-      vim.keymap.set("n", "<Space>ld", ":<C-u>ADel<Space>", {})
-      vim.keymap.set("n", "<Space>lc", "<Plug>AGtoL", {})
+      vim.keymap.set("n", "<Space>la", ":AAddBuf<Space>", {})
+      vim.keymap.set("n", "<Space>ld", ":ADel<Space>", {})
+      vim.keymap.set("n", "<Space>lr", ":ABufDel<Space>", {})
+      vim.keymap.set("n", "<Space>lR", ":ABufWipe<Space>", {})
+      vim.keymap.set("n", "<Space>lc", "<Plug>AGlobToLoc", {})
     end
   }, --  }}}
 
@@ -587,7 +593,7 @@ UpdateTable(
             -- TODO incorporate arglist-plus
             vim.cmd.args(lines)
           end,
-          ["alt-T"] = "Tabe",
+          ["alt-T"] = "tabedit",
           ["alt-v"] = "view",
         }
 
