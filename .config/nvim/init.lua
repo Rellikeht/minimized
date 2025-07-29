@@ -25,19 +25,60 @@ vim.g.B = function(n)
   return s
 end
 
+function RepeatStr(str, times)
+  local result = ""
+  for _ = 1, times do
+    result = result .. str
+  end
+  return result
+end
+
+function StrValue(value, row)
+  local rowstr = RepeatStr(" ", row)
+  if type(value) ~= "table" then
+    return tostring(value)
+  end
+  return "{\n" ..
+      StrRecursiveRow(value, row + 2) ..
+      rowstr ..
+      "}"
+end
+
+function StrRecursiveRow(table, row)
+  local result = ""
+  for k, v in pairs(table) do
+    result = result ..
+        RepeatStr(" ", row) ..
+        StrValue(k, row) ..
+        " : " ..
+        StrValue(v, row) ..
+        "\n"
+  end
+  return result
+end
+
+function PrintRecursive(table)
+  print(StrRecursiveRow(table, 0))
+end
+
+function Map(func, table)
+  local result = {}
+  for k, v in pairs(table) do
+    result[k] = func(v)
+  end
+  return result
+end
+
 --  }}}
 
 -- commands {{{
 
 vim.api.nvim_create_user_command(
-  "Tabe", function(opts)
+  "TabOpen", function(opts)
     local count = opts.count
     if count == 0 then count = -1 end
     vim.cmd(opts.count .. "tabnew")
-    -- This full lua version is closest to working
-    -- but negative indices are too much for it
-    -- vim.cmd.tabnew({range={count}})
-    vim.cmd.arglocal({ args = opts.fargs, bang = true })
+    vim.cmd("arglocal! " .. opts.args)
   end, { complete = "file", nargs = "*", count = 1 }
 )
 
@@ -589,9 +630,9 @@ UpdateTable(
 
         vim.g.fzf_action = {
           ["alt-t"] = function(lines)
-            vim.cmd.Tabe()
-            -- TODO incorporate arglist-plus
-            vim.cmd.args(lines)
+            vim.cmd.TabOpen(
+              Map(vim.fn.fnameescape, lines)
+            )
           end,
           ["alt-T"] = "tabedit",
           ["alt-v"] = "view",
@@ -687,10 +728,18 @@ end -- }}}
 
 pcall(require, "local")
 
+-- Special Code command as part of config
 vim.api.nvim_create_user_command(
   "Code", function()
     require("code")
   end, { nargs = 0 }
+)
+
+-- For easier sourcing of additional stuff
+vim.api.nvim_create_user_command(
+  "SoAdd", function(opts)
+    require(opts.fargs[1])
+  end, { nargs = 1 }
 )
 
 --  }}}
