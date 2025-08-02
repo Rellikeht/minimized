@@ -173,6 +173,7 @@ vim.cmd.filetype("plugin", "on")
 vim.cmd.filetype("indent", "on")
 vim.cmd.syntax("on")
 vim.g.loaded_matchit = 1
+vim.g.qfloc = 1
 
 -- }}}
 

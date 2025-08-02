@@ -338,19 +338,29 @@ PCKR.add(
               -- navigation {{{
 
               vim.keymap.set(
-                "n", "<Leader>dd", vim.lsp.buf.definition,
+                "n", "<Leader>dd",
+                function()
+                  vim.lsp.buf.definition({ loclist = vim.g.qfloc })
+                end,
                 { desc = "go to definition", buffer = bufnr }
               )
               vim.keymap.set(
-                "n", "<Leader>dD", vim.lsp.buf.declaration,
-                { desc = "go to declaration", buffer = bufnr }
+                "n", "<Leader>dD",
+                function()
+                  vim.lsp.buf.declaration({ loclist = vim.g.qfloc })
+                end, { desc = "go to declaration", buffer = bufnr }
               )
               vim.keymap.set(
-                "n", "<Leader>di", vim.lsp.buf.implementation,
-                { desc = "go to implementation", buffer = bufnr }
+                "n", "<Leader>di",
+                function()
+                  vim.lsp.buf.implementation({ loclist = vim.g.qfloc })
+                end, { desc = "go to implementation", buffer = bufnr }
               )
               vim.keymap.set(
-                "n", "<Leader>dt", vim.lsp.buf.type_definition,
+                "n", "<Leader>dt",
+                function()
+                  vim.lsp.buf.type_definition({ loclist = vim.g.qfloc })
+                end,
                 { desc = "go to type definition", buffer = bufnr }
               )
 
