@@ -672,6 +672,27 @@ UpdateTable(
           end,
           ["alt-T"] = "tabedit",
           ["alt-v"] = "view",
+          ["alt-l"] = function(files)
+            vim.fn["aplus#define"](files)
+            vim.fn["aplus#select"](0)
+          end,
+          -- command adds one file and edits another
+          ["alt-L"] = vim.fn["aplus#define"],
+          ["alt-e"] = function(files)
+            -- command misses one file
+            vim.fn["aplus#edit"]("$", 0, files)
+          end,
+          ["alt-E"] = function(files)
+            -- command misses one file
+            vim.fn["aplus#edit"]("", 0, files)
+          end,
+          ["alt-a"] = "$AAdd",
+          ["alt-A"] = "AAdd",
+          ["alt-b"] = function(files)
+            for _, file in pairs(files) do
+              vim.cmd.badd(vim.fn.fnameescape(file))
+            end
+          end,
         }
 
         -- because those are nice and this config should be as
@@ -690,7 +711,8 @@ UpdateTable(
 --bind 'ctrl-t:toggle'
 ]]
 
-        -- TODO add commands
+        -- TODO delete arguments (?)
+        -- TODO more commands
       end
     }, --  }}}
 
