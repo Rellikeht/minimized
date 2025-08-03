@@ -69,6 +69,20 @@ function Map(func, table)
   return result
 end
 
+function CommandRep(fn, arg)
+  return function() for _ = 1, vim.v.count1 do fn(arg) end end
+end
+
+function Qflcmd(cmd)
+  local prefix = "c"
+  if vim.g.qfloc == 1 then
+    prefix = "l"
+  end
+  return function(...)
+    vim.cmd[prefix .. cmd](...)
+  end
+end
+
 --  }}}
 
 -- commands {{{
@@ -767,6 +781,77 @@ hi DiffDelete
 ]]
 
 -- }}}
+
+-- quickfix {{{
+
+for key, map in pairs({
+  [";n"] = CommandRep(Qflcmd("next")),
+  [";p"] = CommandRep(Qflcmd("previous")),
+  [";0"] = Qflcmd("first"),
+  [";$"] = Qflcmd("last"),
+  [";l"] = Qflcmd("history"),
+  -- TODO height
+  [";w"] = function()
+    local height = vim.v.count
+    if height == 0 then height = 10 end
+    Qflcmd("open")({ count = height })
+  end,
+  [";W"] = function()
+    local height = vim.v.count
+    if height == 0 then height = 10 end
+    Qflcmd("window")({ count = height })
+  end,
+}) do
+  vim.keymap.set("n", key, map, { noremap = true, silent = true })
+end
+
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = "qf",
+    callback = function()
+      vim.keymap.set(
+        { "n", "v" }, "q", ":q<CR>", { noremap = true, buffer = true }
+      )
+      vim.keymap.set(
+        "n", "<", Qflcmd("older"), { noremap = true, buffer = true }
+      )
+      vim.keymap.set(
+        "n", ">", Qflcmd("newer"), { noremap = true, buffer = true }
+      )
+      vim.keymap.set(
+        "n", "<BS>", "<CR>zv", {
+          noremap = true, buffer = true, silent = true,
+        }
+      )
+      vim.keymap.set(
+        "n", "<CR>", function()
+          local qpos = vim.fn.getcurpos()
+          vim.cmd.execute("\"normal \\<BS>\"")
+          Qflcmd("open")()
+          vim.fn.setpos(".", qpos)
+        end, {
+          buffer = true,
+        }
+      )
+      vim.keymap.set(
+        "n", "<C-h>", function()
+          vim.cmd.execute("\"normal \\<CR>\"")
+          Qflcmd("close")()
+        end, {
+          buffer = true, silent = true,
+        }
+      )
+      vim.keymap.set(
+        "n", "J", "j<CR>", { noremap = true, buffer = true, silent = true }
+      )
+      vim.keymap.set(
+        "n", "K", "k<CR>", { noremap = true, buffer = true, silent = true }
+      )
+    end
+  }
+)
+
+--  }}}
 
 if vim.g.neovide then
   -- {{{

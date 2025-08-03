@@ -3,10 +3,6 @@ if success and val then return end
 
 -- helpers {{{
 
-local function commandRep(fn, arg)
-  return function() for _ = 1, vim.v.count1 do fn(arg) end end
-end
-
 ---@diagnostic disable-next-line: unused-local, unused-function
 local function copy_table(tbl)
   local result = {}
@@ -247,11 +243,11 @@ PCKR.add(
         )
         vim.keymap.set(
           "n", "<Leader>de", vim.diagnostic.open_float,
-          { desc = "show diagnostics" }
+          { desc = "show diagnostics under cursor" }
         )
 
         vim.keymap.set(
-          "n", "<Leader>dp", commandRep(
+          "n", "<Leader>dp", CommandRep(
             NvimDiagPrev, {
               severity = {
                 vim.diagnostic.severity.ERROR,
@@ -261,7 +257,7 @@ PCKR.add(
           ), { desc = "[N] prev error or warning" }
         )
         vim.keymap.set(
-          "n", "<Leader>dn", commandRep(
+          "n", "<Leader>dn", CommandRep(
             NvimDiagNext, {
               severity = {
                 vim.diagnostic.severity.ERROR,
@@ -272,20 +268,20 @@ PCKR.add(
         )
 
         vim.keymap.set(
-          "n", "<Leader>dP", commandRep(
+          "n", "<Leader>dP", CommandRep(
             NvimDiagPrev,
             { severity = { vim.diagnostic.severity.ERROR } }
           ), { desc = "[N] prev error" }
         )
         vim.keymap.set(
-          "n", "<Leader>dN", commandRep(
+          "n", "<Leader>dN", CommandRep(
             NvimDiagNext,
             { severity = { vim.diagnostic.severity.ERROR } }
           ), { desc = "[N] next error" }
         )
 
         vim.keymap.set(
-          "n", "<Leader>dk", commandRep(
+          "n", "<Leader>dk", CommandRep(
             NvimDiagPrev, {
               severity = {
                 vim.diagnostic.severity.INFO,
@@ -295,7 +291,7 @@ PCKR.add(
           ), { desc = "[N] prev hint/info" }
         )
         vim.keymap.set(
-          "n", "<Leader>dj", commandRep(
+          "n", "<Leader>dj", CommandRep(
             NvimDiagNext, {
               severity = {
                 vim.diagnostic.severity.INFO,
@@ -303,6 +299,19 @@ PCKR.add(
               },
             }
           ), { desc = "[N] next hint/info" }
+        )
+
+        vim.keymap.set(
+          "n", "<Leader>dll", function(_)
+            if vim.g.qfloc == 1 then
+              vim.diagnostic.setloclist({ open = true })
+            else
+              vim.diagnostic.setqflist({ open = true })
+            end
+          end, {
+            noremap = true,
+            desc = "populate quickfix/loclist with diagnostics",
+          }
         )
 
         -- }}}
@@ -382,6 +391,15 @@ PCKR.add(
               vim.keymap.set(
                 "n", "<Leader>dlr", vim.lsp.buf.references, {
                   desc = "populate quickfix list with references",
+                  buffer = bufnr,
+                }
+              )
+
+              vim.keymap.set(
+                "n", "<Leader>dls", function()
+                  vim.lsp.buf.document_symbol({ loclist = vim.g.qfloc })
+                end, {
+                  desc = "populate quickfix/loclist with symbols in current file",
                   buffer = bufnr,
                 }
               )
