@@ -113,7 +113,7 @@ for _, option in pairs(
     "showmatch",
     "hidden",
     "secure",
-    "wrap", -- TODO ??
+    "wrap",
     "autoindent",
     "cindent",
     "wildmenu",
@@ -139,6 +139,7 @@ end
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 4
+vim.opt.textwidth = 72
 
 vim.opt.shellxquote = ""
 vim.opt.maxmempattern = 2000000
@@ -419,7 +420,6 @@ local plugin_configs = { -- {{{
     "justinmk/vim-sneak",   --  {{{
 
     config_pre = function() --  {{{
-      -- sneak & quickscope
       vim.g["sneak#prompt"] = " <sneak> "
       vim.g["sneak#use_ic_scs"] = true
       vim.g["sneak#label"] = true
@@ -445,18 +445,6 @@ local plugin_configs = { -- {{{
       end
     end --  }}}
   },    --  }}}
-
-  {
-    "unblevable/quick-scope", --  {{{
-    config = function()
-      vim.g.qs_delay = 40
-      vim.g.qs_hi_priority = 2
-      vim.g.qs_second_highlight = true
-
-      vim.api.nvim_set_hl(0, "QuickScopePrimary", { fg = "#c81f16" })
-      vim.api.nvim_set_hl(0, "QuickScopeSecondary", { fg = "#ff5642" })
-    end
-  }, --  }}}
 
   {
     "tpope/vim-surround", --  {{{
@@ -820,14 +808,21 @@ vim.api.nvim_create_autocmd(
         "n", ">", Qflcmd("newer"), { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", "<BS>", "<CR>zv", {
+        "n", "J", "j<CR>", { noremap = true, buffer = true, silent = true }
+      )
+      vim.keymap.set(
+        "n", "K", "k<CR>", { noremap = true, buffer = true, silent = true }
+      )
+
+      vim.keymap.set(
+        "n", "<CR>", "<CR>zv", {
           noremap = true, buffer = true, silent = true,
         }
       )
       vim.keymap.set(
-        "n", "<CR>", function()
+        "n", "<C-h>", function()
           local qpos = vim.fn.getcurpos()
-          vim.cmd.execute("\"normal \\<BS>\"")
+          vim.cmd.execute("\"normal \\<CR>\"")
           Qflcmd("open")()
           vim.fn.setpos(".", qpos)
         end, {
@@ -835,18 +830,12 @@ vim.api.nvim_create_autocmd(
         }
       )
       vim.keymap.set(
-        "n", "<C-h>", function()
+        "n", "<BS>", function()
           vim.cmd.execute("\"normal \\<CR>\"")
           Qflcmd("close")()
         end, {
           buffer = true, silent = true,
         }
-      )
-      vim.keymap.set(
-        "n", "J", "j<CR>", { noremap = true, buffer = true, silent = true }
-      )
-      vim.keymap.set(
-        "n", "K", "k<CR>", { noremap = true, buffer = true, silent = true }
       )
     end
   }
