@@ -187,7 +187,6 @@ vim.cmd.filetype("plugin", "on")
 vim.cmd.filetype("indent", "on")
 vim.cmd.syntax("on")
 vim.g.loaded_matchit = 1
-vim.g.qfloc = 1
 
 -- }}}
 
@@ -725,9 +724,6 @@ UpdateTable(
 --bind 'ctrl-p:up,ctrl-n:down'
 --bind 'ctrl-t:toggle'
 ]]
-
-        -- TODO delete arguments (?)
-        -- TODO more commands
       end
     }, --  }}}
 
@@ -784,22 +780,27 @@ hi DiffDelete
 
 -- quickfix {{{
 
+vim.g.qfloc = 1
+
+vim.keymap.set("n", ";t", function()
+  vim.g.qfloc = (vim.g.qfloc + 1) % 2
+  if vim.g.qfloc == 1 then
+    vim.cmd.echo("\"Using location list (local)\"")
+  else
+    vim.cmd.echo("\"Using quickfix list (global)\"")
+  end
+end, { noremap = true })
+
 for key, map in pairs({
   [";n"] = CommandRep(Qflcmd("next")),
   [";p"] = CommandRep(Qflcmd("previous")),
   [";0"] = Qflcmd("first"),
   [";$"] = Qflcmd("last"),
   [";l"] = Qflcmd("history"),
-  -- TODO height
   [";w"] = function()
     local height = vim.v.count
     if height == 0 then height = 10 end
     Qflcmd("open")({ count = height })
-  end,
-  [";W"] = function()
-    local height = vim.v.count
-    if height == 0 then height = 10 end
-    Qflcmd("window")({ count = height })
   end,
 }) do
   vim.keymap.set("n", key, map, { noremap = true, silent = true })
