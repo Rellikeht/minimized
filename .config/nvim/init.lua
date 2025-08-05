@@ -87,6 +87,18 @@ function GetNetrwFP()
   return vim.b.netrw_curdir .. "/" .. vim.fn["netrw#Call"]("NetrwGetWord")
 end
 
+function CommandOnExpanded(command, args)
+  local visited = {}
+  for _, arg in pairs(args) do
+    for _, file in pairs(vim.fn.split(vim.fn.expand(arg), "\n")) do
+      if visited[file] == nil then
+        vim.cmd[command](vim.fn.fnameescape(file))
+        visited[file] = true
+      end
+    end
+  end
+end
+
 -- TODO visual selection
 
 --  }}}
@@ -102,7 +114,17 @@ vim.api.nvim_create_user_command(
   end, { complete = "file", nargs = "*", count = 1 }
 )
 
--- TODO multi bdelete and bwipeout
+vim.api.nvim_create_user_command(
+  "BDelete", function(opts)
+    CommandOnExpanded("bdelete", opts.fargs)
+  end, { complete = "buffer", nargs = "*" }
+)
+
+vim.api.nvim_create_user_command(
+  "BWipeout", function(opts)
+    CommandOnExpanded("bwipeout", opts.fargs)
+  end, { complete = "buffer", nargs = "*" }
+)
 
 --  }}}
 
@@ -793,10 +815,10 @@ vim.api.nvim_create_autocmd(
     callback = function()
       vim.keymap.set("n", "<Space>lu", function()
         vim.cmd.AEdit(GetNetrwFP())
-      end)
+      end, { buffer = true, silent = true })
       vim.keymap.set("n", "<Space>lU", function()
         vim.cmd.AAdd(GetNetrwFP())
-      end)
+      end, { buffer = true, silent = true })
     end
   }
 )
