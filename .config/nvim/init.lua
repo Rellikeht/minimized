@@ -102,6 +102,8 @@ vim.api.nvim_create_user_command(
   end, { complete = "file", nargs = "*", count = 1 }
 )
 
+-- TODO multi bdelete and bwipeout
+
 --  }}}
 
 --  }}}
@@ -693,6 +695,7 @@ UpdateTable(
           end,
           ["alt-a"] = "$AAdd",
           ["alt-A"] = "AAdd",
+          -- TODO extract to separate command
           ["alt-b"] = function(files)
             for _, file in pairs(files) do
               vim.cmd.badd(vim.fn.fnameescape(file))
@@ -717,6 +720,16 @@ UpdateTable(
 ]]
       end
     }, --  }}}
+
+    {
+      "Rellikeht/fzf-vim-additional", --  {{{
+      requires = {
+        "junegunn/fzf",
+        "junegunn/fzf.vim"
+      },
+      config = function()
+      end
+    } --  }}}
 
   }
 ) --  }}}
@@ -745,26 +758,23 @@ vim.keymap.set(
   "t", "<C-q><C-o>", "<C-\\><C-o>", { noremap = true }
 )
 
--- TODO fix coloring of diffs
--- those below don't work
 vim.cmd [[
-hi DiffAdd
+" Those helped
+hi Added
             \ ctermbg=DarkGreen guibg=#0d5826
             \ ctermfg=NONE guifg=NONE
-hi DiffText
-            \ ctermbg=Gray guibg=#566670
-            \ ctermfg=NONE guifg=NONE
-hi DiffChange
-            \ ctermbg=DarkBlue guibg=#0f1a7f
-            \ ctermfg=NONE guifg=NONE
-hi DiffDelete
+hi Removed
             \ ctermbg=DarkRed guibg=#800620
             \ ctermfg=NONE guifg=NONE
 
-"hi DiffAdd ctermbg=DarkGreen guibg=#0d5826
-"hi DiffText ctermbg=Gray guibg=#566670
-"hi DiffChange ctermbg=DarkBlue guibg=#0f1a7f
-"hi DiffDelete ctermbg=DarkRed guibg=#800620
+" TODO fix coloring in diff split
+" those don't work
+"hi DiffText
+"            \ ctermbg=Gray guibg=#566670
+"            \ ctermfg=NONE guifg=NONE
+hi Changed
+            \ ctermbg=DarkBlue guibg=#0f1a7f
+            \ ctermfg=NONE guifg=NONE
 ]]
 
 vim.api.nvim_create_autocmd(
