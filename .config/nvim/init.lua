@@ -83,6 +83,12 @@ function Qflcmd(cmd)
   end
 end
 
+function GetNetrwFP()
+  return vim.b.netrw_curdir .. "/" .. vim.fn["netrw#Call"]("NetrwGetWord")
+end
+
+-- TODO visual selection
+
 --  }}}
 
 -- commands {{{
@@ -273,9 +279,6 @@ vim.keymap.set("", "<C-h>", "<C-]>", { remap = true })
 vim.keymap.set(
   "n", "<C-w><C-h>",
   ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", {}
-)
-vim.keymap.set(
-  "n", "<C-w>gf", ":<C-u>tabedit <cfile><CR>", {}
 )
 vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
 
@@ -763,6 +766,20 @@ hi DiffDelete
 "hi DiffChange ctermbg=DarkBlue guibg=#0f1a7f
 "hi DiffDelete ctermbg=DarkRed guibg=#800620
 ]]
+
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = "netrw",
+    callback = function()
+      vim.keymap.set("n", "<Space>lu", function()
+        vim.cmd.AEdit(GetNetrwFP())
+      end)
+      vim.keymap.set("n", "<Space>lU", function()
+        vim.cmd.AAdd(GetNetrwFP())
+      end)
+    end
+  }
+)
 
 -- }}}
 
