@@ -126,6 +126,12 @@ vim.api.nvim_create_user_command(
   end, { complete = "buffer", nargs = "*" }
 )
 
+vim.api.nvim_create_user_command(
+  "BAdd", function(opts)
+    CommandOnExpanded("badd", opts.fargs)
+  end, { complete = "buffer", nargs = "*" }
+)
+
 --  }}}
 
 --  }}}
@@ -704,36 +710,40 @@ UpdateTable(
         }
 
         vim.g.fzf_action = {
-          ["alt-t"] = function(lines)
-            vim.cmd.TabOpen(
-              Map(vim.fn.fnameescape, lines)
-            )
+          ["alt-t"] = function(files)
+            vim.cmd.TabOpen(Map(vim.fn.fnameescape, files))
           end,
           ["alt-T"] = "tabedit",
           ["alt-v"] = "view",
           ["alt-l"] = function(files)
-            vim.fn["aplus#define"](files)
+            vim.fn["aplus#define"](Map(vim.fn.fnameescape, files))
             vim.fn["aplus#select"](0)
           end,
           -- command adds one file and edits another
           ["alt-L"] = vim.fn["aplus#define"],
           ["alt-e"] = function(files)
             -- command misses one file
-            vim.fn["aplus#edit"]("$", 0, files)
+            vim.fn["aplus#edit"]("$", 0, Map(vim.fn.fnameescape, files))
           end,
           ["alt-E"] = function(files)
             -- command misses one file
-            vim.fn["aplus#edit"]("", 0, files)
+            vim.fn["aplus#edit"]("", 0, Map(vim.fn.fnameescape, files))
           end,
-          ["alt-a"] = "$AAdd",
-          ["alt-A"] = "AAdd",
-          -- TODO extract to separate command
-          ["alt-b"] = function(files)
-            for _, file in pairs(files) do
-              vim.cmd.badd(vim.fn.fnameescape(file))
-            end
+          ["alt-a"] = function(files)
+            vim.fn["aplus#add"]("$", Map(vim.fn.fnameescape, files))
           end,
+          ["alt-A"] = function(files)
+            vim.fn["aplus#add"]("", Map(vim.fn.fnameescape, files))
+          end,
+          ["alt-b"] = vim.cmd.BAdd,
         }
+
+        -- TODO roots
+        vim.keymap.set("n", "<Leader>spc", ":<C-u>Files<Space>")
+        vim.keymap.set("n", "<Leader>sb", ":<C-u>Buffers")
+        vim.keymap.set("n", "<Leader>ss", ":<C-u>Rg<Space>")
+        vim.keymap.set("n", "<Leader>sS", ":<C-u>RG<Space>")
+        vim.keymap.set("n", "<Leader>sl", ":<C-u>Lines<Space>")
 
         -- because those are nice and this config should be as
         -- self contained as it is possible
@@ -760,6 +770,7 @@ UpdateTable(
         "junegunn/fzf.vim"
       },
       config = function()
+        -- TODO greps
       end
     } --  }}}
 
