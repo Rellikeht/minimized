@@ -713,20 +713,23 @@ UpdateTable(
           ["alt-t"] = function(files)
             vim.cmd.TabOpen(Map(vim.fn.fnameescape, files))
           end,
-          ["alt-T"] = "tabedit",
-          ["alt-v"] = "view",
+          ["alt-T"] = function(files)
+            vim.cmd.tabedit(Map(vim.fn.fnameescape, files))
+          end,
+          ["alt-v"] = function(files)
+            vim.cmd.view(Map(vim.fn.fnameescape, files))
+          end,
           ["alt-l"] = function(files)
             vim.fn["aplus#define"](Map(vim.fn.fnameescape, files))
             vim.fn["aplus#select"](0)
           end,
-          -- command adds one file and edits another
-          ["alt-L"] = vim.fn["aplus#define"],
+          ["alt-L"] = function(files)
+            vim.fn["aplus#define"](Map(vim.fn.fnameescape, files))
+          end,
           ["alt-e"] = function(files)
-            -- command misses one file
             vim.fn["aplus#edit"]("$", 0, Map(vim.fn.fnameescape, files))
           end,
           ["alt-E"] = function(files)
-            -- command misses one file
             vim.fn["aplus#edit"]("", 0, Map(vim.fn.fnameescape, files))
           end,
           ["alt-a"] = function(files)
@@ -735,15 +738,18 @@ UpdateTable(
           ["alt-A"] = function(files)
             vim.fn["aplus#add"]("", Map(vim.fn.fnameescape, files))
           end,
-          ["alt-b"] = vim.cmd.BAdd,
+          ["alt-b"] = function(files)
+            vim.cmd.BAdd(Map(vim.fn.fnameescape, files))
+          end,
         }
 
         -- TODO roots
-        vim.keymap.set("n", "<Leader>spc", ":<C-u>Files<Space>")
+        vim.keymap.set("n", "<Leader>sc", ":<C-u>Files<Space>")
         vim.keymap.set("n", "<Leader>sb", ":<C-u>Buffers")
+
+        -- TODO should there be rg from my plugin
         vim.keymap.set("n", "<Leader>ss", ":<C-u>Rg<Space>")
         vim.keymap.set("n", "<Leader>sS", ":<C-u>RG<Space>")
-        vim.keymap.set("n", "<Leader>sl", ":<C-u>Lines<Space>")
 
         -- because those are nice and this config should be as
         -- self contained as it is possible
