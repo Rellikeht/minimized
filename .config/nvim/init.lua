@@ -639,16 +639,16 @@ EXTRAS.join_tables(
       end
     }, --  }}}
 
-    -- {
-    --   "Rellikeht/fzf-vim-additional", --  {{{
-    --   requires = {
-    --     "junegunn/fzf",
-    --     "junegunn/fzf.vim"
-    --   },
-    --   config = function()
-    --     -- TODO greps
-    --   end
-    -- } --  }}}
+    {
+      "Rellikeht/fzf-vim-additional", --  {{{
+      requires = {
+        "junegunn/fzf",
+        "junegunn/fzf.vim"
+      },
+      config = function()
+        -- TODO greps
+      end
+    } --  }}}
 
   }
 ) --  }}}
@@ -701,10 +701,10 @@ vim.api.nvim_create_autocmd(
     pattern = "netrw",
     callback = function()
       vim.keymap.set("n", "<Space>lu", function()
-        vim.cmd.AEdit(vim.fn["extras#get_netrw_fp"]())
+        vim.cmd.AEdit(vim.g["extras#get_netrw_fp"]())
       end, { buffer = true, silent = true })
       vim.keymap.set("n", "<Space>lU", function()
-        vim.cmd.AAdd(vim.fn["extras#get_netrw_fp"]())
+        vim.cmd.AAdd(vim.g["extras#get_netrw_fp"]())
       end, { buffer = true, silent = true })
     end
   }
@@ -726,8 +726,8 @@ vim.keymap.set("n", ";t", function()
 end, { noremap = true })
 
 for key, map in pairs({
-  [";n"] = vim.fn["extras#count_on_command"](Qflcmd("next")),
-  [";p"] = vim.fn["extras#count_on_command"](Qflcmd("previous")),
+  [";n"] = vim.g["extras#count_on_function"](Qflcmd("next")),
+  [";p"] = vim.g["extras#count_on_function"](Qflcmd("previous")),
   [";0"] = Qflcmd("first"),
   [";$"] = Qflcmd("last"),
   [";l"] = Qflcmd("history"),
