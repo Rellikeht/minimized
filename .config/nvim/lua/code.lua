@@ -247,7 +247,7 @@ PCKR.add(
         )
 
         vim.keymap.set(
-          "n", "<Leader>dp", CommandRep(
+          "n", "<Leader>dp", vim.fn["extras#count_on_command"](
             NvimDiagPrev, {
               severity = {
                 vim.diagnostic.severity.ERROR,
@@ -257,7 +257,7 @@ PCKR.add(
           ), { desc = "[N] prev error or warning" }
         )
         vim.keymap.set(
-          "n", "<Leader>dn", CommandRep(
+          "n", "<Leader>dn", vim.fn["extras#count_on_command"](
             NvimDiagNext, {
               severity = {
                 vim.diagnostic.severity.ERROR,
@@ -268,20 +268,20 @@ PCKR.add(
         )
 
         vim.keymap.set(
-          "n", "<Leader>dP", CommandRep(
+          "n", "<Leader>dP", vim.fn["extras#count_on_command"](
             NvimDiagPrev,
             { severity = { vim.diagnostic.severity.ERROR } }
           ), { desc = "[N] prev error" }
         )
         vim.keymap.set(
-          "n", "<Leader>dN", CommandRep(
+          "n", "<Leader>dN", vim.fn["extras#count_on_command"](
             NvimDiagNext,
             { severity = { vim.diagnostic.severity.ERROR } }
           ), { desc = "[N] next error" }
         )
 
         vim.keymap.set(
-          "n", "<Leader>dk", CommandRep(
+          "n", "<Leader>dk", vim.fn["extras#count_on_command"](
             NvimDiagPrev, {
               severity = {
                 vim.diagnostic.severity.INFO,
@@ -291,7 +291,7 @@ PCKR.add(
           ), { desc = "[N] prev hint/info" }
         )
         vim.keymap.set(
-          "n", "<Leader>dj", CommandRep(
+          "n", "<Leader>dj", vim.fn["extras#count_on_command"](
             NvimDiagNext, {
               severity = {
                 vim.diagnostic.severity.INFO,

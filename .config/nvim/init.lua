@@ -8,71 +8,6 @@ local function calc_pumheight()
   return result
 end
 
-function UpdateTable(t1, t2)
-  for k, v in pairs(t2) do
-    table.insert(t1, k, v)
-  end
-end
-
-vim.g.B = function(n)
-  if n == nil then
-    n = 1
-  end
-  local s = ""
-  for _ = 1, n do
-    s = s .. "../"
-  end
-  return s
-end
-
-function RepeatStr(str, times)
-  local result = ""
-  for _ = 1, times do
-    result = result .. str
-  end
-  return result
-end
-
-function StrValue(value, row)
-  local rowstr = RepeatStr(" ", row)
-  if type(value) ~= "table" then
-    return tostring(value)
-  end
-  return "{\n" ..
-      StrRecursiveRow(value, row + 2) ..
-      rowstr ..
-      "}"
-end
-
-function StrRecursiveRow(table, row)
-  local result = ""
-  for k, v in pairs(table) do
-    result = result ..
-        RepeatStr(" ", row) ..
-        StrValue(k, row) ..
-        " : " ..
-        StrValue(v, row) ..
-        "\n"
-  end
-  return result
-end
-
-function PrintRecursive(table)
-  print(StrRecursiveRow(table, 0))
-end
-
-function Map(func, table)
-  local result = {}
-  for k, v in pairs(table) do
-    result[k] = func(v)
-  end
-  return result
-end
-
-function CommandRep(fn, arg)
-  return function() for _ = 1, vim.v.count1 do fn(arg) end end
-end
-
 function Qflcmd(cmd)
   local prefix = "c"
   if vim.g.qfloc == 1 then
@@ -82,55 +17,6 @@ function Qflcmd(cmd)
     vim.cmd[prefix .. cmd](...)
   end
 end
-
-function GetNetrwFP()
-  return vim.b.netrw_curdir .. "/" .. vim.fn["netrw#Call"]("NetrwGetWord")
-end
-
-function CommandOnExpanded(command, args)
-  local visited = {}
-  for _, arg in pairs(args) do
-    for _, file in pairs(vim.fn.split(vim.fn.expand(arg), "\n")) do
-      if visited[file] == nil then
-        vim.cmd[command](vim.fn.fnameescape(file))
-        visited[file] = true
-      end
-    end
-  end
-end
-
--- TODO visual selection
-
---  }}}
-
--- commands {{{
-
-vim.api.nvim_create_user_command(
-  "TabOpen", function(opts)
-    local count = opts.count
-    if count == 0 then count = -1 end
-    vim.cmd(opts.count .. "tabnew")
-    vim.cmd("arglocal! " .. opts.args)
-  end, { complete = "file", nargs = "*", count = 1 }
-)
-
-vim.api.nvim_create_user_command(
-  "BDelete", function(opts)
-    CommandOnExpanded("bdelete", opts.fargs)
-  end, { complete = "buffer", nargs = "*" }
-)
-
-vim.api.nvim_create_user_command(
-  "BWipeout", function(opts)
-    CommandOnExpanded("bwipeout", opts.fargs)
-  end, { complete = "buffer", nargs = "*" }
-)
-
-vim.api.nvim_create_user_command(
-  "BAdd", function(opts)
-    CommandOnExpanded("badd", opts.fargs)
-  end, { complete = "buffer", nargs = "*" }
-)
 
 --  }}}
 
@@ -430,36 +316,6 @@ local plugin_configs = { -- {{{
   "wellle/targets.vim",
 
   {
-    "Rellikeht/arglist-plus", --  {{{
-    config_pre = function()
-    end,
-    config = function()
-      vim.keymap.set("n", "<Space>n", "<Plug>ANext", {})
-      vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
-      vim.keymap.set("n", "<Space>o", ":AEdit<Space>", {})
-      vim.keymap.set("n", "<Space>O", ":AEditBuf<Space>", {})
-      vim.keymap.set("n", "<Space>ll", "<Plug>AList", {})
-      vim.keymap.set("n", "<Space>lL", "<Plug>AVertList", {})
-      vim.keymap.set("n", "<Space>le", ":<C-u>AGo<Space>", {})
-      vim.keymap.set("n", "<Space>lE", ":<C-u>AGo!<Space>", {})
-      vim.keymap.set("n", "<Space>lg", ":<C-u>ASelect<Space>", {})
-      vim.keymap.set("n", "<Space>lG", ":<C-u>ASelect!<Space>", {})
-      vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
-      vim.keymap.set("n", "<Space>la", ":AAddBuf<Space>", {})
-      vim.keymap.set("n", "<Space>ld", ":<C-u>ADel<Space>", {})
-      vim.keymap.set("n", "<Space>lr", ":AReplace<Space>", {})
-      vim.keymap.set("n", "<Space>lR", ":AReplaceBuf<Space>", {})
-      vim.keymap.set("n", "<Space>lc", "<Plug>AGlobToLoc", {})
-      vim.keymap.set("n", "<Space>lu", function()
-        vim.cmd.AEdit(vim.fn.expand("<cfile>"))
-      end, {})
-      vim.keymap.set("n", "<Space>lU", function()
-        vim.cmd.AAdd(vim.fn.expand("<cfile>"))
-      end, {})
-    end
-  }, --  }}}
-
-  {
     "justinmk/vim-sneak",   --  {{{
 
     config_pre = function() --  {{{
@@ -583,11 +439,44 @@ if vim.g.vscode then
   -- }}}
 end
 
-UpdateTable(
+PCKR.add({ "Rellikeht/vim-extras" })
+EXTRAS = require("extras")
+EXTRAS.join_tables(
   plugin_configs,
   { --  {{{
     "Rellikeht/lazy-utils",
     "ryvnf/readline.vim",
+
+    {
+      "Rellikeht/arglist-plus", --  {{{
+      config_pre = function()
+      end,
+      config = function()
+        -- TODO improve keys
+        vim.keymap.set("n", "<Space>n", "<Plug>ANext", {})
+        vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
+        vim.keymap.set("n", "<Space>o", ":AEdit<Space>", {})
+        vim.keymap.set("n", "<Space>O", ":AEditBuf<Space>", {})
+        vim.keymap.set("n", "<Space>ll", "<Plug>AList", {})
+        vim.keymap.set("n", "<Space>lL", "<Plug>AVertList", {})
+        vim.keymap.set("n", "<Space>le", ":<C-u>AGo<Space>", {})
+        vim.keymap.set("n", "<Space>lE", ":<C-u>AGo!<Space>", {})
+        vim.keymap.set("n", "<Space>lg", ":<C-u>ASelect<Space>", {})
+        vim.keymap.set("n", "<Space>lG", ":<C-u>ASelect!<Space>", {})
+        vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
+        vim.keymap.set("n", "<Space>la", ":AAddBuf<Space>", {})
+        vim.keymap.set("n", "<Space>ld", ":<C-u>ADel<Space>", {})
+        vim.keymap.set("n", "<Space>lr", ":AReplace<Space>", {})
+        vim.keymap.set("n", "<Space>lR", ":AReplaceBuf<Space>", {})
+        vim.keymap.set("n", "<Space>lc", "<Plug>AGlobToLoc", {})
+        vim.keymap.set("n", "<Space>lu", function()
+          vim.cmd.AEdit(vim.fn.expand("<cfile>"))
+        end, {})
+        vim.keymap.set("n", "<Space>lU", function()
+          vim.cmd.AAdd(vim.fn.expand("<cfile>"))
+        end, {})
+      end
+    }, --  }}}
 
     {
       "andymass/vim-matchup", --  {{{
@@ -661,35 +550,11 @@ UpdateTable(
 
     {
       "junegunn/fzf.vim", --  {{{
-      requires = { "junegunn/fzf" },
+      requires = {
+        "junegunn/fzf",
+        "Rellikeht/vim-extras",
+      },
       config = function()
-        -- slighty longer than in original :D
-        -- https://github.com/junegunn/fzf.vim/blob/master/README.md#status-line-of-terminal-buffer
-        vim.api.nvim_create_autocmd(
-          "FileType", {
-            pattern = "fzf",
-            callback = function()
-              local previous = {
-                laststatus = vim.opt.laststatus._value,
-                showmode = vim.opt.showmode._value,
-                ruler = vim.opt.ruler._value,
-              }
-              vim.opt.laststatus = 0
-              vim.opt.showmode = false
-              vim.opt.ruler = false
-              vim.api.nvim_create_autocmd(
-                "BufLeave", {
-                  pattern = "<buffer>",
-                  callback = function()
-                    vim.opt.laststatus = previous.laststatus
-                    vim.opt.showmode = previous.showmode
-                    vim.opt.ruler = previous.ruler
-                  end
-                })
-            end
-          }
-        )
-
         vim.g.fzf_layout = { down = "100%" }
         vim.g.fzf_vim = { preview_window = { "down,50%,border-none" } }
         vim.g.fzf_history_dir = vim.fn.stdpath("data") .. "/fzf-history"
@@ -711,35 +576,40 @@ UpdateTable(
 
         vim.g.fzf_action = {
           ["alt-t"] = function(files)
-            vim.cmd.TabOpen(Map(vim.fn.fnameescape, files))
+            -- Undoable with TabOpen somehow
+            vim.cmd.tabnew()
+            vim.fn["aplus#define"](EXTRAS.map(vim.fn.fnameescape, files))
+            vim.fn["aplus#select"](0)
           end,
           ["alt-T"] = function(files)
-            vim.cmd.tabedit(Map(vim.fn.fnameescape, files))
+            for _, file in pairs(EXTRAS.map(vim.fn.fnameescape, files)) do
+              vim.cmd.tabedit(file)
+            end
           end,
           ["alt-v"] = function(files)
-            vim.cmd.view(Map(vim.fn.fnameescape, files))
+            vim.cmd.view(EXTRAS.map(vim.fn.fnameescape, files))
           end,
           ["alt-l"] = function(files)
-            vim.fn["aplus#define"](Map(vim.fn.fnameescape, files))
+            vim.fn["aplus#define"](EXTRAS.map(vim.fn.fnameescape, files))
             vim.fn["aplus#select"](0)
           end,
           ["alt-L"] = function(files)
-            vim.fn["aplus#define"](Map(vim.fn.fnameescape, files))
+            vim.fn["aplus#define"](EXTRAS.map(vim.fn.fnameescape, files))
           end,
           ["alt-e"] = function(files)
-            vim.fn["aplus#edit"]("$", 0, Map(vim.fn.fnameescape, files))
+            vim.fn["aplus#edit"]("$", 0, EXTRAS.map(vim.fn.fnameescape, files))
           end,
           ["alt-E"] = function(files)
-            vim.fn["aplus#edit"]("", 0, Map(vim.fn.fnameescape, files))
+            vim.fn["aplus#edit"]("", 0, EXTRAS.map(vim.fn.fnameescape, files))
           end,
           ["alt-a"] = function(files)
-            vim.fn["aplus#add"]("$", Map(vim.fn.fnameescape, files))
+            vim.fn["aplus#add"]("$", EXTRAS.map(vim.fn.fnameescape, files))
           end,
           ["alt-A"] = function(files)
-            vim.fn["aplus#add"]("", Map(vim.fn.fnameescape, files))
+            vim.fn["aplus#add"]("", EXTRAS.map(vim.fn.fnameescape, files))
           end,
           ["alt-b"] = function(files)
-            vim.cmd.BAdd(Map(vim.fn.fnameescape, files))
+            vim.cmd.BAdd(EXTRAS.map(vim.fn.fnameescape, files))
           end,
         }
 
@@ -769,16 +639,16 @@ UpdateTable(
       end
     }, --  }}}
 
-    {
-      "Rellikeht/fzf-vim-additional", --  {{{
-      requires = {
-        "junegunn/fzf",
-        "junegunn/fzf.vim"
-      },
-      config = function()
-        -- TODO greps
-      end
-    } --  }}}
+    -- {
+    --   "Rellikeht/fzf-vim-additional", --  {{{
+    --   requires = {
+    --     "junegunn/fzf",
+    --     "junegunn/fzf.vim"
+    --   },
+    --   config = function()
+    --     -- TODO greps
+    --   end
+    -- } --  }}}
 
   }
 ) --  }}}
@@ -831,10 +701,10 @@ vim.api.nvim_create_autocmd(
     pattern = "netrw",
     callback = function()
       vim.keymap.set("n", "<Space>lu", function()
-        vim.cmd.AEdit(GetNetrwFP())
+        vim.cmd.AEdit(vim.fn["extras#get_netrw_fp"]())
       end, { buffer = true, silent = true })
       vim.keymap.set("n", "<Space>lU", function()
-        vim.cmd.AAdd(GetNetrwFP())
+        vim.cmd.AAdd(vim.fn["extras#get_netrw_fp"]())
       end, { buffer = true, silent = true })
     end
   }
@@ -856,8 +726,8 @@ vim.keymap.set("n", ";t", function()
 end, { noremap = true })
 
 for key, map in pairs({
-  [";n"] = CommandRep(Qflcmd("next")),
-  [";p"] = CommandRep(Qflcmd("previous")),
+  [";n"] = vim.fn["extras#count_on_command"](Qflcmd("next")),
+  [";p"] = vim.fn["extras#count_on_command"](Qflcmd("previous")),
   [";0"] = Qflcmd("first"),
   [";$"] = Qflcmd("last"),
   [";l"] = Qflcmd("history"),
