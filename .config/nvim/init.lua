@@ -441,7 +441,7 @@ end
 
 PCKR.add({ "Rellikeht/vim-extras" })
 EXTRAS = require("extras")
-EXTRAS.join_tables(
+EXTRAS.table_join(
   plugin_configs,
   { --  {{{
     "Rellikeht/lazy-utils",
@@ -615,11 +615,9 @@ EXTRAS.join_tables(
 
         -- TODO roots
         vim.keymap.set("n", "<Leader>sc", ":<C-u>Files<Space>")
-        vim.keymap.set("n", "<Leader>sb", ":<C-u>Buffers")
-
-        -- TODO should there be rg from my plugin
-        vim.keymap.set("n", "<Leader>ss", ":<C-u>Rg<Space>")
-        vim.keymap.set("n", "<Leader>sS", ":<C-u>RG<Space>")
+        vim.keymap.set("n", "<Leader>sb", ":<C-u>Buffers<CR>")
+        vim.keymap.set("n", "<Leader>sl", ":<C-u>BLines<CR>")
+        vim.keymap.set("n", "<Leader>sL", ":<C-u>Lines<CR>")
 
         -- because those are nice and this config should be as
         -- self contained as it is possible
@@ -646,7 +644,12 @@ EXTRAS.join_tables(
         "junegunn/fzf.vim"
       },
       config = function()
-        -- TODO greps
+        vim.keymap.set("n", "<Leader>sg", ":<C-u>Dgrep<Space>")
+        vim.keymap.set("n", "<Leader>sG", ":<C-u>Digrep<Space>")
+        vim.keymap.set("n", "<Leader>sr", ":<C-u>Drg<Space>")
+        vim.keymap.set("n", "<Leader>sR", ":<C-u>Dru<Space>")
+        vim.keymap.set("n", "<Leader>sa", ":<C-u>Dag<Space>")
+        vim.keymap.set("n", "<Leader>sA", ":<C-u>Dau<Space>")
       end
     } --  }}}
 
