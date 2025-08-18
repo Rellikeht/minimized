@@ -58,31 +58,10 @@ for _, option in pairs({
   vim.opt[option] = false
 end
 
-vim.opt.softtabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 4
-vim.opt.textwidth = 72
-
-vim.opt.shellxquote = ""
-vim.opt.maxmempattern = 2000000
-vim.opt.fileencoding = "utf8"
-vim.opt.ttimeoutlen = 100
-vim.opt.updatetime = 2000
-
-vim.opt.conceallevel = 2
-vim.opt.foldmethod = "marker"
-vim.opt.foldmarker = " {{{, }}}"
-vim.opt.foldlevel = 0
-vim.opt.showbreak = "\\> "
-vim.opt.wrapmargin = 1
-
-vim.opt.mouse = "a"
 vim.opt.scrolloff = 5
 vim.opt.splitkeep = "screen"
 vim.opt.shortmess = "atsOF"
-
-vim.opt.undolevels = 10000
-vim.opt.history = 10000
+vim.opt.mouse = "a"
 
 vim.opt.formatoptions:remove({ "j", "t" })
 vim.opt.formatoptions:append("croqlwn")
@@ -660,6 +639,27 @@ PCKR.add(plugin_configs)
 
 -- other settings {{{
 
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
+vim.opt.textwidth = 72
+
+vim.opt.shellxquote = ""
+vim.opt.maxmempattern = 2000000
+vim.opt.fileencoding = "utf8"
+vim.opt.ttimeoutlen = 100
+vim.opt.updatetime = 2000
+
+vim.opt.conceallevel = 2
+vim.opt.foldmethod = "marker"
+vim.opt.foldmarker = " {{{, }}}"
+vim.opt.foldlevel = 0
+vim.opt.showbreak = "\\> "
+vim.opt.wrapmargin = 1
+
+vim.opt.undolevels = 10000
+vim.opt.history = 10000
+
 for _, option in pairs(
   {
     "number",
@@ -714,6 +714,30 @@ vim.api.nvim_create_autocmd(
 )
 
 -- }}}
+
+-- filetypes {{{
+
+-- ugly but handy
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = { --  {{{
+      "python",
+      "lua",
+      "vim",
+      "zig",
+      "markdown",
+      "ocaml",
+      "elixir",
+      "haskell",
+    }, --  }}}
+    callback = function()
+      vim.bo.softtabstop = 2
+      vim.bo.shiftwidth = 2
+    end
+  }
+)
+
+--  }}}
 
 -- quickfix {{{
 
