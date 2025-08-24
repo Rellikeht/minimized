@@ -18,6 +18,12 @@ function Qflcmd(cmd)
   end
 end
 
+local function table_join(t1, t2)
+  for k, v in pairs(t2) do
+    table.insert(t1, k, v)
+  end
+end
+
 --  }}}
 
 --  }}}
@@ -357,7 +363,12 @@ if vim.g.vscode then
   vim.keymap.set({ "n", "x" }, "-", function()
     VSCODE.call("workbench.action.editor.previousChange")
   end)
-  vim.keymap.set("n", "<Leader>gu", function()
+
+  -- vscode needs it like that
+  vim.keymap.set({ "n", "x" }, "<Leader>gs", function()
+    VSCODE.call("git.stageSelectedRanges")
+  end)
+  vim.keymap.set({ "n", "x" }, "<Leader>gr", function()
     VSCODE.call("git.revertSelectedRanges")
   end)
   vim.keymap.set("n", "<Leader>gn", function()
@@ -365,6 +376,14 @@ if vim.g.vscode then
   end)
   vim.keymap.set("n", "<Leader>gp", function()
     VSCODE.call("editor.action.dirtydiff.previous")
+  end)
+
+  -- this is broken
+  vim.keymap.set("x", "<Leader>gu", function()
+    VSCODE.call("git.unstageSelectedRanges")
+  end)
+  vim.keymap.set("n", "<Leader>gu", function()
+    VSCODE.call("git.unstageChange")
   end)
 
   vim.keymap.set("n", "<Leader>sf", function()
@@ -418,13 +437,19 @@ if vim.g.vscode then
   -- }}}
 end
 
-PCKR.add({ "Rellikeht/vim-extras" })
-EXTRAS = require("extras")
-EXTRAS.table_join(
+table_join(
   plugin_configs,
   { --  {{{
     "Rellikeht/lazy-utils",
     "ryvnf/readline.vim",
+
+    {
+      "Rellikeht/vim-extras",
+      config = function()
+        vim.keymap.set("n", "<Tab>o", ":TabOpen<Space>", {})
+        EXTRAS = require("extras")
+      end
+    },
 
     {
       "Rellikeht/arglist-plus", --  {{{
@@ -436,18 +461,34 @@ EXTRAS.table_join(
         vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
         vim.keymap.set("n", "<Space>o", ":AEdit<Space>", {})
         vim.keymap.set("n", "<Space>O", ":AEditBuf<Space>", {})
+        vim.keymap.set("n", "<Space>j<Space>", ":<C-u>ASelect<Space>", {})
+        vim.keymap.set("n", "<Space>J<Space>", ":<C-u>ASelect!<Space>", {})
         vim.keymap.set("n", "<Space>ll", "<Plug>AList", {})
         vim.keymap.set("n", "<Space>lL", "<Plug>AVertList", {})
         vim.keymap.set("n", "<Space>le", ":<C-u>AGo<Space>", {})
         vim.keymap.set("n", "<Space>lE", ":<C-u>AGo!<Space>", {})
-        vim.keymap.set("n", "<Space>lg", ":<C-u>ASelect<Space>", {})
-        vim.keymap.set("n", "<Space>lG", ":<C-u>ASelect!<Space>", {})
         vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
         vim.keymap.set("n", "<Space>la", ":AAddBuf<Space>", {})
-        vim.keymap.set("n", "<Space>ld", ":<C-u>ADel<Space>", {})
         vim.keymap.set("n", "<Space>lr", ":AReplace<Space>", {})
         vim.keymap.set("n", "<Space>lR", ":AReplaceBuf<Space>", {})
+        vim.keymap.set("n", "<Space>lm", ":AMoveCurN<CR>", {})
+        vim.keymap.set("n", "<Space>lM", ":<C-u>AMoveCur<Space>", {})
         vim.keymap.set("n", "<Space>lc", "<Plug>AGlobToLoc", {})
+
+        vim.keymap.set("n", "<Space>ld", ":<C-u>ADelN<CR>", {})
+        vim.keymap.set("n", "<Space>lD", ":<C-u>ADel<CR>", {})
+        vim.keymap.set("n", "<Space>lq", ":<C-u>ABufDelN<Space>", {})
+        vim.keymap.set("n", "<Space>lQ", ":<C-u>ABufWipeN<Space>", {})
+
+        for i = 0, 9 do
+          vim.keymap.set(
+            "n", "<Space>j" .. i, ":<C-u>" .. i .. "ASelect<Space>", {}
+          )
+          vim.keymap.set(
+            "n", "<Space>J" .. i, ":<C-u>" .. i .. "ASelect!<Space>", {}
+          )
+        end
+
         vim.keymap.set("n", "<Space>lu", function()
           vim.cmd.AEdit(vim.fn.expand("<cfile>"))
         end, {})
