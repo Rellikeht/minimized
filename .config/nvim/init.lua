@@ -32,27 +32,25 @@ end
 
 -- general options {{{
 
-for _, option in pairs(
-  {
-    "ruler",
-    "incsearch",
-    "ignorecase",
-    "smartcase",
-    "showmatch",
-    "hidden",
-    "secure",
-    "wrap",
-    "autoindent",
-    "cindent",
-    "wildmenu",
-    "termguicolors",
-    "ttimeout",
-    "splitright",
-    "splitbelow",
-    "autochdir",
-    "undofile",
-  }
-) do vim.opt[option] = true end
+for _, option in pairs({
+  "ruler",
+  "incsearch",
+  "ignorecase",
+  "smartcase",
+  "showmatch",
+  "hidden",
+  "secure",
+  "wrap",
+  "autoindent",
+  "cindent",
+  "wildmenu",
+  "termguicolors",
+  "ttimeout",
+  "splitright",
+  "splitbelow",
+  "autochdir",
+  "undofile",
+}) do vim.opt[option] = true end
 
 for _, option in pairs({
   "shelltemp",
@@ -90,10 +88,6 @@ vim.opt.cmdwinheight = 25
 
 -- initialization {{{
 
-vim.cmd.filetype("on")
-vim.cmd.filetype("plugin", "on")
-vim.cmd.filetype("indent", "on")
-vim.cmd.syntax("on")
 vim.g.loaded_matchit = 1
 
 -- }}}
@@ -115,17 +109,6 @@ if vim.fn.has("win32") == 1 then -- {{{
 else -- {{{
   GIT_EXECUTABLE = "git"
 end  -- }}}
-
--- filetypes {{{
-
-vim.g.markdown_minlines = 300
-
-vim.api.nvim_create_autocmd(
-  { "BufRead", "BufNewFile" },
-  { pattern = "*.md", command = "set syntax=markdown" }
-)
-
---  }}}
 
 -- colors {{{
 
@@ -177,10 +160,6 @@ vim.keymap.set(
 
 vim.keymap.set("n", "Q", "<Nop>", { remap = true })
 vim.keymap.set("", "<C-h>", "<C-]>", { remap = true })
-vim.keymap.set(
-  "n", "<C-w><C-h>",
-  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", {}
-)
 vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
 
 vim.keymap.set("n", "<Space>y", "\"+y", { noremap = true })
@@ -190,51 +169,15 @@ vim.keymap.set("n", "<Space>U", "\"+P", { noremap = true })
 
 -- }}}
 
--- tabs {{{
-
-vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<C-j>", "<Tab>", { noremap = true })
-vim.keymap.set(
-  "n", "<Tab><Tab>", ":<C-u>tab<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab>h", ":<C-u>tab help<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab>H", ":<C-u>-tab help<Space>", {}
-)
-
--- }}}
-
 -- settings {{{
 
-for key, cmd in pairs(
-  {
-    h = ":<C-u>set hls!<CR>",
-    w = ":<C-u>setlocal wrap!<CR>",
-    W = ":<C-u>set wrap!<CR>",
-  }
-) do
+for key, cmd in pairs({
+  h = ":<C-u>set hls!<CR>",
+  w = ":<C-u>setlocal wrap!<CR>",
+  W = ":<C-u>set wrap!<CR>",
+}) do
   vim.keymap.set(
     "n", "<Space>q" .. key, cmd, {}
-  )
-end
-
---  }}}
-
--- info {{{
-
-for key, cmd in pairs(
-  {
-    m = ":<C-u>marks<CR>",
-    b = ":<C-u>ls<CR>",
-  }
-) do
-  vim.keymap.set(
-    "n", "<Space>i" .. key, cmd, {}
   )
 end
 
@@ -249,15 +192,13 @@ end
 local function bootstrap_pckr()
   local pckr_path = vim.fn.stdpath("data") .. "/pckr/pckr.nvim"
   if not (vim.uv or vim.loop).fs_stat(pckr_path) then
-    vim.fn.system(
-      {
-        GIT_EXECUTABLE,
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/lewis6991/pckr.nvim",
-        pckr_path,
-      }
-    )
+    vim.fn.system({
+      GIT_EXECUTABLE,
+      "clone",
+      "--filter=blob:none",
+      "https://github.com/lewis6991/pckr.nvim",
+      pckr_path,
+    })
   end
   vim.opt.rtp:prepend(pckr_path)
 end
@@ -268,28 +209,27 @@ PCKR_UTIL = require("pckr.util")
 PCKR_CMD = require("pckr.loader.cmd")
 PCKR_KEYS = require("pckr.loader.keys")
 
-PCKR.setup(
-  {
-    pack_dir = PCKR_UTIL.join_paths(
-      vim.fn.stdpath("data"), "site"
+PCKR.setup({
+  pack_dir = PCKR_UTIL.join_paths(
+    vim.fn.stdpath("data"), "site"
+  ),
+  -- Limit the number of simultaneous jobs. nil means no limit
+  max_jobs = nil,
+  autoremove = true,
+  autoinstall = true,
+  git = {
+    cmd = "git",
+    clone_timeout = 60,
+    -- Lua format string used for "aaa/bbb" style plugins
+    default_url_format = "https://github.com/%s",
+  },
+  log = { level = "warn" },
+  lockfile = {
+    path = PCKR_UTIL.join_paths(
+      vim.fn.stdpath("config"), "pckr", "lockfile.lua"
     ),
-    -- Limit the number of simultaneous jobs. nil means no limit
-    max_jobs = nil,
-    autoremove = true,
-    autoinstall = true,
-    git = {
-      cmd = "git",
-      clone_timeout = 60,
-      -- Lua format string used for "aaa/bbb" style plugins
-      default_url_format = "https://github.com/%s",
-    },
-    log = { level = "warn" },
-    lockfile = {
-      path = PCKR_UTIL.join_paths(
-        vim.fn.stdpath("config"), "pckr", "lockfile.lua"
-      ),
-    },
-  }
+  },
+}
 )
 
 --  }}}
@@ -311,18 +251,16 @@ local plugin_configs = { -- {{{
     end,                --  }}}
 
     config = function() --  {{{
-      for key_in, key_out in pairs(
-        {
-          ["<C-n>"] = ";",
-          ["<C-p>"] = ",",
-          s = "s",
-          S = "S",
-          f = "f",
-          F = "F",
-          t = "t",
-          T = "T",
-        }
-      ) do
+      for key_in, key_out in pairs({
+        ["<C-n>"] = ";",
+        ["<C-p>"] = ",",
+        s = "s",
+        S = "S",
+        f = "f",
+        F = "F",
+        t = "t",
+        T = "T",
+      }) do
         vim.keymap.set(
           "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
         )
@@ -444,12 +382,27 @@ table_join(
     "ryvnf/readline.vim",
 
     {
-      "Rellikeht/vim-extras",
+      "kmonad/kmonad-vim", --  {{{
+      -- why doesn't this happen automatically
+      config = function()
+        vim.api.nvim_create_autocmd(
+          { "BufRead", "BufNewFile" }, {
+            pattern = "*.kbd",
+            callback = function()
+              vim.o.filetype = "kbd"
+            end
+          }
+        )
+      end
+    }, --  }}}
+
+    {
+      "Rellikeht/vim-extras", --  {{{
       config = function()
         vim.keymap.set("n", "<Tab>o", ":TabOpen<Space>", {})
         EXTRAS = require("extras")
       end
-    },
+    }, --  }}}
 
     {
       "Rellikeht/arglist-plus", --  {{{
@@ -524,19 +477,17 @@ table_join(
     {
       "windwp/nvim-autopairs", -- {{{
       config = function()
-        require("nvim-autopairs").setup(
-          {
-            disable_filetype = {
-              "markdown",
-              "text",
-              "fzf",
-              "fugitive",
-            },
-            disable_in_macro = true,
-            disable_in_visualblock = false,
-            disable_in_replace_mode = true,
-          }
-        )
+        require("nvim-autopairs").setup({
+          disable_filetype = {
+            "markdown",
+            "text",
+            "fzf",
+            "fugitive",
+          },
+          disable_in_macro = true,
+          disable_in_visualblock = false,
+          disable_in_replace_mode = true,
+        })
       end,
     }, --  }}}
 
@@ -548,21 +499,19 @@ table_join(
         require("nvim-treesitter.install").prefer_git = false
         require("lazy_utils").load_on_startup(
           function()
-            require "nvim-treesitter.configs".setup(
-              {
-                highlight = { enable = true },
-                indent = { enable = true },
-                incremental_selection = { enable = true },
-                sync_install = false,
-                auto_install = false,
+            require "nvim-treesitter.configs".setup({
+              highlight = { enable = true },
+              indent = { enable = true },
+              incremental_selection = { enable = true },
+              sync_install = false,
+              auto_install = false,
 
-                matchup = {
-                  enable = true,
-                  disable_virtual_text = true,
-                  include_match_words = true,
-                },
-              }
-            )
+              matchup = {
+                enable = true,
+                disable_virtual_text = true,
+                include_match_words = true,
+              },
+            })
           end
         )
       end,
@@ -678,6 +627,67 @@ table_join(
 
 PCKR.add(plugin_configs)
 
+-- settings {{{
+
+vim.cmd.filetype("on")
+vim.cmd.filetype("plugin", "on")
+vim.cmd.filetype("indent", "on")
+vim.cmd.syntax("on")
+
+-- filetypes {{{
+
+vim.g.markdown_minlines = 500
+
+vim.api.nvim_create_autocmd(
+  { "BufRead", "BufNewFile" },
+  { pattern = "*.md", command = "set syntax=markdown" }
+)
+
+--  }}}
+
+--  }}}
+
+-- keybindings {{{
+
+-- tabs {{{
+
+vim.keymap.set(
+  "n", "<C-w><C-h>",
+  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", {}
+)
+
+vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<C-j>", "<Tab>", { noremap = true })
+vim.keymap.set(
+  "n", "<Tab><Tab>", ":<C-u>tab<Space>", {}
+)
+vim.keymap.set(
+  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {}
+)
+vim.keymap.set(
+  "n", "<Tab>h", ":<C-u>tab help<Space>", {}
+)
+vim.keymap.set(
+  "n", "<Tab>H", ":<C-u>-tab help<Space>", {}
+)
+
+-- }}}
+
+-- info {{{
+
+for key, cmd in pairs({
+  m = ":<C-u>marks<CR>",
+  b = ":<C-u>ls<CR>",
+}) do
+  vim.keymap.set(
+    "n", "<Space>i" .. key, cmd, {}
+  )
+end
+
+--  }}}
+
+--  }}}
+
 -- other settings {{{
 
 vim.opt.softtabstop = 4
@@ -701,15 +711,13 @@ vim.opt.wrapmargin = 1
 vim.opt.undolevels = 10000
 vim.opt.history = 10000
 
-for _, option in pairs(
-  {
-    "number",
-    "relativenumber",
-    "cursorline",
-    "expandtab",
-    "smarttab",
-  }
-) do vim.opt[option] = true end
+for _, option in pairs({
+  "number",
+  "relativenumber",
+  "cursorline",
+  "expandtab",
+  "smarttab",
+}) do vim.opt[option] = true end
 
 vim.keymap.set("t", "<C-w>", "<C-\\><C-n><C-w>", { remap = true })
 vim.keymap.set("t", "<C-q><C-w>", "<C-w>", { noremap = true })
@@ -770,6 +778,7 @@ vim.api.nvim_create_autocmd(
       "ocaml",
       "elixir",
       "haskell",
+      "kbd",
     }, --  }}}
     callback = function()
       vim.bo.softtabstop = 2
