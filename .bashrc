@@ -65,6 +65,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
+if [ -z "$EDITOR" ]; then
+    EDITOR=vim
+fi
+
 #  }}}
 
 # prompt {{{
