@@ -4,7 +4,7 @@
 # helpers {{{
 
 has_exe() {
-    /usr/bin/env which "$1" >/dev/null 2>/dev/null
+    which "$1" >/dev/null 2>/dev/null
 }
 
 source_if_exists() {
@@ -42,16 +42,6 @@ shopt -s globstar
 # just in case
 shopt -s expand_aliases
 
-# make less more friendly for non-text input files, see lesspipe(1)
-#[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
-
-PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
@@ -76,6 +66,59 @@ if ! shopt -oq posix; then
 fi
 
 #  }}}
+
+# prompt {{{
+
+# colors {{{
+RESET='\[\e[0m\]'
+
+BLACK='\[\e[0;30m\]'
+RED='\[\e[0;31m\]'
+GREEN='\[\e[0;32m\]'
+YELLOW='\[\e[0;33m\]'
+BLUE='\[\e[0;34m\]'
+MAGENTA='\[\e[0;35m\]'
+CYAN='\[\e[0;36m\]'
+WHITE='\[\e[0;37m\]'
+
+LBLACK='\[\e[1;30m\]'
+LRED='\[\e[1;31m\]'
+LGREEN='\[\e[1;32m\]'
+LYELLOW='\[\e[1;33m\]'
+LBLUE='\[\e[1;34m\]'
+LMAGENTA='\[\e[1;35m\]'
+LCYAN='\[\e[1;36m\]'
+LWHITE='\[\e[1;37m\]'
+# }}}
+
+PS2=">"
+PS3=""
+PS4="+"
+
+__prompt_command() {
+    # Because sometimes z.lua fucks up
+    local EX="$?"
+    if [ -n "$EXIT" ]; then
+        EX="$EXIT"
+    fi
+    PS1=""
+    PS1+="${MAGENTA}\w${RESET}"
+    if [ "$EX" != 0 ]; then
+        PS1+="${LRED}"
+    else
+        PS1+="${LGREEN}"
+    fi
+    PS1+="[$EX]${RESET}\n${LCYAN}"
+    if [ "$(id -u)" -eq 0 ]; then
+        PS1+="#"
+    else
+        PS1+="$"
+    fi
+    PS1+="${RESET} "
+}
+PROMPT_COMMAND=__prompt_command
+
+# }}}
 
 # aliases {{{
 
@@ -130,14 +173,48 @@ if has_exe fzf; then #  {{{
     "
 fi #  }}}
 
-# other {{{
+# z {{{
 
+activate_z_lua() {
+    # {{{
+    # Because doing this normal way messes in some cases $?
+    # Here it is exported as $EXIT
+    local TEMP1 TEMP2
+    TEMP1="$(mktemp)"
+    TEMP2="$(mktemp)"
+    cat > "$TEMP2" << 'EOF'
+    --- f.orig	2024-08-06 17:50:22.159686827 +0200
+    +++ f	2024-08-06 17:50:32.406544343 +0200
+    @@ -55,6 +55,7 @@
+     alias ${_ZL_CMD:-z}='_zlua'
+     
+     _zlua_precmd() {
+    +    EXIT="$?"
+         [ "$_ZL_PREVIOUS_PWD" = "$PWD" ] && return
+         _ZL_PREVIOUS_PWD="$PWD"
+         (_zlua --add "$PWD" 2> /dev/null &)
+EOF
+    "$@" bash once enhanced echo fzf >"$TEMP1"
+    patch -u "$TEMP1" -i "$TEMP2" &>/dev/null
+    rm -f "*.orig"
+    eval "$(cat "$TEMP1")"
+    rm "$TEMP1" "$TEMP2"
+    # }}}
+}
+
+# z.lua or plain old z as fallback
 ZLUA_FILE="$HOME/.local/share/z.lua/z.lua"
 if [ -r "$ZLUA_FILE" ] && has_exe lua; then
-    eval "$(lua "$ZLUA_FILE" --init bash enhanced once echo)"
+    activate_z_lua lua "$ZLUA_FILE"
 elif has_exe z.lua; then
-    eval "$(z.lua --init bash enhanced once echo)"
+    activate_z_lua z.lua --init
+elif has_exe z; then
+    . "$(which z)"
 fi
+
+#  }}}
+
+# other {{{
 
 if has_exe direnv && [ -z "$__DIRENV_LOADED" ]; then
     eval "$(direnv hook bash)"
