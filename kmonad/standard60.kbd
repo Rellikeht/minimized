@@ -1,0 +1,119 @@
+(defcfg
+  ;; For Linux
+  input  (device-file "BLOCK_DEVICE")
+  output (uinput-sink "Standard 60% keyboard"
+    ;; This is for altgr to work with symbols
+    "sleep 0.2 && setxkbmap -option compose:ralt"
+    )
+
+  cmp-seq ralt    ;; Set the compose key to `RightAlt'
+  cmp-seq-delay 1 ;; delay in ms between each compose-key sequence press
+  key-seq-delay 1 ;; delay in ms between each outputted key event
+
+  ;; Comment this if you want unhandled events not to be emitted
+  fallthrough true
+
+  ;; Set this to false to disable any command-execution in KMonad
+  allow-cmd true
+
+  ;; Set the implicit around to `around`
+  implicit-around around
+)
+
+(defsrc
+  esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt      cmp rctl
+)
+
+(defalias
+  sym (layer-toggle symbols)
+  ss  (layer-toggle shift-symbols)
+  lsf (around lsft (layer-toggle lshift))
+  rsf (around rsft (layer-toggle rshift))
+  tad (tap-next tab (layer-toggle additional))
+)
+
+(defalias
+ SL0  #((press-only lsft) 0)
+ SL1  #((press-only lsft) 1)
+ SL2  #((press-only lsft) 2)
+ SL3  #((press-only lsft) 3)
+ SL4  #((press-only lsft) 4)
+ SL5  #((press-only lsft) 5)
+ SL6  #((press-only lsft) 6)
+ SL7  #((press-only lsft) 7)
+ SL8  #((press-only lsft) 8)
+ SL9  #((press-only lsft) 9)
+ SL_  #((press-only lsft) -)
+
+ SR0  #((press-only rsft) 0)
+ SR1  #((press-only rsft) 1)
+ SR2  #((press-only rsft) 2)
+ SR3  #((press-only rsft) 3)
+ SR4  #((press-only rsft) 4)
+ SR5  #((press-only rsft) 5)
+ SR6  #((press-only rsft) 6)
+ SR7  #((press-only rsft) 7)
+ SR8  #((press-only rsft) 8)
+ SR9  #((press-only rsft) 9)
+ SR_  #((press-only rsft) -)
+)
+
+(deflayer main
+  _    1    2    3    4    5    XX   6    7    8    9    0    -    bspc
+  @tad q    w    e    r    t    y    u    i    o    p    =    @tad _
+  esc  a    s    d    f    g    h    j    k    l    ;    bspc ret
+  @lsf z    x    c    v    b    n    m    ,    .    /    @rsf
+  _    _    _         _              @sym      rmet _
+)
+
+(deflayer lshift
+  _    _    _    _    _    _    XX   @SL7 @SL8 @SL9 @SL0 @SL6 @SL_ _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              @ss       _    _
+)
+
+(deflayer rshift
+  _    _    _    _    _    _    XX   @SR7 @SR8 @SR9 @SR0 @SR6 @SR_ _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              @ss       _    _
+)
+
+(deflayer symbols
+  _    `    [    ]    _    _    _    _    _    _    _    _    _    _
+  _    _    _    ę    _    _    _    _    _    ó    _    _    _    _
+  _    ą    ś    {    }    _    _    "    '    ł    _    _    _
+  @ss  ż    ź    ć    _    _    ń    _    _    _    _    @ss
+  _    _    _              _              _         _    _
+)
+
+(deflayer shift-symbols
+  _    ~    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    Ę    _    _    _    _    _    Ó    _    _    _    _
+  _    Ą    Ś    \\   |    _    _    _    _    Ł    _    _    _
+  _    Ż    Ź    Ć    _    _    Ń    _    _    _    _    _
+  _    _    _              _              _         _    _
+)
+
+(deflayer additional
+  _    f1   f2   f3   f4   f5   _    f6   f7   f8   f9   f10  f11  _
+  _    _    _    _    _    _    _    home pgup pgdn end  f12  _    _
+  _    _    _    _    _    _    left down up   rght ins  del  _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _         _    _
+)
+
+;;(deflayer empty
+;;  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+;;  _    _    _    _    _    _    _    _    _    _    _    _    _
+;;  _    _    _    _    _    _    _    _    _    _    _    _
+;;  _    _    _              _              _         _    _
+;;)
