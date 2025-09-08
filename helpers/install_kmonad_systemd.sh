@@ -1,12 +1,14 @@
 #!/usr/bin/env sh
 
-if [ "$#" -lt 2 ]; then
-  echo Give mount point and remote source
+if [ "$#" -lt 1 ]; then
+  echo Give block device name
   exit 1
 fi
 
+DNAME="${1##*/}"
 DEST="$HOME/.config/systemd/user"
-FILENAME="$(systemd-escape -p --suffix=mount "$2")"
+KBD="$HOME/.kmonad/$DNAME.kbd"
+FILENAME="$(systemd-escape -p --suffix=service "$DNAME" 2>/dev/null)"
 TEMP=$(mktemp -d)
 clean() {
   rm -fr "$TEMP"
@@ -16,15 +18,15 @@ trap clean EXIT
 cd "$TEMP"
 {
   echo "[Unit]"
-  echo "Description=Mount sshfs from $1 on $2"
+  echo "Description=Kmonad instance for $1"
   echo "After=network-online.target sockets.target"
   echo "Wants=network-online.target sockets.target"
   echo
-  echo "[Mount]"
-  echo "What=$1"
-  echo "Where=$2"
-  echo "Type=sshfs"
-  echo "Options=auto_cache,reconnect"
+  echo "[Service]"
+  echo "ExecStart=bash -c 'PATH=\"\$PATH:%h/.nix-profile/bin:\" kmonad $KBD'"
+  echo "Type=simple"
+  echo "Restart=always"
+  echo "RestartSec=2"
   echo
   echo "[Install]"
   echo "WantedBy=default.target"

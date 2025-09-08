@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-if ! [ "$#" -lt 1 ]; then
+if [ "$#" -lt 1 ]; then
     echo "Give block device name"
     exit 1
 fi
@@ -8,7 +8,7 @@ fi
 SRC="$(readlink -f "${0%/*}/../kmonad/standard60.kbd")"
 DEST="$HOME/.kmonad"
 mkdir -p "$DEST"
-if [ -z "$2" ]; then
+if [ -n "$2" ]; then
     DEST="$DEST/$2"
 else
     DEST="$DEST/${1##*/}.kbd"
