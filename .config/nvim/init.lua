@@ -582,11 +582,13 @@ table_join(
           end,
         }
 
-        -- TODO roots
         vim.keymap.set("n", "<Leader>sc", ":<C-u>Files<Space>")
         vim.keymap.set("n", "<Leader>sb", ":<C-u>Buffers<CR>")
         vim.keymap.set("n", "<Leader>sl", ":<C-u>BLines<CR>")
         vim.keymap.set("n", "<Leader>sL", ":<C-u>Lines<CR>")
+        vim.keymap.set("n", "<Leader>s?", ":<C-u>HelpTags<CR>")
+
+        -- TODO roots
 
         -- because those are nice and this config should be as
         -- self contained as it is possible
