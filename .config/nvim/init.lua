@@ -369,6 +369,9 @@ if vim.g.vscode then
   vim.keymap.set("n", "<Leader>dh", function()
     VSCODE.call("editor.action.showHover")
   end)
+  vim.keymap.set("n", "<Leader>de", function()
+    VSCODE.call("editor.action.showHover")
+  end)
 
   PCKR.add(plugin_configs)
   return
@@ -414,12 +417,12 @@ table_join(
         vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
         vim.keymap.set("n", "<Space>o", ":AEdit<Space>", {})
         vim.keymap.set("n", "<Space>O", ":AEditBuf<Space>", {})
-        vim.keymap.set("n", "<Space>j<Space>", ":<C-u>ASelect<Space>", {})
-        vim.keymap.set("n", "<Space>J<Space>", ":<C-u>ASelect!<Space>", {})
+        vim.keymap.set("n", "<Space>e", ":<C-u>AGo<Space>", {})
+        vim.keymap.set("n", "<Space>E", ":<C-u>AGo!<Space>", {})
+        vim.keymap.set("n", "<Space>j<Space>", ":ASelect", {})
+        vim.keymap.set("n", "<Space>J<Space>", ":ASelect!", {})
         vim.keymap.set("n", "<Space>ll", "<Plug>AList", {})
         vim.keymap.set("n", "<Space>lL", "<Plug>AVertList", {})
-        vim.keymap.set("n", "<Space>le", ":<C-u>AGo<Space>", {})
-        vim.keymap.set("n", "<Space>lE", ":<C-u>AGo!<Space>", {})
         vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
         vim.keymap.set("n", "<Space>la", ":AAddBuf<Space>", {})
         vim.keymap.set("n", "<Space>lr", ":AReplace<Space>", {})
@@ -435,10 +438,10 @@ table_join(
 
         for i = 0, 9 do
           vim.keymap.set(
-            "n", "<Space>j" .. i, ":<C-u>" .. i .. "ASelect<Space>", {}
+            "n", "<Space>j" .. i, ":<C-u>" .. i .. "ASelect<CR>", {}
           )
           vim.keymap.set(
-            "n", "<Space>J" .. i, ":<C-u>" .. i .. "ASelect!<Space>", {}
+            "n", "<Space>J" .. i, ":<C-u>" .. i .. "ASelect!<CR>", {}
           )
         end
 
@@ -874,6 +877,13 @@ if vim.g.neovide then
   vim.g.neovide_refresh_rate_idle = 5
   vim.g.neovide_cursor_hack = false
   vim.g.neovide_scale_factor = 0.95
+
+  vim.keymap.set("n", "<F11>", function()
+    vim.g.neovide_fullscreen = not vim.g.neovide_fullscreen
+  end, { noremap = true })
+  vim.keymap.set("n", "<C-w>u", function()
+    vim.g.neovide_fullscreen = not vim.g.neovide_fullscreen
+  end, { noremap = true })
 
   -- }}}
 elseif vim.fn.has("gui_running") == 1 then
