@@ -430,10 +430,10 @@ PCKR.add({ -- {{{
         }
       ) -- }}}
     end,
-  },
+  },    --  }}}
 
   {
-    "Rellikeht/nvim-lsp-config",
+    "Rellikeht/nvim-lsp-config", --  {{{
     requires = {
       "neovim/nvim-lspconfig",
       "Rellikeht/lazy-utils",
@@ -441,6 +441,24 @@ PCKR.add({ -- {{{
       "p00f/clangd_extensions.nvim",
     },
   }, --  }}}
+
+  {
+    "HiPhish/info.vim",
+    config = function()
+      vim.api.nvim_create_autocmd(
+        "FileType", {
+          pattern = "info",
+          callback = function()
+            vim.keymap.set("n", "<Leader>n", "<Plug>(InfoNext)", { noremap = true })
+            vim.keymap.set("n", "<Leader>p", "<Plug>(InfoPrev)", { noremap = true })
+            vim.keymap.set("n", "<Leader>u", "<Plug>(InfoPrev)", { noremap = true })
+            vim.keymap.set("n", "<Leader>m", "<Plug>(InfoMenu)", { noremap = true })
+            vim.keymap.set("n", "<Leader>o", "<Plug>(InfoGoto)", { noremap = true })
+          end,
+        }
+      )
+    end
+  },
 
   -- TODO C rainbow ?
   -- TODO formatters
