@@ -402,7 +402,7 @@ table_join(
     {
       "Rellikeht/vim-extras", --  {{{
       config = function()
-        vim.keymap.set("n", "<Tab>o", ":TabOpen<Space>", {})
+        vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>", {})
         EXTRAS = require("extras")
       end
     }, --  }}}
@@ -412,15 +412,14 @@ table_join(
       config_pre = function()
       end,
       config = function()
-        -- TODO improve keys
         vim.keymap.set("n", "<Space>n", "<Plug>ANext", {})
         vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
         vim.keymap.set("n", "<Space>o", ":AEdit<Space>", {})
         vim.keymap.set("n", "<Space>O", ":AEditBuf<Space>", {})
         vim.keymap.set("n", "<Space>e", ":<C-u>AGo<Space>", {})
         vim.keymap.set("n", "<Space>E", ":<C-u>AGo!<Space>", {})
-        vim.keymap.set("n", "<Space>j<Space>", ":ASelect", {})
-        vim.keymap.set("n", "<Space>J<Space>", ":ASelect!", {})
+        vim.keymap.set("n", "<Space>j", ":ASelect<CR>", {})
+        vim.keymap.set("n", "<Space>J", ":ASelect!<CR>", {})
         vim.keymap.set("n", "<Space>ll", "<Plug>AList", {})
         vim.keymap.set("n", "<Space>lL", "<Plug>AVertList", {})
         vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
@@ -436,15 +435,6 @@ table_join(
         vim.keymap.set("n", "<Space>lq", ":<C-u>ABufDelN<Space>", {})
         vim.keymap.set("n", "<Space>lQ", ":<C-u>ABufWipeN<Space>", {})
 
-        for i = 0, 9 do
-          vim.keymap.set(
-            "n", "<Space>j" .. i, ":<C-u>" .. i .. "ASelect<CR>", {}
-          )
-          vim.keymap.set(
-            "n", "<Space>J" .. i, ":<C-u>" .. i .. "ASelect!<CR>", {}
-          )
-        end
-
         vim.keymap.set("n", "<Space>lu", function()
           vim.cmd.AEdit(vim.fn.expand("<cfile>"))
         end, {})
@@ -459,7 +449,9 @@ table_join(
       config_pre = function()
         vim.g.matchup_matchparen_offscreen = { method = "popup" }
         vim.g.matchup_surround_enabled = true
-        vim.g.matchup_delim_noskips = 0
+        vim.g.matchup_delim_noskips = false
+        vim.g.matchup_delim_stopline = 100000
+        vim.g.matchup_motion_cursor_end = true
       end,
     }, --  }}}
 
@@ -548,8 +540,7 @@ table_join(
 
         vim.g.fzf_action = {
           ["alt-t"] = function(files)
-            -- Undoable with TabOpen somehow
-            vim.cmd.tabnew()
+            vim.cmd.TabOpen("+0")
             vim.fn["aplus#define"](EXTRAS.map(vim.fn.fnameescape, files))
             vim.fn["aplus#select"](0)
           end,
