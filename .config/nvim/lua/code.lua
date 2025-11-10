@@ -315,8 +315,7 @@ PCKR.add({ -- {{{
 
       vim.api.nvim_create_autocmd( -- {{{
         "LspAttach", {
-          group = vim.api
-              .nvim_create_augroup("UserLspConfig", {}),
+          group = vim.api.nvim_create_augroup("UserLspConfig", {}),
           callback = function(args)
             -- helpers {{{
 
@@ -384,6 +383,12 @@ PCKR.add({ -- {{{
                 buffer = bufnr,
               }
             )
+            vim.keymap.set(
+              "n", "<Leader>dH", LSP_CONFIG.BufHoverPreview, {
+                desc = "display information about the symbol under the cursor in preview window",
+                buffer = bufnr,
+              }
+            )
 
             vim.keymap.set(
               "n", "<Leader>dlr", vim.lsp.buf.references, {
@@ -440,6 +445,9 @@ PCKR.add({ -- {{{
       "mfussenegger/nvim-jdtls",
       "p00f/clangd_extensions.nvim",
     },
+    config = function()
+      LSP_CONFIG = require("nvim_lsp_config")
+    end,
   }, --  }}}
 
   {
