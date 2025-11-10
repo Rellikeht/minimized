@@ -468,8 +468,8 @@ PCKR.add({ -- {{{
     end
   },
 
-  -- TODO C rainbow ?
-  -- TODO formatters
+  -- TODO rainbow ?
+  -- TODO formatters (neoformat)
   -- TODO snippets ?
 }
 ) -- }}}
@@ -483,8 +483,7 @@ local lazy_utils = require("lazy_utils")
 local tsinstall = require("nvim-treesitter.install")
 
 do
-  -- This is because FileType is not triggered on first file
-  -- sometimes
+  -- This is because FileType is not triggered on first file sometimes
   -- TODO is this proper solution
   vim.cmd.filetype("detect")
   lazy_utils.load_on_startup(
@@ -496,7 +495,7 @@ local function lazy_ts_ensure_installed(name, filetypes)
   if filetypes == nil then filetypes = name end
   lazy_utils.load_on_filetypes(
     filetypes, function()
-      -- TODO B failing silently
+      -- TODO failing silently (when no internet)
       vim.cmd.TSUpdate(name)
     end
   )

@@ -72,7 +72,7 @@ vim.opt.formatoptions:append("croqlwn")
 
 vim.opt.wildchar = string.byte("\t")
 vim.opt.wildmode = "list:longest,full"
-vim.opt.wildoptions = "fuzzy,tagfile,pum"
+vim.opt.wildoptions = "fuzzy,tagfile" -- ??
 vim.opt.complete = "w,b,s,i,d,.,k"
 vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
 if vim.fn.has("nvim-0.11") == 1 then
@@ -582,7 +582,7 @@ table_join(
         vim.keymap.set("n", "<Leader>sL", ":<C-u>Lines<CR>")
         vim.keymap.set("n", "<Leader>s?", ":<C-u>HelpTags<CR>")
 
-        -- TODO roots
+        -- TODO project roots
 
         -- because those are nice and this config should be as
         -- self contained as it is possible
