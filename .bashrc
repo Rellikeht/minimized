@@ -1,21 +1,40 @@
+#!/usr/bin/env bash
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
 # helpers {{{
 
 has_exe() {
-    which "$1" >/dev/null 2>/dev/null
+    command -v "$1" >/dev/null
 }
 
 source_if_exists() {
-    [ -f "$1" ] && source "$1"
+    [ -r "$1" ] && source "$1"
 }
 
 eval_if_exists() {
-    [ -f "$1" ] && . "$1"
+    [ -r "$1" ] && . "$1"
+}
+
+update_path() {
+    [[ "$PATH" =~ "(.*:)?$1(:.*)?"* ]] || export PATH="$PATH:$1"
 }
 
 #  }}}
+
+# bindings {{{
+
+# better up and down
+bind '"[A" history-search-backward'
+bind '"[B" history-search-forward'
+bind '"" history-search-backward'
+bind '"" history-search-forward'
+
+# may be better, but is acceptable
+bind '"\ei":"**	"'
+bind 'Space:magic-space'
+
+# }}}
 
 # settings {{{
 
@@ -47,26 +66,28 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 
 # enable color support of ls
 if [ -x /usr/bin/dircolors ]; then
-    if [ -r ~/.dircolors ]; then
-        eval "$(dircolors -b ~/.dircolors)"
+    if [ -r "$HOME/.dircolors" ]; then
+        eval "$(dircolors -b "$HOME/.dircolors")"
     else
         eval "$(dircolors -b)"
     fi
 fi
 
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
+# TODO is this needed
+# if ! shopt -oq posix; then
+#     eval_if_exists "/usr/share/bash-completion/bash_completion" ||
+#         eval_if_exists /etc/bash_completion
+# fi
+
+update_path "$HOME/bin"
+update_path "$HOME/.local/bin"
 
 if [ -z "$EDITOR" ]; then
-    EDITOR=vim
+    if has_exe nvim; then
+        export EDITOR=nvim
+    else
+        export EDITOR=vim
+    fi
 fi
 
 #  }}}
@@ -128,16 +149,13 @@ PROMPT_COMMAND=__prompt_command
 
 alias ls='ls --color=auto'
 alias ll='ls -la'
-
 alias grep='grep --color=auto'
-alias fgrep='grep -F'
-alias egrep='grep -E'
 
 eval_if_exists "$HOME/.bash_aliases"
 
 #  }}}
 
-# conda {{{
+# integrations {{{
 
 if has_exe micromamba; then
     eval "$(micromamba shell hook -s bash)"
@@ -146,18 +164,13 @@ elif has_exe conda; then
     if [ $? -eq 0 ]; then
         eval "$__conda_setup"
     else
-        if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-            . "$HOME/miniconda3/etc/profile.d/conda.sh"
-        else
-            export PATH="$HOME/miniconda3/bin:$PATH"
-        fi
+        eval_if_exists "$HOME/miniconda3/etc/profile.d/conda.sh" ||
+            update_path "$HOME/miniconda3/bin:$PATH"
     fi
     unset __conda_setup
 fi
 
-#  }}}
-
-if has_exe fzf; then #  {{{
+if has_exe fzf; then 
     eval "$(fzf --bash)"
     export FZF_COMPLETION_TRIGGER='**'
     export FZF_DEFAULT_OPTS="
@@ -175,9 +188,7 @@ if has_exe fzf; then #  {{{
     --bind 'ctrl-p:up,ctrl-n:down'
     --bind 'ctrl-t:toggle'
     "
-fi #  }}}
-
-# z {{{
+fi 
 
 activate_z_lua() {
     # {{{
@@ -213,16 +224,25 @@ if [ -r "$ZLUA_FILE" ] && has_exe lua; then
 elif has_exe z.lua; then
     activate_z_lua z.lua --init
 elif has_exe z; then
-    . "$(which z)"
+    . "$(z)"
 fi
-
-#  }}}
-
-# other {{{
 
 if has_exe direnv && [ -z "$__DIRENV_LOADED" ]; then
     eval "$(direnv hook bash)"
     __DIRENV_LOADED=1
+fi
+
+#  }}}
+
+# local {{{
+
+eval_if_exists "$HOME/.bashrc.local"
+
+# User specific aliases and functions
+if [ -d "$HOME/.bashrc.d" ]; then
+	for rc in "$HOME/.bashrc.d"/*; do
+        eval_if_exists "$rc"
+	done
 fi
 
 #  }}}
