@@ -127,7 +127,19 @@ __prompt_command() {
         EX="$EXIT"
     fi
     PS1=""
-    PS1+="${MAGENTA}\w${RESET}"
+    if [ -n "$PS1_USER" ]; then
+        PS1+="${LGREEN}\u${RESET}"
+    fi
+    if [ -n "$PS1_USER" ] && [ -n "$PS1_HOST" ]; then
+        PS1+="${MAGENTA}@${RESET}"
+    fi
+    if [ -n "$PS1_HOST" ]; then
+        PS1+="${LCYAN}\h${RESET}"
+    fi
+    if [ -n "$PS1_USER" ] || [ -n "$PS1_HOST" ]; then
+        PS1+=":"
+    fi
+    PS1+="${LMAGENTA}\w${RESET}"
     if [ "$EX" != 0 ]; then
         PS1+="${LRED}"
     else
