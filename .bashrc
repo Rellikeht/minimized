@@ -140,6 +140,11 @@ __prompt_command() {
         PS1+=":"
     fi
     PS1+="${LMAGENTA}\w${RESET}"
+    if [ -n "$PS1_ADD" ]; then
+        PS1+=" $LCYAN-$RESET "
+        PS1+="$LYELLOW$PS1_ADD$RESET"
+        PS1+=" $LCYAN-$RESET "
+    fi
     if [ "$EX" != 0 ]; then
         PS1+="${LRED}"
     else
@@ -244,6 +249,10 @@ if has_exe direnv && [ -z "$__DIRENV_LOADED" ]; then
     __DIRENV_LOADED=1
 fi
 
+if [ -z "$SSH_AUTH_SOCK" ] && [ -n "$XDG_RUNTIME_DIR" ]; then
+    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+fi
+
 #  }}}
 
 # local {{{
@@ -252,9 +261,10 @@ eval_if_exists "$HOME/.bashrc.local"
 
 # User specific aliases and functions
 if [ -d "$HOME/.bashrc.d" ]; then
-	for rc in "$HOME/.bashrc.d"/*; do
+    for rc in "$HOME/.bashrc.d"/*; do
         eval_if_exists "$rc"
-	done
+    done
+    unset rc
 fi
 
 #  }}}
