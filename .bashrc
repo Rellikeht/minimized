@@ -12,10 +12,6 @@ source_if_exists() {
     [ -r "$1" ] && source "$1"
 }
 
-eval_if_exists() {
-    [ -r "$1" ] && . "$1"
-}
-
 update_path() {
     [[ "$PATH" =~ "(.*:)?$1(:.*)?"* ]] || export PATH="$PATH:$1"
 }
@@ -72,12 +68,6 @@ if [ -x /usr/bin/dircolors ]; then
         eval "$(dircolors -b)"
     fi
 fi
-
-# TODO is this needed
-# if ! shopt -oq posix; then
-#     eval_if_exists "/usr/share/bash-completion/bash_completion" ||
-#         eval_if_exists /etc/bash_completion
-# fi
 
 update_path "$HOME/bin"
 update_path "$HOME/.local/bin"
@@ -168,7 +158,7 @@ alias ls='ls --color=auto'
 alias ll='ls -la'
 alias grep='grep --color=auto'
 
-eval_if_exists "$HOME/.bash_aliases"
+source_if_exists "$HOME/.bash_aliases"
 
 #  }}}
 
@@ -181,31 +171,11 @@ elif has_exe conda; then
     if [ $? -eq 0 ]; then
         eval "$__conda_setup"
     else
-        eval_if_exists "$HOME/miniconda3/etc/profile.d/conda.sh" ||
+        source_if_exists "$HOME/miniconda3/etc/profile.d/conda.sh" ||
             update_path "$HOME/miniconda3/bin:$PATH"
     fi
     unset __conda_setup
 fi
-
-if has_exe fzf; then 
-    eval "$(fzf --bash)"
-    export FZF_COMPLETION_TRIGGER='**'
-    export FZF_DEFAULT_OPTS="
-    --preview-window 'top:60%'
-    --height=100%
-    --history='$HOME/.fzf-hist'
-    --bind 'alt-k:preview-up,alt-j:preview-down'
-    --bind 'ctrl-k:kill-line,ctrl-j:jump'
-    --bind 'ctrl-s:change-preview-window(hidden|)'
-    --bind 'alt-K:preview-half-page-up,alt-J:preview-half-page-down'
-    --bind 'alt-U:half-page-up,alt-D:half-page-down'
-    --bind 'ctrl-c:cancel,ctrl-g:clear-selection'
-    --bind 'alt-p:prev-history,alt-n:next-history'
-    --bind 'alt-P:prev-selected,alt-N:next-selected'
-    --bind 'ctrl-p:up,ctrl-n:down'
-    --bind 'ctrl-t:toggle'
-    "
-fi 
 
 activate_z_lua() {
     # {{{
@@ -257,14 +227,36 @@ fi
 
 # local {{{
 
-eval_if_exists "$HOME/.bashrc.local"
+source_if_exists "$HOME/.bashrc.local"
 
 # User specific aliases and functions
 if [ -d "$HOME/.bashrc.d" ]; then
     for rc in "$HOME/.bashrc.d"/*; do
-        eval_if_exists "$rc"
+        source_if_exists "$rc"
     done
     unset rc
 fi
 
 #  }}}
+
+if has_exe fzf; then #  {{{
+    # this eval has to be run after sourcing all completions which can
+    # be done in local files so this is at the end of file
+    eval "$(fzf --bash)"
+    export FZF_COMPLETION_TRIGGER='**'
+    export FZF_DEFAULT_OPTS="
+    --preview-window 'top:60%'
+    --height=100%
+    --history='$HOME/.fzf-hist'
+    --bind 'alt-k:preview-up,alt-j:preview-down'
+    --bind 'ctrl-k:kill-line,ctrl-j:jump'
+    --bind 'ctrl-s:change-preview-window(hidden|)'
+    --bind 'alt-K:preview-half-page-up,alt-J:preview-half-page-down'
+    --bind 'alt-U:half-page-up,alt-D:half-page-down'
+    --bind 'ctrl-c:cancel,ctrl-g:clear-selection'
+    --bind 'alt-p:prev-history,alt-n:next-history'
+    --bind 'alt-P:prev-selected,alt-N:next-selected'
+    --bind 'ctrl-p:up,ctrl-n:down'
+    --bind 'ctrl-t:toggle'
+    "
+fi #  }}}
