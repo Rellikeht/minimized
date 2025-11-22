@@ -173,8 +173,6 @@ vim.keymap.set("n", "<Space>U", "\"+P", { noremap = true })
 
 for key, cmd in pairs({
   h = ":<C-u>set hls!<CR>",
-  w = ":<C-u>setlocal wrap!<CR>",
-  W = ":<C-u>set wrap!<CR>",
 }) do
   vim.keymap.set(
     "n", "<Space>q" .. key, cmd, {}
@@ -680,6 +678,20 @@ for key, cmd in pairs({
 }) do
   vim.keymap.set(
     "n", "<Space>i" .. key, cmd, {}
+  )
+end
+
+--  }}}
+
+-- other {{{
+
+for key, cmd in pairs({
+  w = ":<C-u>setlocal wrap!<CR>",
+  W = ":<C-u>set wrap!<CR>",
+  s = ":<C-u>SetOptionCount laststatus<CR>",
+}) do
+  vim.keymap.set(
+    "n", "<Space>q" .. key, cmd, {}
   )
 end
 
