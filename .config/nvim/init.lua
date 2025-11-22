@@ -48,7 +48,6 @@ for _, option in pairs({
   "ttimeout",
   "splitright",
   "splitbelow",
-  "autochdir",
   "undofile",
 }) do vim.opt[option] = true end
 
@@ -299,6 +298,7 @@ local plugin_configs = { -- {{{
 if vim.g.vscode then
   --  {{{
 
+  -- TODO make 'autochdir' work with vscode
   VSCODE = require("vscode")
   vim.keymap.set("x", "gc", function()
     VSCODE.call("editor.action.commentLine")
@@ -630,6 +630,8 @@ vim.cmd.filetype("on")
 vim.cmd.filetype("plugin", "on")
 vim.cmd.filetype("indent", "on")
 vim.cmd.syntax("on")
+
+vim.opt.autochdir = true
 
 -- filetypes {{{
 
