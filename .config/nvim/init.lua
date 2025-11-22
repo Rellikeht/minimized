@@ -283,6 +283,17 @@ local plugin_configs = { -- {{{
       vim.keymap.set("n", "<Space>.", ".", { noremap = true })
     end
   }, --  }}}
+
+  {
+    "Rellikeht/vim-extras", --  {{{
+    config = function()
+      if vim.g.vscode then
+        return
+      end
+      vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>", {})
+      EXTRAS = require("extras")
+    end
+  }, --  }}}
 }    -- }}}
 
 --  }}}
@@ -396,14 +407,6 @@ table_join(
             end
           }
         )
-      end
-    }, --  }}}
-
-    {
-      "Rellikeht/vim-extras", --  {{{
-      config = function()
-        vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>", {})
-        EXTRAS = require("extras")
       end
     }, --  }}}
 
