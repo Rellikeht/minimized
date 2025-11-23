@@ -324,29 +324,6 @@ PCKR.add({ -- {{{
               args.data.client_id
             )
 
-            -- inspired by
-            -- https://github.com/neovim/neovim/discussions/35953#discussioncomment-14544580
-            -- this makes it possible to toggle hover window in insert mode 
-            local float_wrapper = function(opener)
-              return function(contents, syntax, opts)
-                local buf_id, win_id = opener(contents, syntax, opts)
-                if not buf_id or not win_id then
-                  return buf_id, win_id
-                end
-                if opts.parent_bufnr ~= nil then
-                  vim.api.nvim_buf_set_var(
-                    opts.parent_bufnr,
-                    "hover_close_id",
-                    win_id
-                  )
-                end
-                return buf_id, win_id
-              end
-            end
-            vim.lsp.util.open_floating_preview = float_wrapper(
-              vim.lsp.util.open_floating_preview
-            )
-
             -- }}}
 
             -- insert mode {{{
@@ -360,29 +337,6 @@ PCKR.add({ -- {{{
                 client.server_capabilities.definitionProvider then
               vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
             end
-
-            vim.keymap.set(
-              "i", "<C-_>",
-              function()
-                if vim.b.hover_close_id and
-                    vim.api.nvim_win_is_valid(vim.b.hover_close_id) then
-                  vim.api.nvim_win_close(vim.b.hover_close_id, true)
-                  vim.b.hover_close_id = nil
-                  return
-                end
-                vim.lsp.buf.hover({
-                  relative = "cursor",
-                  anchor_bias = "above",
-                  focusable = false,
-                  zindex = 1000,
-                  parent_bufnr = bufnr,
-                })
-              end,
-              {
-                desc = "display hover information about the symbol under the cursor",
-                buffer = bufnr,
-              }
-            )
 
             --  }}}
 
@@ -430,19 +384,11 @@ PCKR.add({ -- {{{
               }
             )
             vim.keymap.set(
-              "n", "<Leader>dH", LSP_CONFIG.BufHoverPreview, {
-                desc = "display information about the symbol under the cursor in preview window",
-                buffer = bufnr,
-              }
-            )
-
-            vim.keymap.set(
               "n", "<Leader>dlr", vim.lsp.buf.references, {
                 desc = "populate quickfix list with references",
                 buffer = bufnr,
               }
             )
-
             vim.keymap.set(
               "n", "<Leader>dls", function()
                 vim.lsp.buf.document_symbol({ loclist = vim.g.qfloc })
@@ -477,6 +423,8 @@ PCKR.add({ -- {{{
             )
 
             -- }}}
+
+            LSP_CONFIG_CALLBACK(bufnr)
           end,
         }
       ) -- }}}
@@ -492,7 +440,42 @@ PCKR.add({ -- {{{
       "p00f/clangd_extensions.nvim",
     },
     config = function()
-      LSP_CONFIG = require("nvim_lsp_config")
+      local lsp_hover_win_name = "hover_close_id"
+      LSP_CONFIG_CALLBACK = function(bufnr)
+        local lsp_config = require("nvim_lsp_config")
+        lsp_config.wrap_float(
+          lsp_hover_win_name
+        )
+
+        vim.keymap.set(
+          "n", "<Leader>dH",
+          function()
+            lsp_config.buf_hover_preview(
+              {},
+              lsp_hover_win_name,
+              bufnr
+            )
+          end, {
+            desc = "display information about the symbol under the cursor in preview window",
+            buffer = bufnr,
+          }
+        )
+        vim.keymap.set(
+          "i", "<C-_>",
+          function()
+            lsp_config.hover_toggle({
+              relative = "cursor",
+              anchor_bias = "above",
+              focusable = false,
+              zindex = 1000,
+            }, bufnr, lsp_hover_win_name)
+          end,
+          {
+            desc = "display hover information about the symbol under the cursor",
+            buffer = bufnr,
+          }
+        )
+      end
     end,
   }, --  }}}
 
