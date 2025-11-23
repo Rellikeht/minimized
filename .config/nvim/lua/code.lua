@@ -324,6 +324,29 @@ PCKR.add({ -- {{{
               args.data.client_id
             )
 
+            -- inspired by
+            -- https://github.com/neovim/neovim/discussions/35953#discussioncomment-14544580
+            -- this makes it possible to toggle hover window in insert mode 
+            local float_wrapper = function(opener)
+              return function(contents, syntax, opts)
+                local buf_id, win_id = opener(contents, syntax, opts)
+                if not buf_id or not win_id then
+                  return buf_id, win_id
+                end
+                if opts.parent_bufnr ~= nil then
+                  vim.api.nvim_buf_set_var(
+                    opts.parent_bufnr,
+                    "hover_close_id",
+                    win_id
+                  )
+                end
+                return buf_id, win_id
+              end
+            end
+            vim.lsp.util.open_floating_preview = float_wrapper(
+              vim.lsp.util.open_floating_preview
+            )
+
             -- }}}
 
             -- insert mode {{{
@@ -337,6 +360,29 @@ PCKR.add({ -- {{{
                 client.server_capabilities.definitionProvider then
               vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
             end
+
+            vim.keymap.set(
+              "i", "<C-_>",
+              function()
+                if vim.b.hover_close_id and
+                    vim.api.nvim_win_is_valid(vim.b.hover_close_id) then
+                  vim.api.nvim_win_close(vim.b.hover_close_id, true)
+                  vim.b.hover_close_id = nil
+                  return
+                end
+                vim.lsp.buf.hover({
+                  relative = "cursor",
+                  anchor_bias = "above",
+                  focusable = false,
+                  zindex = 1000,
+                  parent_bufnr = bufnr,
+                })
+              end,
+              {
+                desc = "display hover information about the symbol under the cursor",
+                buffer = bufnr,
+              }
+            )
 
             --  }}}
 
