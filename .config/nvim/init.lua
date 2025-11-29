@@ -715,10 +715,11 @@ vim.opt.ttimeoutlen = 100
 vim.opt.updatetime = 2000
 
 vim.opt.conceallevel = 2
+vim.opt.concealcursor = ""
 vim.opt.foldmethod = "marker"
 vim.opt.foldmarker = " {{{, }}}"
 vim.opt.foldlevel = 0
-vim.opt.showbreak = "\\> "
+vim.opt.showbreak = "> "
 vim.opt.wrapmargin = 1
 
 vim.opt.undolevels = 10000

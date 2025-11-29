@@ -440,21 +440,13 @@ PCKR.add({ -- {{{
       "p00f/clangd_extensions.nvim",
     },
     config = function()
-      local lsp_hover_win_name = "hover_close_id"
       LSP_CONFIG_CALLBACK = function(bufnr)
         local lsp_config = require("nvim_lsp_config")
-        lsp_config.wrap_float(
-          lsp_hover_win_name
-        )
-
+        lsp_config.wrap_float()
         vim.keymap.set(
           "n", "<Leader>dH",
           function()
-            lsp_config.buf_hover_preview(
-              {},
-              lsp_hover_win_name,
-              bufnr
-            )
+            lsp_config.buf_hover_preview({}, bufnr)
           end, {
             desc = "display information about the symbol under the cursor in preview window",
             buffer = bufnr,
@@ -463,12 +455,12 @@ PCKR.add({ -- {{{
         vim.keymap.set(
           "i", "<C-_>",
           function()
-            lsp_config.hover_toggle({
+            lsp_config.insert_hover({
               relative = "cursor",
               anchor_bias = "above",
               focusable = false,
               zindex = 1000,
-            }, bufnr, lsp_hover_win_name)
+            }, bufnr)
           end,
           {
             desc = "display hover information about the symbol under the cursor",
