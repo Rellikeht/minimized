@@ -1,19 +1,6 @@
 local success, val = pcall(function() return CODE_LOADED end)
 if success and val then return end
 
--- helpers {{{
-
----@diagnostic disable-next-line: unused-local, unused-function
-local function copy_table(tbl)
-  local result = {}
-  for k, v in pairs(tbl) do result[k] = v end
-  return result
-end
-
---  }}}
-
--- plugins {{{
-
 PCKR.add({ -- {{{
 
   {
@@ -199,7 +186,6 @@ PCKR.add({ -- {{{
 
   {
     "neovim/nvim-lspconfig", --  {{{
-    requires = {},
     config = function()
       if vim.fn.has("nvim-0.10") == 0 then return end
       if vim.fn.has("nvim-0.11") == 1 then -- {{{
@@ -472,7 +458,7 @@ PCKR.add({ -- {{{
   }, --  }}}
 
   {
-    "HiPhish/info.vim",
+    "HiPhish/info.vim", --  {{{
     config = function()
       vim.api.nvim_create_autocmd(
         "FileType", {
@@ -487,42 +473,27 @@ PCKR.add({ -- {{{
         }
       )
     end
-  },
+  }, --  }}}
 
   -- TODO rainbow ?
   -- TODO formatters (neoformat)
-  -- TODO snippets ?
+  -- TODO snippets
 }
 ) -- }}}
 
 -- post setup {{{
 
-local lazy_utils = require("lazy_utils")
-
 -- treesitter {{{
-
-local tsinstall = require("nvim-treesitter.install")
 
 do
   -- This is because FileType is not triggered on first file sometimes
   -- TODO is this proper solution
   vim.cmd.filetype("detect")
-  lazy_utils.load_on_startup(
-    function() vim.cmd.filetype("detect") end
-  )
-end
-
-local function lazy_ts_ensure_installed(name, filetypes)
-  if filetypes == nil then filetypes = name end
-  lazy_utils.load_on_filetypes(
-    filetypes, function()
-      -- TODO failing silently (when no internet)
-      vim.cmd.TSUpdate(name)
-    end
-  )
+  LAZY_UTILS.load_on_startup(function() vim.cmd.filetype("detect") end)
 end
 
 for key, name in pairs({
+  ["*"] = "comment",
   [{ "sh", "bash", "zsh" }] = "bash",
   "python",
   "powershell",
@@ -545,17 +516,15 @@ for key, name in pairs({
   if type(key) == "string" or type(key) == "table" then
     filetypes = key
   end
-  lazy_ts_ensure_installed(name, filetypes)
+  H.lazy_ts_ensure_installed(name, filetypes)
 end
 
 --  }}}
 
 --  }}}
 
---  }}}
-
 if vim.fn.has("win32") == 1 then -- {{{
-  tsinstall.compilers = { "zig", "cl", "cc", "gcc", "clang" }
+  TSINSTALL.compilers = { "zig", "cl", "cc", "gcc", "clang" }
 
   -- }}}
 else -- {{{

@@ -2,27 +2,39 @@
 
 -- general {{{
 
-local function calc_pumheight()
-  local result = vim.opt.lines._value
-  result = (result - result % 3) / 3
-  return result
-end
+H = {
+  table_join = function(t1, t2)
+    for k, v in pairs(t2) do
+      table.insert(t1, k, v)
+    end
+  end,
 
-function Qflcmd(cmd)
-  local prefix = "c"
-  if vim.g.qfloc == 1 then
-    prefix = "l"
-  end
-  return function(...)
-    vim.cmd[prefix .. cmd](...)
-  end
-end
+  lazy_ts_ensure_installed = function(name, filetypes)
+    if filetypes == nil then filetypes = name end
+    LAZY_UTILS.load_on_filetypes(
+      filetypes, function()
+        -- TODO make this fail silently when network not available
+        vim.cmd.TSUpdate(name)
+      end
+    )
+  end,
 
-local function table_join(t1, t2)
-  for k, v in pairs(t2) do
-    table.insert(t1, k, v)
-  end
-end
+  calc_pumheight = function()
+    local result = vim.opt.lines._value
+    result = (result - result % 3) / 3
+    return result
+  end,
+
+  qlcmd = function(cmd)
+    local prefix = "c"
+    if vim.g.qfloc == 1 then
+      prefix = "l"
+    end
+    return function(...)
+      vim.cmd[prefix .. cmd](...)
+    end
+  end,
+}
 
 --  }}}
 
@@ -80,7 +92,7 @@ end
 
 vim.opt.omnifunc = "syntaxcomplete#Complete"
 vim.opt.pumwidth = 20
-vim.opt.pumheight = calc_pumheight()
+vim.opt.pumheight = H.calc_pumheight()
 vim.opt.cmdwinheight = 25
 
 -- }}}
@@ -387,11 +399,17 @@ if vim.g.vscode then
   -- }}}
 end
 
-table_join(
+H.table_join(
   plugin_configs,
   { --  {{{
-    "Rellikeht/lazy-utils",
     "ryvnf/readline.vim",
+
+    {
+      "Rellikeht/lazy-utils", --  {{{
+      config = function()
+        LAZY_UTILS = require("lazy_utils")
+      end
+    }, --  }}}
 
     {
       "kmonad/kmonad-vim", --  {{{
@@ -492,8 +510,9 @@ table_join(
       requires = { "Rellikeht/lazy-utils" },
       run = ":TSUpdate",
       config = function()
-        require("nvim-treesitter.install").prefer_git = false
-        require("lazy_utils").load_on_startup(
+        TSINSTALL = require("nvim-treesitter.install")
+        TSINSTALL.prefer_git = false
+        LAZY_UTILS.load_on_startup(
           function()
             require "nvim-treesitter.configs".setup({
               highlight = { enable = true },
@@ -817,15 +836,15 @@ vim.keymap.set("n", ";t", function()
 end, { noremap = true })
 
 for key, map in pairs({
-  [";n"] = vim.g["extras#count_on_function"](Qflcmd("next")),
-  [";p"] = vim.g["extras#count_on_function"](Qflcmd("previous")),
-  [";0"] = Qflcmd("first"),
-  [";$"] = Qflcmd("last"),
-  [";l"] = Qflcmd("history"),
+  [";n"] = vim.g["extras#count_on_function"](H.qlcmd("next")),
+  [";p"] = vim.g["extras#count_on_function"](H.qlcmd("previous")),
+  [";0"] = H.qlcmd("first"),
+  [";$"] = H.qlcmd("last"),
+  [";l"] = H.qlcmd("history"),
   [";w"] = function()
     local height = vim.v.count
     if height == 0 then height = 10 end
-    Qflcmd("open")({ count = height })
+    H.qlcmd("open")({ count = height })
   end,
 }) do
   vim.keymap.set("n", key, map, { noremap = true, silent = true })
@@ -839,10 +858,10 @@ vim.api.nvim_create_autocmd(
         { "n", "v" }, "q", ":q<CR>", { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", "<", Qflcmd("older"), { noremap = true, buffer = true }
+        "n", "<", H.qlcmd("older"), { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", ">", Qflcmd("newer"), { noremap = true, buffer = true }
+        "n", ">", H.qlcmd("newer"), { noremap = true, buffer = true }
       )
       vim.keymap.set(
         "n", "J", "j<CR>", { noremap = true, buffer = true, silent = true }
@@ -860,7 +879,7 @@ vim.api.nvim_create_autocmd(
         "n", "<C-h>", function()
           local qpos = vim.fn.getcurpos()
           vim.cmd.execute("\"normal \\<CR>\"")
-          Qflcmd("open")()
+          H.qlcmd("open")()
           vim.fn.setpos(".", qpos)
         end, {
           buffer = true,
@@ -869,7 +888,7 @@ vim.api.nvim_create_autocmd(
       vim.keymap.set(
         "n", "<BS>", function()
           vim.cmd.execute("\"normal \\<CR>\"")
-          Qflcmd("close")()
+          H.qlcmd("close")()
         end, {
           buffer = true, silent = true,
         }
@@ -913,9 +932,8 @@ vim.api.nvim_create_user_command(
   end, { nargs = 0 }
 )
 
--- For easier sourcing of additional stuff
 vim.api.nvim_create_user_command(
-  "SoAdd", function(opts)
+  "RSource", function(opts)
     require(opts.fargs[1])
   end, { nargs = 1 }
 )
