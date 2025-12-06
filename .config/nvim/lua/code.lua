@@ -395,7 +395,7 @@ PCKR.add({ -- {{{
               }
             )
             vim.keymap.set(
-              "n", "<Leader>df", function()
+              { "n", "x" }, "<Leader>df", function()
                 vim.lsp.buf.format({ async = false })
                 vim.cmd.norm("zv")
               end, {
@@ -487,9 +487,10 @@ PCKR.add({ -- {{{
 
 do
   -- This is because FileType is not triggered on first file sometimes
-  -- TODO is this proper solution
-  vim.cmd.filetype("detect")
-  LAZY_UTILS.load_on_startup(function() vim.cmd.filetype("detect") end)
+  -- TODO this seems wrong and takes long time on big files
+  LAZY_UTILS.load_on_startup(function()
+    vim.cmd.filetype("detect")
+  end)
 end
 
 for key, name in pairs({

@@ -94,6 +94,7 @@ vim.opt.omnifunc = "syntaxcomplete#Complete"
 vim.opt.pumwidth = 20
 vim.opt.pumheight = H.calc_pumheight()
 vim.opt.cmdwinheight = 25
+vim.opt.redrawtime = 5000
 
 -- }}}
 
@@ -126,8 +127,6 @@ end  -- }}}
 -- isn't available sometimes
 local success = pcall(vim.cmd.colorscheme, "zaibatsu")
 if not success then pcall(vim.cmd.colorscheme, "retrobox") end
-
--- vim.api.nvim_set_hl(0, "Todo", {fg="#ffcf2f", bg="#0e1224", bold=true})
 
 -- simple yet effective
 vim.api.nvim_set_hl(0, "NormalFloat", { link = "CursorLine" })
@@ -184,6 +183,7 @@ vim.keymap.set("n", "<Space>U", "\"+P", { noremap = true })
 
 for key, cmd in pairs({
   h = ":<C-u>set hls!<CR>",
+  c = ":<C-u>set ignorecase!<CR>",
 }) do
   vim.keymap.set(
     "n", "<Space>q" .. key, cmd, {}
@@ -309,6 +309,8 @@ local plugin_configs = { -- {{{
 
 if vim.g.vscode then
   --  {{{
+
+  vim.opt.redrawtime = 0
 
   -- TODO make 'autochdir' work with vscode
   VSCODE = require("vscode")
@@ -515,7 +517,10 @@ H.table_join(
         LAZY_UTILS.load_on_startup(
           function()
             require "nvim-treesitter.configs".setup({
-              highlight = { enable = true },
+              highlight = {
+                enable = true,
+                additional_vim_regex_highlighting = false,
+              },
               indent = { enable = true },
               incremental_selection = { enable = true },
               sync_install = false,
