@@ -130,11 +130,16 @@ __prompt_command() {
         PS1+=":"
     fi
     PS1+="${LMAGENTA}\w${RESET}"
-    if [ -n "$PS1_ADD" ]; then
-        PS1+=" $LCYAN-$RESET "
-        PS1+="$LYELLOW$PS1_ADD$RESET"
-        PS1+=" $LCYAN-$RESET "
+
+    if has_exe __prompt_additional; then
+        PS1_ADD="$(__prompt_additional)"
+        if [ -n "$PS1_ADD" ]; then
+            PS1+=" $LCYAN-$RESET "
+            PS1+="$PS1_ADD"
+            PS1+="$RESET $LCYAN-$RESET "
+        fi
     fi
+
     if [ "$EX" != 0 ]; then
         PS1+="${LRED}"
     else

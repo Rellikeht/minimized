@@ -396,6 +396,13 @@ if vim.g.vscode then
     VSCODE.call("editor.action.showHover")
   end)
 
+  -- because some keys got overwriten and originals are nice
+  for key in {
+    "gq",
+  } do
+    vim.keymap.set({ "n", "x" }, "<Leader>v" .. key, key, { noremap = true })
+  end
+
   PCKR.add(plugin_configs)
   return
   -- }}}
