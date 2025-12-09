@@ -397,9 +397,9 @@ if vim.g.vscode then
   end)
 
   -- because some keys got overwriten and originals are nice
-  for key in {
+  for _, key in pairs({
     "gq",
-  } do
+  }) do
     vim.keymap.set({ "n", "x" }, "<Leader>v" .. key, key, { noremap = true })
   end
 
