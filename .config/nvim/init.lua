@@ -34,6 +34,12 @@ H = {
       vim.cmd[prefix .. cmd](...)
     end
   end,
+
+  wrap_qfloc = function(cmd)
+    return function(...)
+      cmd(..., { loclist = vim.g.qfloc })
+    end
+  end,
 }
 
 --  }}}

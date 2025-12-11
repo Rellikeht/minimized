@@ -329,29 +329,20 @@ PCKR.add({ -- {{{
             -- navigation {{{
 
             vim.keymap.set(
-              "n", "<Leader>dd",
-              function()
-                vim.lsp.buf.definition({ loclist = vim.g.qfloc })
-              end,
+              "n", "<Leader>dd", H.wrap_qfloc(vim.lsp.buf.definition),
               { desc = "go to definition", buffer = bufnr }
             )
             vim.keymap.set(
-              "n", "<Leader>dD",
-              function()
-                vim.lsp.buf.declaration({ loclist = vim.g.qfloc })
-              end, { desc = "go to declaration", buffer = bufnr }
+              "n", "<Leader>dD", H.wrap_qfloc(vim.lsp.buf.declaration),
+              { desc = "go to declaration", buffer = bufnr }
             )
             vim.keymap.set(
-              "n", "<Leader>di",
-              function()
-                vim.lsp.buf.implementation({ loclist = vim.g.qfloc })
-              end, { desc = "go to implementation", buffer = bufnr }
+              "n", "<Leader>di", H.wrap_qfloc(vim.lsp.buf.implementation)
+              , { desc = "go to implementation", buffer = bufnr }
             )
             vim.keymap.set(
-              "n", "<Leader>dt",
-              function()
-                vim.lsp.buf.type_definition({ loclist = vim.g.qfloc })
-              end,
+              "n", "<Leader>dt", H.wrap_qfloc(vim.lsp.buf.type_definition)
+              ,
               { desc = "go to type definition", buffer = bufnr }
             )
 
@@ -370,15 +361,13 @@ PCKR.add({ -- {{{
               }
             )
             vim.keymap.set(
-              "n", "<Leader>dlr", vim.lsp.buf.references, {
+              "n", "<Leader>dlr", H.wrap_qfloc(vim.lsp.buf.references), {
                 desc = "populate quickfix list with references",
                 buffer = bufnr,
               }
             )
             vim.keymap.set(
-              "n", "<Leader>dls", function()
-                vim.lsp.buf.document_symbol({ loclist = vim.g.qfloc })
-              end, {
+              "n", "<Leader>dls", H.wrap_qfloc(vim.lsp.buf.document_symbol), {
                 desc = "populate quickfix/loclist with symbols in current file",
                 buffer = bufnr,
               }
