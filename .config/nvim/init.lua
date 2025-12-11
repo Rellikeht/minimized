@@ -481,6 +481,9 @@ H.table_join(
     {
       "andymass/vim-matchup", --  {{{
       config_pre = function()
+        -- this makes things little faster and isn't that useful
+        vim.g.matchup_matchparen_enabled = false
+        -- not really needed, but nice when matchparen gets enabled
         vim.g.matchup_matchparen_offscreen = { method = "popup" }
         vim.g.matchup_surround_enabled = true
         vim.g.matchup_delim_noskips = false
@@ -614,6 +617,7 @@ H.table_join(
           end,
         }
 
+        -- TODO fzf preview position switch
         vim.keymap.set("n", "<Leader>sc", ":<C-u>Files<Space>")
         vim.keymap.set("n", "<Leader>sb", ":<C-u>Buffers<CR>")
         vim.keymap.set("n", "<Leader>sl", ":<C-u>BLines<CR>")
@@ -661,7 +665,7 @@ H.table_join(
 
 PCKR.add(plugin_configs)
 
--- settings {{{
+-- other settings {{{
 
 vim.cmd.filetype("on")
 vim.cmd.filetype("plugin", "on")
@@ -680,65 +684,6 @@ vim.api.nvim_create_autocmd(
 )
 
 --  }}}
-
---  }}}
-
--- keybindings {{{
-
--- tabs {{{
-
-vim.keymap.set(
-  "n", "<C-w><C-h>",
-  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", {}
-)
-
-vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
-vim.keymap.set("n", "<C-j>", "<Tab>", { noremap = true })
-vim.keymap.set(
-  "n", "<Tab><Tab>", ":<C-u>tab<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab>h", ":<C-u>tab help<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab>H", ":<C-u>-tab help<Space>", {}
-)
-
--- }}}
-
--- info {{{
-
-for key, cmd in pairs({
-  m = ":<C-u>marks<CR>",
-  b = ":<C-u>ls<CR>",
-}) do
-  vim.keymap.set(
-    "n", "<Space>i" .. key, cmd, {}
-  )
-end
-
---  }}}
-
--- other {{{
-
-for key, cmd in pairs({
-  w = ":<C-u>setlocal wrap!<CR>",
-  W = ":<C-u>set wrap!<CR>",
-  s = ":<C-u>SetOptionCount laststatus<CR>",
-}) do
-  vim.keymap.set(
-    "n", "<Space>q" .. key, cmd, {}
-  )
-end
-
---  }}}
-
---  }}}
-
--- other settings {{{
 
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
@@ -815,6 +760,61 @@ vim.api.nvim_create_autocmd(
 
 -- }}}
 
+-- keybindings {{{
+
+-- tabs {{{
+
+vim.keymap.set(
+  "n", "<C-w><C-h>",
+  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", {}
+)
+
+vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
+vim.keymap.set("n", "<C-j>", "<Tab>", { noremap = true })
+vim.keymap.set(
+  "n", "<Tab><Tab>", ":<C-u>tab<Space>", {}
+)
+vim.keymap.set(
+  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {}
+)
+vim.keymap.set(
+  "n", "<Tab>h", ":<C-u>tab help<Space>", {}
+)
+vim.keymap.set(
+  "n", "<Tab>H", ":<C-u>-tab help<Space>", {}
+)
+
+-- }}}
+
+-- info {{{
+
+for key, cmd in pairs({
+  m = ":<C-u>marks<CR>",
+  b = ":<C-u>ls<CR>",
+}) do
+  vim.keymap.set(
+    "n", "<Space>i" .. key, cmd, {}
+  )
+end
+
+--  }}}
+
+-- other {{{
+
+for key, cmd in pairs({
+  w = ":<C-u>setlocal wrap!<CR>",
+  W = ":<C-u>set wrap!<CR>",
+  s = ":<C-u>SetOptionCount laststatus<CR>",
+}) do
+  vim.keymap.set(
+    "n", "<Space>q" .. key, cmd, {}
+  )
+end
+
+--  }}}
+
+--  }}}
+
 -- filetypes {{{
 
 -- ugly but handy
@@ -822,9 +822,11 @@ vim.api.nvim_create_autocmd(
   "FileType", {
     pattern = { --  {{{
       "python",
+      "nix",
       "lua",
       "vim",
       "zig",
+      "nim",
       "markdown",
       "ocaml",
       "elixir",
