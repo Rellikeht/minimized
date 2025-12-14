@@ -102,13 +102,13 @@ vim.opt.pumheight = H.calc_pumheight()
 vim.opt.cmdwinheight = 25
 vim.opt.redrawtime = 5000
 
--- }}}
+--  }}}
 
 -- initialization {{{
 
 vim.g.loaded_matchit = 1
 
--- }}}
+--  }}}
 
 if vim.fn.has("win32") == 1 then -- {{{
   -- must have really
@@ -123,10 +123,10 @@ if vim.fn.has("win32") == 1 then -- {{{
 
   GIT_EXECUTABLE = "git.exe"
 
-  -- }}}
+  --  }}}
 else -- {{{
   GIT_EXECUTABLE = "git"
-end  -- }}}
+end  --  }}}
 
 -- colors {{{
 
@@ -143,9 +143,9 @@ vim.api.nvim_set_hl(0, "Pmenu", { link = "CursorColumn" })
 vim.api.nvim_set_hl(0, "PmenuKind", { link = "SignColumn" })
 vim.api.nvim_set_hl(0, "PmenuExtra", { link = "SignColumn" })
 
--- }}}
+--  }}}
 
--- }}}
+--  }}}
 
 -- keybindings {{{
 
@@ -183,7 +183,7 @@ vim.keymap.set("n", "<Space>Y", "\"+Y", { noremap = true })
 vim.keymap.set("n", "<Space>u", "\"+p", { noremap = true })
 vim.keymap.set("n", "<Space>U", "\"+P", { noremap = true })
 
--- }}}
+--  }}}
 
 -- settings {{{
 
@@ -198,7 +198,7 @@ end
 
 --  }}}
 
--- }}}
+--  }}}
 
 -- common plugins {{{
 
@@ -309,7 +309,7 @@ local plugin_configs = { -- {{{
       EXTRAS = require("extras")
     end
   }, --  }}}
-}    -- }}}
+}    --  }}}
 
 --  }}}
 
@@ -411,7 +411,7 @@ if vim.g.vscode then
 
   PCKR.add(plugin_configs)
   return
-  -- }}}
+  --  }}}
 end
 
 H.table_join(
@@ -758,7 +758,7 @@ vim.api.nvim_create_autocmd(
   }
 )
 
--- }}}
+--  }}}
 
 -- keybindings {{{
 
@@ -784,7 +784,7 @@ vim.keymap.set(
   "n", "<Tab>H", ":<C-u>-tab help<Space>", {}
 )
 
--- }}}
+--  }}}
 
 -- info {{{
 
@@ -806,9 +806,7 @@ for key, cmd in pairs({
   W = ":<C-u>set wrap!<CR>",
   s = ":<C-u>SetOptionCount laststatus<CR>",
 }) do
-  vim.keymap.set(
-    "n", "<Space>q" .. key, cmd, {}
-  )
+  vim.keymap.set("n", "<Space>q" .. key, cmd, { noremap = true })
 end
 
 --  }}}
@@ -818,6 +816,7 @@ end
 -- filetypes {{{
 
 -- ugly but handy
+-- TODO does this work
 vim.api.nvim_create_autocmd(
   "FileType", {
     pattern = { --  {{{
@@ -933,13 +932,13 @@ if vim.g.neovide then
     vim.g.neovide_fullscreen = not vim.g.neovide_fullscreen
   end, { noremap = true })
 
-  -- }}}
+  --  }}}
 elseif vim.fn.has("gui_running") == 1 then
   -- {{{
-  -- }}}
+  --  }}}
 else
   -- {{{
-end -- }}}
+end --  }}}
 
 function CODE()
   if CODE_LOADED ~= nil then return end
@@ -1240,7 +1239,7 @@ function CODE()
           }
         )
 
-        -- }}}
+        --  }}}
 
         vim.api.nvim_create_autocmd( -- {{{
           "LspAttach", {
@@ -1253,7 +1252,7 @@ function CODE()
                 args.data.client_id
               )
 
-              -- }}}
+              --  }}}
 
               -- insert mode {{{
 
@@ -1316,7 +1315,7 @@ function CODE()
                 }
               )
 
-              -- }}}
+              --  }}}
 
               -- actions {{{
 
@@ -1340,12 +1339,12 @@ function CODE()
                 { desc = "execute code action", buffer = bufnr }
               )
 
-              -- }}}
+              --  }}}
 
               LSP_CONFIG_CALLBACK(bufnr)
             end,
           }
-        ) -- }}}
+        ) --  }}}
       end,
     },    --  }}}
 
@@ -1411,7 +1410,7 @@ function CODE()
     -- TODO formatters (neoformat)
     -- TODO snippets
   }
-  ) -- }}}
+  ) --  }}}
 
   -- post setup {{{
 
@@ -1459,9 +1458,9 @@ function CODE()
   if vim.fn.has("win32") == 1 then -- {{{
     TSINSTALL.compilers = { "zig", "cl", "cc", "gcc", "clang" }
 
-    -- }}}
+    --  }}}
   else -- {{{
-  end  -- }}}
+  end  --  }}}
 
   CODE_LOADED = true
 end
