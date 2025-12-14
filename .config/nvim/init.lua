@@ -316,100 +316,115 @@ local plugin_configs = { -- {{{
 if vim.g.vscode then
   --  {{{
 
-  vim.opt.redrawtime = 0
-
-  -- TODO make 'autochdir' work with vscode
   VSCODE = require("vscode")
+  -- TODO make 'autochdir' work with vscode
+
+  -- action binds {{{
+
+  function VSCodeMap(name)
+    return function()
+      VSCODE.call(name)
+    end
+  end
+
+  for key, cmd in pairs({
+    gu = "git.unstageChange",
+    gn = "editor.action.dirtydiff.next",
+    gp = "editor.action.dirtydiff.previous",
+
+    sc = "workbench.action.showCommands",
+    sf = "workbench.action.quickOpen",
+
+    dn = "editor.action.marker.next",
+    dp = "editor.action.marker.prev",
+    Dn = "editor.action.marker.nextInFiles",
+    Dp = "editor.action.marker.prevInFiles",
+
+    dd = "editor.action.revealDefinition",
+    dD = "editor.action.revealDeclaration",
+    dlr = "editor.action.goToReferences",
+    di = "editor.action.peekImplementation",
+
+    dr = "editor.action.rename",
+    da = "editor.action.quickFix",
+    dh = "editor.action.showHover",
+    de = "editor.action.showHover",
+  }) do
+    vim.keymap.set("n", "<Leader>" .. key, VSCodeMap(cmd))
+  end
+
+  for key, cmd in pairs({
+    ["+"] = "workbench.action.editor.nextChange",
+    ["-"] = "workbench.action.editor.previousChange",
+
+    -- vscode needs it like that
+    gs = "git.stageSelectedRanges",
+    gr = "git.revertSelectedRanges",
+
+    ss = "workbench.action.findInFiles",
+
+    -- TODO vertical scrolling and positioning
+  }) do
+    vim.keymap.set({ "n", "x" }, "<Leader>" .. key, VSCodeMap(cmd))
+  end
+
   vim.keymap.set("x", "gc", function()
     VSCODE.call("editor.action.commentLine")
     VSCODE.call("vscode-neovim.escape", { key = "v" })
   end)
-  vim.keymap.set({ "n", "x" }, "+", function()
-    VSCODE.call("workbench.action.editor.nextChange")
-  end)
-  vim.keymap.set({ "n", "x" }, "-", function()
-    VSCODE.call("workbench.action.editor.previousChange")
-  end)
-
-  -- vscode needs it like that
-  vim.keymap.set({ "n", "x" }, "<Leader>gs", function()
-    VSCODE.call("git.stageSelectedRanges")
-  end)
-  vim.keymap.set({ "n", "x" }, "<Leader>gr", function()
-    VSCODE.call("git.revertSelectedRanges")
-  end)
-  vim.keymap.set("n", "<Leader>gn", function()
-    VSCODE.call("editor.action.dirtydiff.next")
-  end)
-  vim.keymap.set("n", "<Leader>gp", function()
-    VSCODE.call("editor.action.dirtydiff.previous")
-  end)
 
   -- this is broken
-  vim.keymap.set("x", "<Leader>gu", function()
-    VSCODE.call("git.unstageSelectedRanges")
-  end)
-  vim.keymap.set("n", "<Leader>gu", function()
-    VSCODE.call("git.unstageChange")
-  end)
+  vim.keymap.set(
+    "x", "<Leader>gu",
+    VSCodeMap("git.unstageSelectedRanges")
+  )
 
-  vim.keymap.set("n", "<Leader>sf", function()
-    VSCODE.call("workbench.action.quickOpen")
-  end)
-  vim.keymap.set("n", "<Leader>sc", function()
-    VSCODE.call("workbench.action.showCommands")
-  end)
-  vim.keymap.set("n", "<Leader>ss", function()
-    VSCODE.call("workbench.action.findInFiles")
-  end)
+  --  }}}
 
-  vim.keymap.set("n", "<Leader>dn", function()
-    VSCODE.call("editor.action.marker.next")
-  end)
-  vim.keymap.set("n", "<Leader>dp", function()
-    VSCODE.call("editor.action.marker.prev")
-  end)
-  vim.keymap.set("n", "<Leader>Dn", function()
-    VSCODE.call("editor.action.marker.nextInFiles")
-  end)
-  vim.keymap.set("n", "<Leader>Dp", function()
-    VSCODE.call("editor.action.marker.prevInFiles")
-  end)
+  -- settings and backup bindings {{{
 
-  vim.keymap.set("n", "<Leader>dd", function()
-    VSCODE.call("editor.action.revealDefinition")
-  end)
-  vim.keymap.set("n", "<Leader>dD", function()
-    VSCODE.call("editor.action.revealDeclaration")
-  end)
-  vim.keymap.set("n", "<Leader>dlr", function()
-    VSCODE.call("editor.action.goToReferences")
-  end)
-  vim.keymap.set("n", "<Leader>di", function()
-    VSCODE.call("editor.action.peekImplementation")
-  end)
+  vim.opt.redrawtime = 0
 
-  vim.keymap.set("n", "<Leader>dr", function()
-    VSCODE.call("editor.action.rename")
-  end)
-  vim.keymap.set("n", "<Leader>da", function()
-    VSCODE.call("editor.action.quickFix")
-  end)
-  vim.keymap.set("n", "<Leader>dh", function()
-    VSCODE.call("editor.action.showHover")
-  end)
-  vim.keymap.set("n", "<Leader>de", function()
-    VSCODE.call("editor.action.showHover")
-  end)
+  -- settings
+  for key, cmd in pairs({
+    -- TODO make this more like nvim counterparts
+    w = VSCodeMap("editor.action.toggleWordWrap"),
+    W = VSCodeMap("editor.action.toggleWordWrap"),
+    -- loosely similar to nvim counterpart
+    s = VSCodeMap("workbench.action.toggleStatusbarVisibility"),
+  }) do
+    vim.keymap.set("n", "<Space>q" .. key, cmd, { noremap = true })
+  end
 
-  -- because some keys got overwriten and originals are nice
+  -- some original bindings get overwritten by vscode extension and
+  -- they are too good to just let go
   for _, key in pairs({
     "gq",
+    "=",
   }) do
     vim.keymap.set({ "n", "x" }, "<Leader>v" .. key, key, { noremap = true })
   end
 
+  --  }}}
+
+  -- other stuff {{{
+
+  -- for testing and quick additions
+  -- no idea how good it really will be
+  vim.api.nvim_create_user_command(
+    "ReloadNvimConfig", function()
+      vim.cmd({
+        cmd = "source",
+        args = { vim.fn.stdpath("config") .. "/init.lua" },
+        -- TODO silent
+      })
+    end, {}
+  )
+
   PCKR.add(plugin_configs)
+
+  --  }}}
+
   return
   --  }}}
 end
