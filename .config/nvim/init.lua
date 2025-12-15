@@ -327,6 +327,9 @@ if vim.g.vscode then
     end
   end
 
+  vim.keymap.set({ "n", "x" }, "+", VSCodeMap("workbench.action.editor.nextChange"))
+  vim.keymap.set({ "n", "x" }, "-", VSCodeMap("workbench.action.editor.previousChange"))
+
   for key, cmd in pairs({
     gu = "git.unstageChange",
     gn = "editor.action.dirtydiff.next",
@@ -354,9 +357,6 @@ if vim.g.vscode then
   end
 
   for key, cmd in pairs({
-    ["+"] = "workbench.action.editor.nextChange",
-    ["-"] = "workbench.action.editor.previousChange",
-
     -- vscode needs it like that
     gs = "git.stageSelectedRanges",
     gr = "git.revertSelectedRanges",
