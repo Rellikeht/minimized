@@ -51,6 +51,8 @@ H = {
 -- general options {{{
 
 for _, option in pairs({
+  "number",
+  "smarttab",
   "ruler",
   "incsearch",
   "ignorecase",
@@ -363,7 +365,7 @@ if vim.g.vscode then
 
     ss = "workbench.action.findInFiles",
 
-    -- TODO vertical scrolling and positioning
+    -- TODO horizontal scrolling and positioning
   }) do
     vim.keymap.set({ "n", "x" }, "<Leader>" .. key, VSCodeMap(cmd))
   end
@@ -384,6 +386,7 @@ if vim.g.vscode then
   -- settings and backup bindings {{{
 
   vim.opt.redrawtime = 0
+  vim.opt.scrolloff = 6
 
   -- settings
   for key, cmd in pairs({
@@ -394,6 +397,18 @@ if vim.g.vscode then
     s = VSCodeMap("workbench.action.toggleStatusbarVisibility"),
   }) do
     vim.keymap.set("n", "<Space>q" .. key, cmd, { noremap = true })
+  end
+
+  for name, value in pairs({
+    -- Those can't be done using (neo)vim config
+    ["editor.lineNumbers"] = "relative",
+
+    ["editor.inlayHints.enabled"] = "offUntilPressed",
+    ["window.customMenuBarAltFocus"] = false,
+    ["diffEditor.maxFileSize"] = 0,
+    ["workbench.editor.scrollToSwitchTabs"] = true,
+  }) do
+    VSCODE.update_config(name, value, "global")
   end
 
   -- some original bindings get overwritten by vscode extension and
@@ -723,11 +738,9 @@ vim.opt.undolevels = 10000
 vim.opt.history = 10000
 
 for _, option in pairs({
-  "number",
   "relativenumber",
-  "cursorline",
   "expandtab",
-  "smarttab",
+  "cursorline",
 }) do vim.opt[option] = true end
 
 vim.keymap.set("t", "<C-w>", "<C-\\><C-n><C-w>", { remap = true })
