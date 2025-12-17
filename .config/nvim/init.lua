@@ -9,12 +9,12 @@ H = {
     end
   end,
 
-  lazy_ts_ensure_installed = function(name, filetypes)
+  lazy_ensure_ts_installed = function(name, filetypes)
     if filetypes == nil then filetypes = name end
     LAZY_UTILS.load_on_filetypes(
       filetypes, function()
         -- TODO make this fail silently when network not available
-        vim.cmd.TSUpdate(name)
+        vim.cmd("silent! TSUpdate " .. name)
       end
     )
   end,
@@ -31,12 +31,16 @@ H = {
       prefix = "l"
     end
     return function(...)
-      if value ~= nil then
+      if value == nil then
         value = ""
-      else
+      elseif type(value) == "string" then
         value = vim.v[value]
       end
-      vim.cmd({ cmd = value .. prefix .. cmd, args = { ... } })
+      print("value", value)
+      print("prefix", prefix)
+      print("cmd", cmd)
+      print("args", ...)
+      vim.cmd({ cmd = value .. prefix .. cmd, args = ... })
     end
   end,
 
@@ -462,6 +466,10 @@ H.table_join(
       "Rellikeht/lazy-utils", --  {{{
       config = function()
         LAZY_UTILS = require("lazy_utils")
+        if HOOKS.lazy_utils ~= nil then
+          HOOKS.lazy_utils()
+          HOOKS.lazy_utils = nil
+        end
       end
     }, --  }}}
 
@@ -566,6 +574,7 @@ H.table_join(
       "nvim-treesitter/nvim-treesitter", --  {{{
       requires = { "Rellikeht/lazy-utils" },
       run = ":TSUpdate",
+      branch = "master",
       config = function()
         TREESITTER = require("nvim-treesitter")
         TREESITTER.prefer_git = false
@@ -592,6 +601,7 @@ H.table_join(
 
         if HOOKS.nvim_treesitter ~= nil then
           HOOKS.nvim_treesitter()
+          HOOKS.nvim_treesitter = nil
         end
       end,
     }, --  }}}
@@ -904,7 +914,7 @@ for key, map in pairs({
   [";w"] = function()
     local height = vim.v.count
     if height == 0 then height = 10 end
-    H.qlcmd("open")({ count = height })
+    H.qlcmd("open", height)
   end,
 }) do
   vim.keymap.set("n", key, map, { noremap = true, silent = true })
@@ -943,6 +953,7 @@ vim.api.nvim_create_autocmd(
           vim.fn.setpos(".", qpos)
         end, {
           buffer = true,
+          noremap = true,
         }
       )
       vim.keymap.set(
@@ -1454,19 +1465,9 @@ function CODE()
     -- TODO formatters (neoformat)
     -- TODO snippets
   }
-  ) --  }}}
-
-  -- post setup {{{
+  )                                  --  }}}
 
   HOOKS.nvim_treesitter = function() -- treesitter {{{
-    do
-      -- This is because FileType is not triggered on first file sometimes
-      -- TODO this seems wrong and takes long time on big files
-      LAZY_UTILS.load_on_startup(function()
-        vim.cmd.filetype("detect")
-      end)
-    end
-
     for key, name in pairs({
       ["*"] = "comment",
       [{ "sh", "bash", "zsh" }] = "bash",
@@ -1491,7 +1492,7 @@ function CODE()
       if type(key) == "string" or type(key) == "table" then
         filetypes = key
       end
-      H.lazy_ts_ensure_installed(name, filetypes)
+      H.lazy_ensure_ts_installed(name, filetypes)
     end
 
     if vim.fn.has("win32") == 1 then -- {{{
@@ -1500,9 +1501,14 @@ function CODE()
       --  }}}
     else -- {{{
     end  --  }}}
-  end    --  }}}
 
-  --  }}}
+    vim.cmd.filetype("detect")
+  end --  }}}
+
+  if TREESITTER ~= nil then
+    HOOKS.nvim_treesitter()
+    HOOKS.nvim_treesitter = nil
+  end
 
   CODE_LOADED = true
 end
