@@ -25,13 +25,18 @@ H = {
     return result
   end,
 
-  qlcmd = function(cmd)
+  qlcmd = function(cmd, value)
     local prefix = "c"
     if vim.g.qfloc == 1 then
       prefix = "l"
     end
     return function(...)
-      vim.cmd[prefix .. cmd](...)
+      if value ~= nil then
+        value = ""
+      else
+        value = vim.v[value]
+      end
+      vim.cmd({ cmd = value .. prefix .. cmd, args = { ... } })
     end
   end,
 
@@ -41,6 +46,8 @@ H = {
     end
   end,
 }
+
+HOOKS = {}
 
 --  }}}
 
@@ -213,6 +220,8 @@ local function bootstrap_pckr()
       GIT_EXECUTABLE,
       "clone",
       "--filter=blob:none",
+      "-b", -- because main can be broken
+      "v1.1.2",
       "https://github.com/lewis6991/pckr.nvim",
       pckr_path,
     })
@@ -558,11 +567,11 @@ H.table_join(
       requires = { "Rellikeht/lazy-utils" },
       run = ":TSUpdate",
       config = function()
-        TSINSTALL = require("nvim-treesitter.install")
-        TSINSTALL.prefer_git = false
+        TREESITTER = require("nvim-treesitter")
+        TREESITTER.prefer_git = false
         LAZY_UTILS.load_on_startup(
           function()
-            require "nvim-treesitter.configs".setup({
+            TREESITTER.setup({
               highlight = {
                 enable = true,
                 additional_vim_regex_highlighting = false,
@@ -580,6 +589,10 @@ H.table_join(
             })
           end
         )
+
+        if HOOKS.nvim_treesitter ~= nil then
+          HOOKS.nvim_treesitter()
+        end
       end,
     }, --  }}}
 
@@ -883,8 +896,8 @@ vim.keymap.set("n", ";t", function()
 end, { noremap = true })
 
 for key, map in pairs({
-  [";n"] = vim.g["extras#count_on_function"](H.qlcmd("next")),
-  [";p"] = vim.g["extras#count_on_function"](H.qlcmd("previous")),
+  [";n"] = H.qlcmd("next", "count1"),
+  [";p"] = H.qlcmd("previous", "count1"),
   [";0"] = H.qlcmd("first"),
   [";$"] = H.qlcmd("last"),
   [";l"] = H.qlcmd("history"),
@@ -1156,16 +1169,25 @@ function CODE()
 
     {
       "neovim/nvim-lspconfig", --  {{{
+      requires = {
+        "Rellikeht/vim-extras",
+      },
       config = function()
         if vim.fn.has("nvim-0.10") == 0 then return end
         if vim.fn.has("nvim-0.11") == 1 then -- {{{
           -- for backwards compatibility
-          function NvimDiagPrev()
-            vim.diagnostic.jump({ count = -1, float = true })
+          function NvimDiagPrev(config)
+            return function()
+              H.table_join(config, { count = -vim.v.count1, float = true })
+              vim.diagnostic.jump(config)
+            end
           end
 
-          function NvimDiagNext()
-            vim.diagnostic.jump({ count = 1, float = true })
+          function NvimDiagNext(config)
+            return function()
+              H.table_join(config, { count = vim.v.count1, float = true })
+              vim.diagnostic.jump(config)
+            end
           end
         else
           function NvimDiagNext()
@@ -1181,7 +1203,8 @@ function CODE()
 
         local lspconfig = require("lspconfig")
         lspconfig.util.default_config = vim.tbl_extend(
-          "force", lspconfig.util.default_config,
+          "force",
+          lspconfig.util.default_config,
           { message_level = nil }
         )
 
@@ -1200,58 +1223,51 @@ function CODE()
         )
 
         vim.keymap.set(
-          "n", "<Leader>dp", vim.g["extras#count_on_function"](
-            NvimDiagPrev, {
-              severity = {
-                vim.diagnostic.severity.ERROR,
-                vim.diagnostic.severity.WARN,
-              },
+          "n", "<Leader>dp",
+          NvimDiagPrev({
+            severity = {
+              vim.diagnostic.severity.ERROR,
+              vim.diagnostic.severity.WARN
             }
-          ), { desc = "[N] prev error or warning" }
+          }), { desc = "[N] prev error or warning" }
         )
         vim.keymap.set(
-          "n", "<Leader>dn", vim.g["extras#count_on_function"](
-            NvimDiagNext, {
-              severity = {
-                vim.diagnostic.severity.ERROR,
-                vim.diagnostic.severity.WARN,
-              },
-            }
-          ), { desc = "[N] next error or warning" }
+          "n", "<Leader>dn",
+          NvimDiagNext({
+            severity = {
+              vim.diagnostic.severity.ERROR,
+              vim.diagnostic.severity.WARN,
+            },
+          }), { desc = "[N] next error or warning" }
         )
 
         vim.keymap.set(
-          "n", "<Leader>dP", vim.g["extras#count_on_function"](
-            NvimDiagPrev,
+          "n", "<Leader>dP", NvimDiagPrev(
             { severity = { vim.diagnostic.severity.ERROR } }
           ), { desc = "[N] prev error" }
         )
         vim.keymap.set(
-          "n", "<Leader>dN", vim.g["extras#count_on_function"](
-            NvimDiagNext,
+          "n", "<Leader>dN", NvimDiagNext(
             { severity = { vim.diagnostic.severity.ERROR } }
           ), { desc = "[N] next error" }
         )
 
         vim.keymap.set(
-          "n", "<Leader>dk", vim.g["extras#count_on_function"](
-            NvimDiagPrev, {
-              severity = {
-                vim.diagnostic.severity.INFO,
-                vim.diagnostic.severity.HINT,
-              },
-            }
-          ), { desc = "[N] prev hint/info" }
+          "n", "<Leader>dk",
+          NvimDiagPrev({
+            severity = {
+              vim.diagnostic.severity.INFO,
+              vim.diagnostic.severity.HINT,
+            },
+          }), { desc = "[N] prev hint/info" }
         )
         vim.keymap.set(
-          "n", "<Leader>dj", vim.g["extras#count_on_function"](
-            NvimDiagNext, {
-              severity = {
-                vim.diagnostic.severity.INFO,
-                vim.diagnostic.severity.HINT,
-              },
-            }
-          ), { desc = "[N] next hint/info" }
+          "n", "<Leader>dj", NvimDiagNext({
+            severity = {
+              vim.diagnostic.severity.INFO,
+              vim.diagnostic.severity.HINT,
+            },
+          }), { desc = "[N] next hint/info" }
         )
 
         vim.keymap.set(
@@ -1442,53 +1458,51 @@ function CODE()
 
   -- post setup {{{
 
-  -- treesitter {{{
-
-  do
-    -- This is because FileType is not triggered on first file sometimes
-    -- TODO this seems wrong and takes long time on big files
-    LAZY_UTILS.load_on_startup(function()
-      vim.cmd.filetype("detect")
-    end)
-  end
-
-  for key, name in pairs({
-    ["*"] = "comment",
-    [{ "sh", "bash", "zsh" }] = "bash",
-    "python",
-    "powershell",
-    "go",
-    "rust",
-    "cpp",
-    "c",
-    "html",
-    "css",
-    "java",
-    "elixir",
-    "julia",
-    "ocaml",
-    "haskell",
-    "typst",
-    "latex",
-  }
-  ) do
-    local filetypes = nil
-    if type(key) == "string" or type(key) == "table" then
-      filetypes = key
+  HOOKS.nvim_treesitter = function() -- treesitter {{{
+    do
+      -- This is because FileType is not triggered on first file sometimes
+      -- TODO this seems wrong and takes long time on big files
+      LAZY_UTILS.load_on_startup(function()
+        vim.cmd.filetype("detect")
+      end)
     end
-    H.lazy_ts_ensure_installed(name, filetypes)
-  end
+
+    for key, name in pairs({
+      ["*"] = "comment",
+      [{ "sh", "bash", "zsh" }] = "bash",
+      "python",
+      "powershell",
+      "go",
+      "rust",
+      "cpp",
+      "c",
+      "html",
+      "css",
+      "java",
+      "elixir",
+      "julia",
+      "ocaml",
+      "haskell",
+      "typst",
+      "latex",
+    }
+    ) do
+      local filetypes = nil
+      if type(key) == "string" or type(key) == "table" then
+        filetypes = key
+      end
+      H.lazy_ts_ensure_installed(name, filetypes)
+    end
+
+    if vim.fn.has("win32") == 1 then -- {{{
+      TREESITTER.compilers = { "zig", "cl", "cc", "gcc", "clang" }
+
+      --  }}}
+    else -- {{{
+    end  --  }}}
+  end    --  }}}
 
   --  }}}
-
-  --  }}}
-
-  if vim.fn.has("win32") == 1 then -- {{{
-    TSINSTALL.compilers = { "zig", "cl", "cc", "gcc", "clang" }
-
-    --  }}}
-  else -- {{{
-  end  --  }}}
 
   CODE_LOADED = true
 end
