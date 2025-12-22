@@ -49,6 +49,17 @@ H = {
       cmd(..., { loclist = vim.g.qfloc })
     end
   end,
+
+  -- https://stackoverflow.com/a/2982789
+  -- translated into lua
+  longest_line_length = function()
+    return vim.fn.max(
+      vim.fn.map(
+        vim.fn.range(1, vim.fn.line('$')),
+        function(_, line) return vim.fn.virtcol({ line, "$" }) - 1 end
+      )
+    )
+  end,
 }
 
 HOOKS = {}
@@ -367,6 +378,7 @@ if vim.g.vscode then
     da = "editor.action.quickFix",
     dh = "editor.action.showHover",
     de = "editor.action.showHover",
+    df = "editor.action.formatDocument",
   }) do
     vim.keymap.set("n", "<Leader>" .. key, VSCodeMap(cmd))
   end
@@ -375,10 +387,7 @@ if vim.g.vscode then
     -- vscode needs it like that
     gs = "git.stageSelectedRanges",
     gr = "git.revertSelectedRanges",
-
     ss = "workbench.action.findInFiles",
-
-    -- TODO horizontal scrolling and positioning
   }) do
     vim.keymap.set({ "n", "x" }, "<Leader>" .. key, VSCodeMap(cmd))
   end
@@ -388,11 +397,61 @@ if vim.g.vscode then
     VSCODE.call("vscode-neovim.escape", { key = "v" })
   end)
 
-  -- this is broken
+  for key, cmd in pairs({
+    -- this is broken
+    gu = "git.unstageSelectedRanges",
+    df = "editor.action.formatSelection",
+  }) do
+    vim.keymap.set("x", "<Leader>" .. key, VSCodeMap(cmd))
+  end
+
+  --  }}}
+
+  -- vertical scrolling {{{
+
+  -- TODO move cursor (probably impossible)
   vim.keymap.set(
-    "x", "<Leader>gu",
-    VSCodeMap("git.unstageSelectedRanges")
+    { "n", "x" }, "zh", function()
+      local amount = math.min(vim.v.count1, H.longest_line_length())
+      for _ = 1, amount do
+        VSCODE.call("scrollLeft")
+      end
+    end
   )
+  vim.keymap.set(
+    { "n", "x" }, "zl", function()
+      local amount = math.min(vim.v.count1, H.longest_line_length())
+      for _ = 1, amount do
+        VSCODE.call("scrollRight")
+      end
+    end
+  )
+
+  vim.keymap.set(
+    { "n", "x" }, "zH", function()
+      for _ = 1, math.floor(vim.fn.winwidth(0) / 2) do
+        VSCODE.call("scrollLeft")
+      end
+    end
+  )
+  vim.keymap.set(
+    { "n", "x" }, "zL", function()
+      for _ = 1, math.floor(vim.fn.winwidth(0) / 2) do
+        VSCODE.call("scrollRight")
+      end
+    end
+  )
+
+  --  }}}
+
+  -- other binds {{{
+
+  -- some original bindings get overwritten by vscode extension and
+  -- they are too good to just let go
+  pcall(vim.keymap.del, "n", "==")
+  pcall(vim.keymap.del, { "n", "x" }, "=")
+  pcall(vim.keymap.del, "n", "gqq")
+  pcall(vim.keymap.del, { "n", "x" }, "gq")
 
   --  }}}
 
@@ -413,8 +472,10 @@ if vim.g.vscode then
   end
 
   for name, value in pairs({
-    -- Those can't be done using (neo)vim config
+    -- those can't be done using (neo)vim config
     ["editor.lineNumbers"] = "relative",
+    -- sad that the only possible indicator is indent
+    ["editor.wrappingIndent"] = "indent",
 
     ["editor.inlayHints.enabled"] = "offUntilPressed",
     ["window.customMenuBarAltFocus"] = false,
@@ -422,15 +483,6 @@ if vim.g.vscode then
     ["workbench.editor.scrollToSwitchTabs"] = true,
   }) do
     VSCODE.update_config(name, value, "global")
-  end
-
-  -- some original bindings get overwritten by vscode extension and
-  -- they are too good to just let go
-  for _, key in pairs({
-    "gq",
-    "=",
-  }) do
-    vim.keymap.set({ "n", "x" }, "<Leader>v" .. key, key, { noremap = true })
   end
 
   --  }}}
