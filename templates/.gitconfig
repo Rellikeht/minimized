@@ -1,0 +1,52 @@
+[safe]
+	directory = ~/Dev/*
+	directory = ~/Documents/*
+
+[core]
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    dark = true
+
+[merge]
+    conflictstyle = zdiff3
+
+[diff]
+    guitool = vscode
+    tool = vim
+    tool = neovim
+
+[difftool]
+    prompt = false
+;     guiDefault = true
+
+[difftool "vscode"]
+    cmd = code --wait --diff "$LOCAL" "$REMOTE"
+
+[difftool "neovim"]
+    cmd = nvim -d "$LOCAL" "$REMOTE"
+
+[difftool "vim"]
+    cmd = vim -d "$LOCAL" "$REMOTE"
+
+[merge]
+    guitool = vscode
+    tool = vim
+    tool = neovim
+
+[mergetool]
+    prompt = false
+;     guiDefault = true
+
+[mergetool "vscode"]
+    cmd = code --wait "$MERGED"
+
+[mergetool "neovim"]
+    cmd = nvim -d "$LOCAL" "$MERGED" "$REMOTE"
+
+[mergetool "vim"]
+    cmd = vim -d "$LOCAL" "$MERGED" "$REMOTE"
