@@ -2,7 +2,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-# helpers {{{
+# helpers & source pre {{{
 
 has_exe() {
     command -v "$1" >/dev/null
@@ -15,6 +15,8 @@ source_if_exists() {
 update_path() {
     [[ "$PATH" =~ "(.*:)?$1(:.*)?"* ]] || export PATH="$PATH:$1"
 }
+
+source_if_exists "$HOME/.bashrc.pre.local"
 
 #  }}}
 
@@ -224,8 +226,15 @@ if has_exe direnv && [ -z "$__DIRENV_LOADED" ]; then
     __DIRENV_LOADED=1
 fi
 
-if [ -z "$SSH_AUTH_SOCK" ] && [ -n "$XDG_RUNTIME_DIR" ]; then
-    export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    if [ -d "$XDG_RUNTIME_DIR" ]; then
+        SSH_AUTH_SOCK="$XDG_RUNTIME_DIR"
+    elif [ -d "/run/user/$UID" ]; then
+        SSH_AUTH_SOCK="/run/user/$UID"
+    else
+        SSH_AUTH_SOCK="$HOME/.ssh"
+    fi
+    export SSH_AUTH_SOCK="$SSH_AUTH_SOCK/ssh-agent.socket"
 fi
 
 #  }}}

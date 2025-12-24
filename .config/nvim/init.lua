@@ -1575,12 +1575,14 @@ function CODE()
     end  --  }}}
 
     vim.cmd.filetype("detect")
-  end --  }}}
+  end
 
   if TREESITTER ~= nil then
     HOOKS.nvim_treesitter()
     HOOKS.nvim_treesitter = nil
   end
+
+  --  }}}
 
   CODE_LOADED = true
 end
