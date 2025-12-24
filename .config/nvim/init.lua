@@ -74,57 +74,63 @@ HOOKS = {}
 
 for _, option in pairs({
   "number",
-  "smarttab",
-  "ruler",
-  "incsearch",
-  "ignorecase",
-  "smartcase",
-  "showmatch",
-  "hidden",
-  "secure",
-  "wrap",
-  "autoindent",
-  "cindent",
-  "wildmenu",
-  "termguicolors",
-  "ttimeout",
+  "relativenumber",
+  "ruler",         -- show line and column in bottom
+  "incsearch",     -- <3
+  "ignorecase",    -- for smartcase to work
+  "smartcase",     -- <3
+  "showmatch",     -- show matching brackets when inserting
+  "hidden",        -- allow leaving buffers unwritten when jumping
+  "secure",        -- just in case something is wrong with modelines
+  "autoindent",    -- auto indent after <CR> in insert mode
+  "cindent",       -- TODO document
+  "wildmenu",      -- TODO document
+  "termguicolors", -- TODO document
+  "undofile",      -- undo history persistent throughout editor on and off
   "splitright",
   "splitbelow",
-  "undofile",
-}) do vim.opt[option] = true end
+  "wrap",
+}) do
+  vim.opt[option] = true
+end
 
 for _, option in pairs({
-  "shelltemp",
-  "timeout",
-  "autoread",
-  "swapfile",
-  "hlsearch",
+  "shelltemp", -- TODO document
+  "timeout",   -- wait for next key in combination until it is pressed
+  "autoread",  --  disable automatic read file when changed from outside
+  "swapfile",  --
+  "hlsearch",  -- let t be set
 }) do
   vim.opt[option] = false
 end
 
-vim.opt.scrolloff = 5
-vim.opt.splitkeep = "screen"
-vim.opt.shortmess = "atsOF"
-vim.opt.mouse = "a"
+vim.opt.scrolloff = 5                        -- lines from edge when scrolling
+vim.opt.splitkeep = "screen"                 -- TODO document
+vim.opt.shortmess = "atsOF"                  -- less annoying messages
+vim.opt.mouse = "a"                          -- enable full mouse experience
+vim.opt.formatoptions:remove({ "j", "t" })   -- TODO document
+vim.opt.formatoptions:append("croqlwn")      -- TODO document
 
-vim.opt.formatoptions:remove({ "j", "t" })
-vim.opt.formatoptions:append("croqlwn")
+vim.opt.wildchar = string.byte("\t")         -- TODO document
+vim.opt.wildmode = "list:longest,full"       -- TODO document
+vim.opt.wildoptions = "fuzzy,tagfile"        -- ??
+vim.opt.omnifunc = "syntaxcomplete#Complete" -- default vim function for <C-x>o
+vim.opt.complete = "w,b,s,i,d,.,k"           -- TODO document
+vim.opt.switchbuf:append(                    -- TODO document
+  { "usetab", "useopen" }
+)
 
-vim.opt.wildchar = string.byte("\t")
-vim.opt.wildmode = "list:longest,full"
-vim.opt.wildoptions = "fuzzy,tagfile" -- ??
-vim.opt.complete = "w,b,s,i,d,.,k"
+-- best completion settings out there
 vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
 if vim.fn.has("nvim-0.11") == 1 then
   vim.opt.completeopt:append("fuzzy")
 end
 
-vim.opt.omnifunc = "syntaxcomplete#Complete"
-vim.opt.pumwidth = 20
+vim.opt.redrawtime = 5000 -- wait longer for drawging (helpful in bigger files)
+vim.opt.pumwidth = 50     -- to see anything in completion window
 vim.opt.pumheight = H.calc_pumheight()
-vim.opt.cmdwinheight = 25
-vim.opt.redrawtime = 5000
+vim.opt.cmdwinheight = 25 -- more commands in command line window
+vim.opt.cedit = "<C-j>"   -- key to open command-line window in command mode
 
 --  }}}
 
@@ -542,8 +548,6 @@ H.table_join(
 
     {
       "Rellikeht/arglist-plus", --  {{{
-      config_pre = function()
-      end,
       config = function()
         vim.keymap.set("n", "<Space>n", "<Plug>ANext", {})
         vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
@@ -574,6 +578,20 @@ H.table_join(
         vim.keymap.set("n", "<Space>lU", function()
           vim.cmd.AAdd(vim.fn.expand("<cfile>"))
         end, {})
+
+        vim.api.nvim_create_autocmd(
+          "FileType", {
+            pattern = "netrw",
+            callback = function()
+              vim.keymap.set("n", "<Space>lu", function()
+                vim.cmd.AEdit(vim.g["extras#get_netrw_fp"]())
+              end, { buffer = true, silent = true })
+              vim.keymap.set("n", "<Space>lU", function()
+                vim.cmd.AAdd(vim.g["extras#get_netrw_fp"]())
+              end, { buffer = true, silent = true })
+            end
+          }
+        )
       end
     }, --  }}}
 
@@ -624,7 +642,9 @@ H.table_join(
 
     {
       "nvim-treesitter/nvim-treesitter", --  {{{
-      requires = { "Rellikeht/lazy-utils" },
+      requires = {
+        "Rellikeht/lazy-utils"           -- for helpers in config
+      },
       run = ":TSUpdate",
       branch = "master",
       config = function()
@@ -662,7 +682,8 @@ H.table_join(
       "junegunn/fzf.vim", --  {{{
       requires = {
         "junegunn/fzf",
-        "Rellikeht/vim-extras",
+        "Rellikeht/vim-extras",   -- for helpers in config
+        "Rellikeht/arglist-plus", -- for helpers in config
       },
       config = function()
         vim.g.fzf_layout = { down = "100%" }
@@ -790,34 +811,32 @@ vim.api.nvim_create_autocmd(
 
 --  }}}
 
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
-vim.opt.textwidth = 72
+vim.opt.softtabstop = 4         -- amount of spaces when pressing tab
+vim.opt.shiftwidth = 4          -- amount of spaces for other indentation
+vim.opt.tabstop = 4             -- width of tab characters
+vim.opt.textwidth = 72          -- TODO should this be set here
 
-vim.opt.shellxquote = ""
-vim.opt.maxmempattern = 2000000
-vim.opt.fileencoding = "utf8"
-vim.opt.ttimeoutlen = 100
-vim.opt.updatetime = 2000
-
-vim.opt.conceallevel = 2
-vim.opt.concealcursor = ""
-vim.opt.foldmethod = "marker"
-vim.opt.foldmarker = " {{{, }}}"
-vim.opt.foldlevel = 0
-vim.opt.showbreak = "> "
-vim.opt.wrapmargin = 1
-
-vim.opt.undolevels = 10000
+vim.opt.maxmempattern = 2000000 -- computers are fast enough for big patterns
+vim.opt.fileencoding = "utf8"   -- why isn't this a default
+vim.opt.updatetime = 2000       -- waiting for CursorHold and writing to swap
+vim.opt.undolevels = 20000
 vim.opt.history = 10000
 
-for _, option in pairs({
-  "relativenumber",
-  "expandtab",
-  "cursorline",
-}) do vim.opt[option] = true end
+vim.opt.conceallevel = 1         -- show concealled characters under cursor
+vim.opt.foldmethod = "marker"    -- I don't like automatic folding
+vim.opt.foldmarker = " {{{, }}}" -- just in case some formatter fucks up
+vim.opt.foldlevel = 0
+vim.opt.showbreak = "> "         -- wrap indicator
+vim.opt.wrapmargin = 1           -- size of margin on the right
 
+vim.opt.expandtab = true         -- use spaces instead of tabs
+vim.opt.cursorline = true        -- highlight line where cursor is
+
+-- TODO is this necessary
+-- vim.opt.ttimeout = true
+-- vim.opt.ttimeoutlen = 100
+
+-- builtin terminal may be useful and <c-w> isn't necessary
 vim.keymap.set("t", "<C-w>", "<C-\\><C-n><C-w>", { remap = true })
 vim.keymap.set("t", "<C-q><C-w>", "<C-w>", { noremap = true })
 vim.keymap.set("t", "<C-q><C-q>", "<C-q>", { noremap = true })
@@ -828,8 +847,8 @@ vim.keymap.set(
   "t", "<C-q><C-o>", "<C-\\><C-o>", { noremap = true }
 )
 
+-- fixing diffs colors
 vim.cmd [[
-" Those helped
 hi Added
             \ ctermbg=DarkGreen guibg=#0d5826
             \ ctermfg=NONE guifg=NONE
@@ -846,20 +865,6 @@ hi Changed
             \ ctermbg=DarkBlue guibg=#0f1a7f
             \ ctermfg=NONE guifg=NONE
 ]]
-
-vim.api.nvim_create_autocmd(
-  "FileType", {
-    pattern = "netrw",
-    callback = function()
-      vim.keymap.set("n", "<Space>lu", function()
-        vim.cmd.AEdit(vim.g["extras#get_netrw_fp"]())
-      end, { buffer = true, silent = true })
-      vim.keymap.set("n", "<Space>lU", function()
-        vim.cmd.AAdd(vim.g["extras#get_netrw_fp"]())
-      end, { buffer = true, silent = true })
-    end
-  }
-)
 
 --  }}}
 
@@ -912,6 +917,22 @@ for key, cmd in pairs({
   vim.keymap.set("n", "<Space>q" .. key, cmd, { noremap = true })
 end
 
+-- TODO
+-- <C-Space> in terminal
+-- vim.keymap.set("i", "<C-Space>", "<C-@>", { noremap = true })
+-- vim.keymap.set("i", "<C-@>", function()
+--   if vim.fn.pumvisible == 1 or vim.o.omnifunc == nil then
+--     vim.cmd.execute("\"normal \\<C-n>\"")
+--   else
+--     vim.cmd.execute("\"normal \\<C-x>o\"")
+--   end
+-- end, { noremap = true })
+
+-- original
+-- inoremap <C-Space> <C-@>
+-- inoremap <expr> <C-@> (pumvisible()) ?
+--       \'<C-n>' : (&omnifunc == '') ? '<C-n>' : '<C-x><C-o>'
+
 --  }}}
 
 --  }}}
@@ -919,7 +940,6 @@ end
 -- filetypes {{{
 
 -- ugly but handy
--- TODO does this work
 vim.api.nvim_create_autocmd(
   "FileType", {
     pattern = { --  {{{
@@ -1231,9 +1251,9 @@ function CODE()
     },     --  }}}
 
     {
-      "neovim/nvim-lspconfig", --  {{{
+      "neovim/nvim-lspconfig",  --  {{{
       requires = {
-        "Rellikeht/vim-extras",
+        "Rellikeht/vim-extras", -- for helpers in config
       },
       config = function()
         if vim.fn.has("nvim-0.10") == 0 then return end
