@@ -8,6 +8,7 @@ bck.*
 *-local
 local/
 .local*
+local.*
 *hist
 
 pckr/

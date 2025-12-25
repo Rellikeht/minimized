@@ -5,7 +5,7 @@
 H = {
   table_join = function(t1, t2)
     for k, v in pairs(t2) do
-      table.insert(t1, k, v)
+      t1[k] = v
     end
   end,
 
@@ -36,10 +36,6 @@ H = {
       elseif type(value) == "string" then
         value = vim.v[value]
       end
-      print("value", value)
-      print("prefix", prefix)
-      print("cmd", cmd)
-      print("args", ...)
       vim.cmd({ cmd = value .. prefix .. cmd, args = ... })
     end
   end,
@@ -1006,22 +1002,25 @@ vim.api.nvim_create_autocmd(
         "n", "K", "k<CR>", { noremap = true, buffer = true, silent = true }
       )
 
+      -- just a default <CR> with fold opening
       vim.keymap.set(
         "n", "<CR>", "<CR>zv", {
           noremap = true, buffer = true, silent = true,
         }
       )
+      -- jump like <CR> but return cursor to qf/loc window
       vim.keymap.set(
         "n", "<C-h>", function()
           local qpos = vim.fn.getcurpos()
           vim.cmd.execute("\"normal \\<CR>\"")
-          H.qlcmd("open")()
+          vim.cmd.execute("\"normal \\<C-w>w\"")
           vim.fn.setpos(".", qpos)
         end, {
           buffer = true,
-          noremap = true,
+          -- noremap = true,
         }
       )
+      -- jump to element and close window
       vim.keymap.set(
         "n", "<BS>", function()
           vim.cmd.execute("\"normal \\<CR>\"")
@@ -1262,7 +1261,7 @@ function CODE()
 
           function NvimDiagNext(config)
             return function()
-              H.table_join(config, { count = vim.v.count1, float = true })
+              H.t.able_join(config, { count = vim.v.count1, float = true })
               vim.diagnostic.jump(config)
             end
           end
