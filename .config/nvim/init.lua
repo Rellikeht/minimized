@@ -519,6 +519,7 @@ H.table_join(
   plugin_configs,
   { --  {{{
     "ryvnf/readline.vim",
+    "vale1410/vim-minizinc",
 
     {
       "Rellikeht/lazy-utils", --  {{{
@@ -800,17 +801,6 @@ vim.cmd.syntax("on")
 
 vim.opt.autochdir = true
 
--- filetypes {{{
-
-vim.g.markdown_minlines = 500
-
-vim.api.nvim_create_autocmd(
-  { "BufRead", "BufNewFile" },
-  { pattern = "*.md", command = "set syntax=markdown" }
-)
-
---  }}}
-
 vim.opt.softtabstop = 4         -- amount of spaces when pressing tab
 vim.opt.shiftwidth = 4          -- amount of spaces for other indentation
 vim.opt.tabstop = 4             -- width of tab characters
@@ -865,6 +855,10 @@ hi Changed
             \ ctermbg=DarkBlue guibg=#0f1a7f
             \ ctermfg=NONE guifg=NONE
 ]]
+
+-- sw=4 and sts=4 by default, why
+vim.g.markdown_recommended_style = false
+vim.g.markdown_minlines = 1000
 
 --  }}}
 
@@ -1574,7 +1568,7 @@ function CODE()
     else -- {{{
     end  --  }}}
 
-    vim.cmd.filetype("detect")
+    vim.cmd("silent! filetype detect")
   end
 
   if TREESITTER ~= nil then
