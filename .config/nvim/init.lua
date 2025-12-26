@@ -5,7 +5,11 @@
 H = {
   table_join = function(t1, t2)
     for k, v in pairs(t2) do
-      t1[k] = v
+      if type(k) == "number" and t1[k] ~= nil then
+        table.insert(t1, v)
+      else
+        t1[k] = v
+      end
     end
   end,
 
@@ -311,6 +315,7 @@ local plugin_configs = { -- {{{
     end --  }}}
   },    --  }}}
 
+  -- TODO vim-sandwich
   {
     "tpope/vim-surround", --  {{{
     config = function()
@@ -1261,7 +1266,7 @@ function CODE()
 
           function NvimDiagNext(config)
             return function()
-              H.t.able_join(config, { count = vim.v.count1, float = true })
+              H.table_join(config, { count = vim.v.count1, float = true })
               vim.diagnostic.jump(config)
             end
           end
@@ -1288,8 +1293,6 @@ function CODE()
 
         vim.keymap
             .set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>", {})
-        vim.keymap
-            .set("n", "<Leader>dql", ":<C-u>LspLog<CR>", {})
         vim.keymap.set(
           "n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {}
         )
@@ -1566,8 +1569,6 @@ function CODE()
       --  }}}
     else -- {{{
     end  --  }}}
-
-    vim.cmd("silent! filetype detect")
   end
 
   if TREESITTER ~= nil then
@@ -1576,6 +1577,13 @@ function CODE()
   end
 
   --  }}}
+
+  -- No idea if this should be for one file or for all
+  -- vim.cmd("silent! filetype detect")
+  -- This bufdo may be too much as it will be slow and may attach lsps
+  -- to too many files (although this config doesn't have any
+  -- sensible mechanism for preventing this when opening files)
+  vim.cmd("silent! bufdo filetype detect")
 
   CODE_LOADED = true
 end
