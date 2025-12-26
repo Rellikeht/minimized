@@ -520,7 +520,20 @@ H.table_join(
   plugin_configs,
   { --  {{{
     "ryvnf/readline.vim",
-    "vale1410/vim-minizinc",
+
+    { --  {{{
+      "vale1410/vim-minizinc",
+      config = function()
+        vim.api.nvim_create_autocmd(
+          "FileType", {
+            pattern = "zinc",
+            callback = function()
+              vim.o.commentstring = "% %s"
+            end,
+          }
+        )
+      end
+    }, --  }}}
 
     {
       "Rellikeht/lazy-utils", --  {{{
@@ -912,21 +925,10 @@ for key, cmd in pairs({
   vim.keymap.set("n", "<Space>q" .. key, cmd, { noremap = true })
 end
 
--- TODO
--- <C-Space> in terminal
--- vim.keymap.set("i", "<C-Space>", "<C-@>", { noremap = true })
--- vim.keymap.set("i", "<C-@>", function()
---   if vim.fn.pumvisible == 1 or vim.o.omnifunc == nil then
---     vim.cmd.execute("\"normal \\<C-n>\"")
---   else
---     vim.cmd.execute("\"normal \\<C-x>o\"")
---   end
--- end, { noremap = true })
-
--- original
--- inoremap <C-Space> <C-@>
--- inoremap <expr> <C-@> (pumvisible()) ?
---       \'<C-n>' : (&omnifunc == '') ? '<C-n>' : '<C-x><C-o>'
+vim.keymap.set("i", "<C-Space>",
+  "(pumvisible()) ? '<C-n>' : (&omnifunc == '') ? '<C-n>' : '<C-x><C-o>'",
+  { expr = true, noremap = true }
+)
 
 --  }}}
 
