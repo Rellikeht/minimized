@@ -6,7 +6,8 @@
 
 "let g:data_dir = '~/.vim'
 
-set number relativenumber
+set nocompatible " why does this even exist
+set number relativenumber " <3
 set smarttab " just in case really
 set expandtab " use spaces instead of tabs
 set ignorecase " for smartcase to work
@@ -42,7 +43,8 @@ set wildchar=<Tab> " TODO
 set wildmode=list:longest,full " TODO
 set wildoptions=fuzzy,tagfile " TODO
 set complete=w,b,s,i,d,.,k " helpful (and not too costly) complete sources
-set completeopt=menu,menuone,noselect,noinsert,fuzzy " best completion options out there
+" best completion options out there
+set completeopt=menu,menuone,noselect,noinsert,fuzzy
 set omnifunc=syntaxcomplete#Complete " <C-x>o complete
 set cmdwinheight=25 " more commands in command line window
 set redrawtime=5000 " wait longer for drawging (helpful in bigger files)
@@ -60,8 +62,7 @@ set softtabstop=4 " amount of spaces when pressing tab
 set shiftwidth=4 " amount of spaces for other indentation
 set tabstop=4 " width of tab characters
 "set textwidth=80 " TODO does this matter
-set cpoptions-=C " allow command continuations on next line
-set maxmempattern=2000000 " computers are fast enough for big patterns
+set maxmempattern=200000 " computers are fast enough for big patterns
 set fileencoding=utf8 " why isn't this a default
 set updatetime=2000 " waiting for CursorHold and writing to swap 
 set conceallevel=1 " show concealled characters under cursor
@@ -89,12 +90,7 @@ if has('win32') " windows friendly options, just in case {{{
   let &shellredir='| Out-File -Encoding UTF8 %s'
 endif " }}} 
 
-" sometimes it is better to have 2 spaces instead of 4
-autocmd FileType
-      \ python,nix,lua,vim,zig,nim,markdown,ocaml,elixir,haskell,kbd
-      \ setlocal softtabstop=2 shiftwidth=2
-
-set background=dark
+"set background=dark
 
 highlight MatchParen cterm=bold gui=bold
 
@@ -111,6 +107,9 @@ highlight DiffChange
 highlight DiffDelete
             \ ctermbg=DarkRed guibg=#800620
             \ ctermfg=NONE guifg=NONE
+
+let g:markdown_recommended_style = 0
+let g:markdown_minlines = 500
 
 " }}}
 
@@ -156,18 +155,37 @@ inoremap <C-x>u <C-x><C-u>
 inoremap <C-x>v <C-x><C-v>
 inoremap <C-x>j <C-x><C-]>
 
-" <C-Space> in terminal
 inoremap <C-Space> <C-@>
 inoremap <expr> <C-@> (pumvisible()) ?
-      \'<C-n>' : (&omnifunc == '') ? '<C-n>' : '<C-x><C-o>'
+      \ '<C-n>' : (&omnifunc == '') ? '<C-n>' : '<C-x><C-o>'
+
+map <Space> <Nop>
+map <Space>qh :<C-u>set hlsearch!<CR>
+map <Space>qw :<C-u>set wrap!<CR>
 
 " }}}
 
 " {{{
 
-filetype plugin indent on
-syntax on
+" sometimes it is better to have 2 spaces instead of 4
+autocmd FileType
+      \ python,nix,lua,vim,zig,nim,markdown,ocaml,elixir,haskell,kbd
+      \ setlocal softtabstop=2 shiftwidth=2
+
 runtime! ftplugin/man.vim
+filetype plugin on
+filetype indent on
+
+" syntax on can take long time and slow down startup
+" this hack makes this faster (only) visually
+augroup ft_syn
+  autocmd!
+  autocmd BufEnter *
+        \ syntax on
+        \ | augroup ft_syn
+        \ | autocmd!
+        \ | augroup END
+augroup END
 
 " }}}
 
