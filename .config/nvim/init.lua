@@ -520,20 +520,8 @@ H.table_join(
   plugin_configs,
   { --  {{{
     "ryvnf/readline.vim",
-
-    { --  {{{
-      "vale1410/vim-minizinc",
-      config = function()
-        vim.api.nvim_create_autocmd(
-          "FileType", {
-            pattern = "zinc",
-            callback = function()
-              vim.o.commentstring = "% %s"
-            end,
-          }
-        )
-      end
-    }, --  }}}
+    "kmonad/kmonad-vim",
+    "CervEdin/vim-minizinc",
 
     {
       "Rellikeht/lazy-utils", --  {{{
@@ -543,21 +531,6 @@ H.table_join(
           HOOKS.lazy_utils()
           HOOKS.lazy_utils = nil
         end
-      end
-    }, --  }}}
-
-    {
-      "kmonad/kmonad-vim", --  {{{
-      -- why doesn't this happen automatically
-      config = function()
-        vim.api.nvim_create_autocmd(
-          { "BufRead", "BufNewFile" }, {
-            pattern = "*.kbd",
-            callback = function()
-              vim.o.filetype = "kbd"
-            end
-          }
-        )
       end
     }, --  }}}
 
