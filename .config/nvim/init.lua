@@ -808,9 +808,7 @@ PCKR.add(plugin_configs)
 
 -- other settings {{{
 
-vim.cmd.filetype("on")
-vim.cmd.filetype("plugin", "on")
-vim.cmd.filetype("indent", "on")
+vim.cmd.filetype("plugin", "indent", "on")
 vim.cmd.syntax("on")
 
 vim.opt.autochdir = true
@@ -1580,12 +1578,26 @@ function CODE()
 
   --  }}}
 
-  -- No idea if this should be for one file or for all
-  -- vim.cmd("silent! filetype detect")
-  -- This bufdo may be too much as it will be slow and may attach lsps
-  -- to too many files (although this config doesn't have any
-  -- sensible mechanism for preventing this when opening files)
-  vim.cmd("silent! bufdo filetype detect")
+  -- auto filetype detect {{{
+  -- because code command may be run after opening some buffers and lsp
+  -- or orther goodies won't be loaded automatically then
+  vim.api.nvim_create_autocmd(
+    "BufEnter", {
+      callback = function()
+        if vim.b.filetype_detected or vim.o.buftype ~= "" then
+          return
+        end
+        -- seems to work the same
+        -- vim.cmd("silent! filetype detect")
+        vim.cmd({
+          cmd = "filetype",
+          args = { "detect" },
+          mods = { silent = true },
+        })
+        vim.b.filetype_detected = true
+      end
+    }
+  ) --  }}}
 
   CODE_LOADED = true
 end
