@@ -911,7 +911,7 @@ vim.keymap.set("i", "<C-Space>",
 vim.api.nvim_create_autocmd(
   "FileType", {
     pattern = { --  {{{
-      "python",
+      -- "python",
       "nix",
       "lua",
       "vim",
@@ -1355,6 +1355,7 @@ function CODE()
               if client and
                   client.server_capabilities.completionProvider then
                 -- Enable completion triggered by <c-x><c-o>
+                -- TODO this seems to disappear
                 vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
               end
               if client and
@@ -1552,25 +1553,35 @@ function CODE()
   --  }}}
 
   -- auto filetype detect {{{
+
+  local function filetype_detect_callback(ev)
+    if vim.b[ev.buf].filetype_detected or vim.bo[ev.buf].buftype ~= "" then
+      return
+    end
+    local omnifunc = vim.bo[ev.buf].omnifunc
+    -- seems to work the same
+    -- vim.cmd("silent! filetype detect")
+    vim.cmd({
+      cmd = "filetype",
+      args = { "detect" },
+      mods = { silent = true },
+    })
+    vim.b[ev.buf].filetype_detected = true
+    -- custom and lsp omnifunc gets overwritten during filetype
+    -- detection
+    vim.bo[ev.buf].omnifunc = omnifunc
+  end
+
   -- because code command may be run after opening some buffers and lsp
   -- or orther goodies won't be loaded automatically then
   vim.api.nvim_create_autocmd(
     "BufEnter", {
-      callback = function()
-        if vim.b.filetype_detected or vim.o.buftype ~= "" then
-          return
-        end
-        -- seems to work the same
-        -- vim.cmd("silent! filetype detect")
-        vim.cmd({
-          cmd = "filetype",
-          args = { "detect" },
-          mods = { silent = true },
-        })
-        vim.b.filetype_detected = true
-      end
+      callback = filetype_detect_callback
     }
-  ) --  }}}
+  )
+  filetype_detect_callback({ buf = vim.fn.bufnr() })
+
+  --  }}}
 
   CODE_LOADED = true
 end
