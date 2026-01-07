@@ -46,7 +46,8 @@ H = {
 
   wrap_qfloc = function(cmd, args)
     return function(...)
-      cmd(args, ..., { loclist = vim.g.qfloc })
+      H.table_join(args, {...})
+      cmd(args, { loclist = vim.g.qfloc })
     end
   end,
 
@@ -1004,7 +1005,7 @@ vim.api.nvim_create_autocmd(
           vim.cmd.execute("\"normal \\<CR>\"")
           H.qlcmd("close")()
         end, {
-          buffer = true, silent = true,
+          buffer = true, silent = true, noremap = true
         }
       )
     end
