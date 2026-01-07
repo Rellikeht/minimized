@@ -44,9 +44,9 @@ H = {
     end
   end,
 
-  wrap_qfloc = function(cmd)
+  wrap_qfloc = function(cmd, args)
     return function(...)
-      cmd(..., { loclist = vim.g.qfloc })
+      cmd(args, ..., { loclist = vim.g.qfloc })
     end
   end,
 
@@ -1400,7 +1400,11 @@ function CODE()
                 }
               )
               vim.keymap.set(
-                "n", "<Leader>dlr", H.wrap_qfloc(vim.lsp.buf.references), {
+                "n", "<Leader>dlr",
+                H.wrap_qfloc(
+                  vim.lsp.buf.references,
+                  { includeDeclaration = false }
+                ), {
                   desc = "populate quickfix list with references",
                   buffer = bufnr,
                 }
