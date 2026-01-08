@@ -201,6 +201,7 @@ vim.g.maplocalleader = "_"
 -- Select whole buffer without plugins
 vim.keymap.set("v", "aee", "gg0oG$", { noremap = true })
 vim.keymap.set("v", "iee", "aee", { noremap = true })
+-- TODO change to operator
 vim.keymap.set(
   "n", "yaee ", "gg0vG$y`'", { noremap = true }
 )
@@ -289,6 +290,21 @@ local plugin_configs = { -- {{{
   "wellle/targets.vim",
 
   {
+    "machakann/vim-sandwich", --  {{{
+    config = function()
+      vim.cmd.runtime("macros/sandwich/keymap/surround.vim")
+      vim.keymap.set("x", "zs", "<Plug>(sandwich-add)")
+      -- TODO how to replace
+      -- vim.keymap.set("x", "zS", "<Plug>VgSurround")
+
+      vim.keymap.set({"x", "o"}, "is", "<Plug>(textobj-sandwich-query-i)")
+      vim.keymap.set({"x", "o"}, "as", "<Plug>(textobj-sandwich-query-a)")
+      vim.keymap.set({"x", "o"}, "iS", "<Plug>(textobj-sandwich-auto-i)")
+      vim.keymap.set({"x", "o"}, "aS", "<Plug>(textobj-sandwich-auto-a)")
+    end
+  }, --  }}}
+
+  {
     "justinmk/vim-sneak",   --  {{{
 
     config_pre = function() --  {{{
@@ -315,15 +331,6 @@ local plugin_configs = { -- {{{
       end
     end --  }}}
   },    --  }}}
-
-  -- TODO vim-sandwich
-  {
-    "tpope/vim-surround", --  {{{
-    config = function()
-      vim.keymap.set("x", "<Space>a", "<Plug>VSurround", {})
-      vim.keymap.set("x", "<Space>A", "<Plug>VgSurround", {})
-    end
-  }, --  }}}
 
   {
     "tpope/vim-repeat", --  {{{
