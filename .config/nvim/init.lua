@@ -46,7 +46,7 @@ H = {
 
   wrap_qfloc = function(cmd, args)
     return function(...)
-      H.table_join(args, {...})
+      H.table_join(args, { ... })
       cmd(args, { loclist = vim.g.qfloc })
     end
   end,
@@ -84,7 +84,7 @@ for _, option in pairs({
   "hidden",        -- allow leaving buffers unwritten when jumping
   "secure",        -- just in case something is wrong with modelines
   "autoindent",    -- auto indent after <CR> in insert mode
-  "cindent",       -- TODO document
+  -- "cindent",       -- TODO do I need this; this makes multiple O slow
   "wildmenu",      -- TODO document
   "termguicolors", -- TODO document
   "undofile",      -- undo history persistent throughout editor on and off
@@ -297,10 +297,10 @@ local plugin_configs = { -- {{{
       -- TODO how to replace
       -- vim.keymap.set("x", "zS", "<Plug>VgSurround")
 
-      vim.keymap.set({"x", "o"}, "is", "<Plug>(textobj-sandwich-query-i)")
-      vim.keymap.set({"x", "o"}, "as", "<Plug>(textobj-sandwich-query-a)")
-      vim.keymap.set({"x", "o"}, "iS", "<Plug>(textobj-sandwich-auto-i)")
-      vim.keymap.set({"x", "o"}, "aS", "<Plug>(textobj-sandwich-auto-a)")
+      vim.keymap.set({ "x", "o" }, "is", "<Plug>(textobj-sandwich-query-i)")
+      vim.keymap.set({ "x", "o" }, "as", "<Plug>(textobj-sandwich-query-a)")
+      vim.keymap.set({ "x", "o" }, "iS", "<Plug>(textobj-sandwich-auto-i)")
+      vim.keymap.set({ "x", "o" }, "aS", "<Plug>(textobj-sandwich-auto-a)")
     end
   }, --  }}}
 
@@ -337,17 +337,6 @@ local plugin_configs = { -- {{{
     config = function()
       -- because RepeatDot sometimes fails
       vim.keymap.set("n", "<Space>.", ".", { noremap = true })
-    end
-  }, --  }}}
-
-  {
-    "Rellikeht/vim-extras", --  {{{
-    config = function()
-      if vim.g.vscode then
-        return
-      end
-      vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>", {})
-      EXTRAS = require("extras")
     end
   }, --  }}}
 }    --  }}}
@@ -516,6 +505,10 @@ if vim.g.vscode then
     end, {}
   )
 
+  H.table_join(
+    plugin_configs,
+    { "Rellikeht/vim-extras" }
+  )
   PCKR.add(plugin_configs)
 
   --  }}}
@@ -530,6 +523,14 @@ H.table_join(
     "ryvnf/readline.vim",
     "kmonad/kmonad-vim",
     "CervEdin/vim-minizinc",
+
+    {
+      "Rellikeht/vim-extras", --  {{{
+      config = function()
+        vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>", {})
+        EXTRAS = require("extras")
+      end
+    }, --  }}}
 
     {
       "Rellikeht/lazy-utils", --  {{{
