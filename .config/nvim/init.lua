@@ -309,17 +309,17 @@ local plugin_configs = { -- {{{
 
     config_pre = function() --  {{{
       vim.g["sneak#prompt"] = " <sneak> "
-      vim.g["sneak#use_ic_scs"] = true
-      vim.g["sneak#label"] = true
-      vim.g["sneak#next"] = false
+      vim.g["sneak#use_ic_scs"] = 1
+      vim.g["sneak#label"] = 1
+      vim.g["sneak#s_next"] = 0
     end,                --  }}}
 
     config = function() --  {{{
       for key_in, key_out in pairs({
         ["<C-n>"] = ";",
         ["<C-p>"] = ",",
-        s = "s",
-        S = "S",
+        ["<C-q>s"] = "s",
+        ["<C-q>S"] = "S",
         f = "f",
         F = "F",
         t = "t",
@@ -329,6 +329,9 @@ local plugin_configs = { -- {{{
           "", key_in, "<Plug>Sneak_" .. key_out, { noremap = true }
         )
       end
+      -- part of vscode-neovim command output window workaround
+      vim.keymap.set("", "s", "<C-q>s", { remap = true })
+      vim.keymap.set("", "S", "<C-q>S", { remap = true })
     end --  }}}
   },    --  }}}
 
@@ -448,7 +451,7 @@ if vim.g.vscode then
 
   --  }}}
 
-  -- other binds {{{
+  -- fixing vscode-neovim binds {{{
 
   -- some original bindings get overwritten by vscode extension and
   -- they are too good to just let go
@@ -456,6 +459,28 @@ if vim.g.vscode then
   pcall(vim.keymap.del, { "n", "x" }, "=")
   pcall(vim.keymap.del, "n", "gqq")
   pcall(vim.keymap.del, { "n", "x" }, "gq")
+
+  -- vim sneak
+  -- because vscode-neovim plugin opens cmd output window for s and S
+  -- sneak commands
+  vim.keymap.set("", "s",
+    function()
+      local cmdheight = vim.o.cmdheight
+      vim.o.cmdheight = 3
+      vim.cmd.execute("\"normal \\<C-q>s\"")
+      vim.o.cmdheight = cmdheight
+    end,
+    { noremap = true }
+  )
+  vim.keymap.set("", "S",
+    function()
+      local cmdheight = vim.o.cmdheight
+      vim.o.cmdheight = 3
+      vim.cmd.execute("\"normal \\<C-q>s\"")
+      vim.o.cmdheight = cmdheight
+    end,
+    { noremap = true }
+  )
 
   --  }}}
 
