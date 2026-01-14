@@ -49,12 +49,16 @@ H = {
     end
   end,
 
-  wrap_qfloc = function(func, args)
+  wrap_qfloc = function(func, args, fill_first)
     return function(...)
-      local func_args = { ... }
+      local func_args = {}
       H.table_join(func_args, { loclist = vim.g.qfloc == 1 })
       H.table_join(func_args, args)
-      func(func_args)
+      if ... == nil and not fill_first then
+        func(func_args)
+      else
+        func(..., func_args)
+      end
     end
   end,
 
@@ -1449,7 +1453,8 @@ function CODE()
                 "n", "<Leader>dlr",
                 H.wrap_qfloc(
                   vim.lsp.buf.references,
-                  { includeDeclaration = false }
+                  { includeDeclaration = false },
+                  true
                 ), {
                   desc = "populate quickfix list with references",
                   buffer = bufnr,
