@@ -4,6 +4,7 @@
 
 H = {
   table_join = function(t1, t2)
+    if t1 == nil or t2 == nil then return end
     for k, v in pairs(t2) do
       if type(k) == "number" and t1[k] ~= nil then
         table.insert(t1, v)
@@ -44,10 +45,12 @@ H = {
     end
   end,
 
-  wrap_qfloc = function(cmd, args)
+  wrap_qfloc = function(func, args)
     return function(...)
-      H.table_join(args, { ... })
-      cmd(args, { loclist = vim.g.qfloc })
+      local func_args = { ... }
+      H.table_join(func_args, { loclist = vim.g.qfloc == 1 })
+      H.table_join(func_args, args)
+      func(func_args)
     end
   end,
 
@@ -1028,8 +1031,7 @@ vim.api.nvim_create_autocmd(
           vim.cmd.execute("\"normal \\<C-w>w\"")
           vim.fn.setpos(".", qpos)
         end, {
-          buffer = true,
-          -- noremap = true,
+          buffer = true, noremap = true,
         }
       )
       -- jump to element and close window
