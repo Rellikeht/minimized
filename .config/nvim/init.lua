@@ -30,7 +30,7 @@ H = {
     return result
   end,
 
-  qlcmd = function(cmd, value)
+  qlcmd = function(cmd, value, count)
     local prefix = "c"
     if vim.g.qfloc == 1 then
       prefix = "l"
@@ -38,10 +38,14 @@ H = {
     return function(...)
       if value == nil then
         value = ""
-      elseif type(value) == "string" then
+      elseif type(value) == "string" and #value > 0 then
         value = vim.v[value]
       end
-      vim.cmd({ cmd = value .. prefix .. cmd, args = ... })
+      vim.cmd({
+        cmd = value .. prefix .. cmd,
+        count = count,
+        args = { ... },
+      })
     end
   end,
 
@@ -141,6 +145,7 @@ vim.opt.cedit = "<C-j>"   -- key to open command-line window in command mode
 -- initialization {{{
 
 vim.g.loaded_matchit = 1
+DEFAULT_QL_HEIGHT = 12
 
 --  }}}
 
@@ -990,8 +995,13 @@ for key, map in pairs({
   [";l"] = H.qlcmd("history"),
   [";w"] = function()
     local height = vim.v.count
-    if height == 0 then height = 10 end
-    H.qlcmd("open", height)
+    if height == 0 then height = DEFAULT_QL_HEIGHT end
+    H.qlcmd("open", "", height)()
+  end,
+  [";W"] = function()
+    local height = vim.v.count
+    if height == 0 then height = DEFAULT_QL_HEIGHT end
+    H.qlcmd("window", "", height)()
   end,
 }) do
   vim.keymap.set("n", key, map, { noremap = true, silent = true })
