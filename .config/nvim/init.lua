@@ -94,9 +94,8 @@ for _, option in pairs({
   "hidden",        -- allow leaving buffers unwritten when jumping
   "secure",        -- just in case something is wrong with modelines
   "autoindent",    -- auto indent after <CR> in insert mode
-  -- "cindent",       -- TODO do I need this; this makes multiple O slow
   "wildmenu",      -- TODO document
-  "termguicolors", -- TODO document
+  "termguicolors", -- 24 bit colors are nice (if they are available)
   "undofile",      -- undo history persistent throughout editor on and off
   "splitright",
   "splitbelow",
@@ -172,6 +171,7 @@ end  --  }}}
 
 -- colors {{{
 
+-- TODO good looking in cterm
 -- isn't available sometimes
 local success = pcall(vim.cmd.colorscheme, "zaibatsu")
 if not success then pcall(vim.cmd.colorscheme, "retrobox") end
@@ -646,7 +646,26 @@ H.table_join(
       "tpope/vim-fugitive", --  {{{
       config = function()
         vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
-        vim.keymap.set("n", "<Leader>g<Space>", ":<C-u>G<Space>", {})
+        -- TODO is this enough
+        -- (https://github.com/junegunn/gv.vim exists)
+        vim.api.nvim_create_user_command(
+          "GV",
+          -- a dog (https://stackoverflow.com/a/35075021)
+          -- "G log --all --decorate --oneline --graph",
+          -- overengineered version
+          function(opts)
+            vim.cmd(
+              "G log" ..
+              " --all" ..
+              " --decorate" ..
+              " --graph" ..
+              " --date='format:%F %T'" ..
+              " --format='%h %cd%d %s (%an)'" ..
+              (opts.bang and " %" or "")
+            )
+          end,
+          { bang = true, nargs = "*" }
+        )
       end
     }, --  }}}
 
@@ -1201,14 +1220,23 @@ function CODE()
     {
       "mhinz/vim-signify", --  {{{
       config = function()
-        vim.keymap.set("n", "+", "<Plug>(signify-next-hunk)", { noremap = true })
-        vim.keymap.set("n", "-", "<Plug>(signify-prev-hunk)", { noremap = true })
-        vim.keymap.set("n", "<Leader>gt", vim.cmd.SignifyToggle, { noremap = true })
-        vim.keymap.set("n", "<Leader>gs", vim.cmd.SignifyHunkDiff, { noremap = true })
-        vim.keymap.set("n", "<Leader>gS", vim.cmd.SignifyDiff, { noremap = true })
-        vim.keymap.set("n", "<Leader>gu", vim.cmd.SignifyHunkUndo, { noremap = true })
-        vim.keymap.set("n", "<Leader>gR", vim.cmd.SignifyRefresh, { noremap = true })
-        vim.keymap.set("n", "<Leader>gh", vim.cmd.SignifyToggleHighlight, { noremap = true })
+        vim.cmd.SignifyToggle()
+        vim.keymap.set(
+          "n", "+", "<Plug>(signify-next-hunk)", { noremap = true }
+        )
+        vim.keymap.set(
+          "n", "-", "<Plug>(signify-prev-hunk)", { noremap = true }
+        )
+        vim.keymap.set(
+          "n", "<Leader>gs", vim.cmd.SignifyHunkDiff, {
+            noremap = true,
+            desc = "diff for hunk under cursor"
+          })
+        vim.keymap.set(
+          "n", "<Leader>gu", vim.cmd.SignifyHunkUndo, {
+            noremap = true,
+            desc = "undo hunk under cursor"
+          })
 
         vim.api.nvim_create_autocmd(
           "User", {
@@ -1445,6 +1473,8 @@ function CODE()
                   buffer = bufnr,
                 }
               )
+              -- TODO version only for current file (cfilter/lfilter is
+              -- the only way)
               vim.keymap.set(
                 "n", "<Leader>dlr",
                 H.wrap_qfloc(
