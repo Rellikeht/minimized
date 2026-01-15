@@ -30,20 +30,19 @@ H = {
     return result
   end,
 
-  qlcmd = function(cmd, value, count)
+  qlcmd = function(cmd, count)
     local prefix = "c"
     if vim.g.qfloc == 1 then
       prefix = "l"
     end
     return function(...)
-      if value == nil then
-        value = ""
-      elseif type(value) == "string" and #value > 0 then
-        value = vim.v[value]
+      local ccount = count
+      if type(count) == "string" and #count > 0 then
+        ccount = vim.v[count]
       end
       vim.cmd({
-        cmd = value .. prefix .. cmd,
-        count = count,
+        cmd = prefix .. cmd,
+        count = ccount,
         args = { ... },
       })
     end
@@ -149,7 +148,7 @@ vim.opt.cedit = "<C-j>"   -- key to open command-line window in command mode
 -- initialization {{{
 
 vim.g.loaded_matchit = 1
-DEFAULT_QL_HEIGHT = 12
+vim.g.ql_height = 12
 
 --  }}}
 
@@ -996,16 +995,13 @@ for key, map in pairs({
   [";p"] = H.qlcmd("previous", "count1"),
   [";0"] = H.qlcmd("first"),
   [";$"] = H.qlcmd("last"),
-  [";l"] = H.qlcmd("history"),
+  [";h"] = H.qlcmd("history", "count1"),
+  [";<"] = H.qlcmd("older", "count1"),
+  [";>"] = H.qlcmd("newer", "count1"),
   [";w"] = function()
     local height = vim.v.count
-    if height == 0 then height = DEFAULT_QL_HEIGHT end
-    H.qlcmd("open", "", height)()
-  end,
-  [";W"] = function()
-    local height = vim.v.count
-    if height == 0 then height = DEFAULT_QL_HEIGHT end
-    H.qlcmd("window", "", height)()
+    if height == 0 then height = vim.g.ql_height end
+    H.qlcmd("open", height)()
   end,
 }) do
   vim.keymap.set("n", key, map, { noremap = true, silent = true })
@@ -1019,10 +1015,10 @@ vim.api.nvim_create_autocmd(
         { "n", "v" }, "q", ":q<CR>", { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", "<", H.qlcmd("older"), { noremap = true, buffer = true }
+        "n", "<", H.qlcmd("older", "count1"), { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", ">", H.qlcmd("newer"), { noremap = true, buffer = true }
+        "n", ">", H.qlcmd("newer", "count1"), { noremap = true, buffer = true }
       )
       vim.keymap.set(
         "n", "J", "j<CR>", { noremap = true, buffer = true, silent = true }
