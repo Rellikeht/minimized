@@ -48,16 +48,20 @@ H = {
     end
   end,
 
-  wrap_qfloc = function(func, args, fill_first)
+  wrap_qfloc = function(func, ...)
+    local opts = { ... }
     return function(...)
-      local func_args = {}
-      H.table_join(func_args, { loclist = vim.g.qfloc == 1 })
-      H.table_join(func_args, args)
-      if ... == nil and not fill_first then
-        func(func_args)
-      else
-        func(..., func_args)
+      local args = { ... }
+      for k, v in pairs(opts) do
+        if k > #args then
+          table.insert(args, v)
+        else
+          H.table_join(args[k], v)
+        end
       end
+      if #args == 0 then args = { {} } end
+      H.table_join(args[#args], { loclist = vim.g.qfloc == 1 })
+      func(unpack(args))
     end
   end,
 
@@ -847,6 +851,7 @@ PCKR.add(plugin_configs)
 
 vim.cmd.filetype("plugin", "indent", "on")
 vim.cmd.syntax("on")
+vim.cmd.packadd("cfilter")
 
 vim.opt.autochdir = true
 
@@ -1473,14 +1478,12 @@ function CODE()
                   buffer = bufnr,
                 }
               )
-              -- TODO version only for current file (cfilter/lfilter is
-              -- the only way)
               vim.keymap.set(
                 "n", "<Leader>dlr",
                 H.wrap_qfloc(
                   vim.lsp.buf.references,
                   { includeDeclaration = false },
-                  true
+                  {}
                 ), {
                   desc = "populate quickfix list with references",
                   buffer = bufnr,
