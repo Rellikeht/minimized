@@ -32,9 +32,7 @@ H = {
 
   qlcmd = function(cmd, count)
     local prefix = "c"
-    if vim.g.qfloc == 1 then
-      prefix = "l"
-    end
+    if vim.g.qfloc == 1 then prefix = "l" end
     return function(...)
       local ccount = count
       if type(count) == "string" and #count > 0 then
@@ -214,12 +212,10 @@ vim.g.mapleader = ","
 vim.g.maplocalleader = "_"
 
 -- Select whole buffer without plugins
+-- TODO change to operators
 vim.keymap.set("v", "aee", "gg0oG$", { noremap = true })
 vim.keymap.set("v", "iee", "aee", { noremap = true })
--- TODO change to operator
-vim.keymap.set(
-  "n", "yaee ", "gg0vG$y`'", { noremap = true }
-)
+vim.keymap.set("n", "yaee ", "gg0vG$y`'", { noremap = true })
 
 vim.keymap.set("n", "Q", "<Nop>", { remap = true })
 vim.keymap.set("", "<C-h>", "<C-]>", { remap = true })
@@ -238,9 +234,7 @@ for key, cmd in pairs({
   h = ":<C-u>set hls!<CR>",
   c = ":<C-u>set ignorecase!<CR>",
 }) do
-  vim.keymap.set(
-    "n", "<Space>q" .. key, cmd, {}
-  )
+  vim.keymap.set("n", "<Space>q" .. key, cmd, {})
 end
 
 --  }}}
@@ -274,9 +268,7 @@ PCKR_CMD = require("pckr.loader.cmd")
 PCKR_KEYS = require("pckr.loader.keys")
 
 PCKR.setup({
-  pack_dir = PCKR_UTIL.join_paths(
-    vim.fn.stdpath("data"), "site"
-  ),
+  pack_dir = PCKR_UTIL.join_paths(vim.fn.stdpath("data"), "site"),
   -- Limit the number of simultaneous jobs. nil means no limit
   max_jobs = nil,
   autoremove = true,
@@ -370,9 +362,7 @@ if vim.g.vscode then
   -- action binds {{{
 
   function VSCodeMap(name)
-    return function()
-      VSCODE.call(name)
-    end
+    return function() VSCODE.call(name) end
   end
 
   vim.keymap.set({ "n", "x" }, "+", VSCodeMap("workbench.action.editor.nextChange"))
@@ -435,17 +425,13 @@ if vim.g.vscode then
   vim.keymap.set(
     { "n", "x" }, "zh", function()
       local amount = math.min(vim.v.count1, H.longest_line_length())
-      for _ = 1, amount do
-        VSCODE.call("scrollLeft")
-      end
+      for _ = 1, amount do VSCODE.call("scrollLeft") end
     end
   )
   vim.keymap.set(
     { "n", "x" }, "zl", function()
       local amount = math.min(vim.v.count1, H.longest_line_length())
-      for _ = 1, amount do
-        VSCODE.call("scrollRight")
-      end
+      for _ = 1, amount do VSCODE.call("scrollRight") end
     end
   )
 
@@ -545,10 +531,9 @@ if vim.g.vscode then
     end, {}
   )
 
-  H.table_join(
-    plugin_configs,
-    { "Rellikeht/vim-extras" }
-  )
+  H.table_join(plugin_configs, {
+    "Rellikeht/vim-extras"
+  })
   PCKR.add(plugin_configs)
 
   --  }}}
@@ -650,8 +635,7 @@ H.table_join(
       "tpope/vim-fugitive", --  {{{
       config = function()
         vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
-        -- TODO is this enough
-        -- (https://github.com/junegunn/gv.vim exists)
+        -- TODO is this enough (https://github.com/junegunn/gv.vim exists)
         vim.api.nvim_create_user_command(
           "GV",
           -- a dog (https://stackoverflow.com/a/35075021)
@@ -699,7 +683,8 @@ H.table_join(
     {
       "nvim-treesitter/nvim-treesitter", --  {{{
       requires = {
-        "Rellikeht/lazy-utils"           -- for helpers in config
+        -- for helpers in config
+        "Rellikeht/lazy-utils"
       },
       run = ":TSUpdate",
       branch = "master",
@@ -884,12 +869,8 @@ vim.opt.cursorline = true        -- highlight line where cursor is
 vim.keymap.set("t", "<C-w>", "<C-\\><C-n><C-w>", { remap = true })
 vim.keymap.set("t", "<C-q><C-w>", "<C-w>", { noremap = true })
 vim.keymap.set("t", "<C-q><C-q>", "<C-q>", { noremap = true })
-vim.keymap.set(
-  "t", "<C-q><C-n>", "<C-\\><C-n>", { noremap = true }
-)
-vim.keymap.set(
-  "t", "<C-q><C-o>", "<C-\\><C-o>", { noremap = true }
-)
+vim.keymap.set("t", "<C-q><C-n>", "<C-\\><C-n>", { noremap = true })
+vim.keymap.set("t", "<C-q><C-o>", "<C-\\><C-o>", { noremap = true })
 
 -- fixing diffs colors
 vim.cmd [[
@@ -927,18 +908,10 @@ vim.keymap.set(
 
 vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<C-j>", "<Tab>", { noremap = true })
-vim.keymap.set(
-  "n", "<Tab><Tab>", ":<C-u>tab<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab>h", ":<C-u>tab help<Space>", {}
-)
-vim.keymap.set(
-  "n", "<Tab>H", ":<C-u>-tab help<Space>", {}
-)
+vim.keymap.set("n", "<Tab><Tab>", ":<C-u>tab<Space>", {})
+vim.keymap.set("n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {})
+vim.keymap.set("n", "<Tab>h", ":<C-u>tab help<Space>", {})
+vim.keymap.set("n", "<Tab>H", ":<C-u>-tab help<Space>", {})
 
 --  }}}
 
@@ -948,9 +921,7 @@ for key, cmd in pairs({
   m = ":<C-u>marks<CR>",
   b = ":<C-u>ls<CR>",
 }) do
-  vim.keymap.set(
-    "n", "<Space>i" .. key, cmd, {}
-  )
+  vim.keymap.set("n", "<Space>i" .. key, cmd, {})
 end
 
 --  }}}
@@ -1039,10 +1010,12 @@ vim.api.nvim_create_autocmd(
         { "n", "v" }, "q", ":q<CR>", { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", "<", H.qlcmd("older", "count1"), { noremap = true, buffer = true }
+        "n", "<", H.qlcmd("older", "count1"),
+        { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", ">", H.qlcmd("newer", "count1"), { noremap = true, buffer = true }
+        "n", ">", H.qlcmd("newer", "count1"),
+        { noremap = true, buffer = true }
       )
       vim.keymap.set(
         "n", "J", "j<CR>", { noremap = true, buffer = true, silent = true }
@@ -1053,9 +1026,8 @@ vim.api.nvim_create_autocmd(
 
       -- just a default <CR> with fold opening
       vim.keymap.set(
-        "n", "<CR>", "<CR>zv", {
-          noremap = true, buffer = true, silent = true,
-        }
+        "n", "<CR>", "<CR>zv",
+        { noremap = true, buffer = true, silent = true }
       )
       -- jump like <CR> but return cursor to qf/loc window
       vim.keymap.set(
@@ -1064,18 +1036,14 @@ vim.api.nvim_create_autocmd(
           vim.cmd.execute("\"normal \\<CR>\"")
           vim.cmd.execute("\"normal \\<C-w>w\"")
           vim.fn.setpos(".", qpos)
-        end, {
-          buffer = true, noremap = true,
-        }
+        end, { buffer = true, noremap = true, }
       )
       -- jump to element and close window
       vim.keymap.set(
         "n", "<BS>", function()
           vim.cmd.execute("\"normal \\<CR>\"")
           H.qlcmd("close")()
-        end, {
-          buffer = true, silent = true, noremap = true
-        }
+        end, { buffer = true, silent = true, noremap = true }
       )
     end
   }
@@ -1085,7 +1053,6 @@ vim.api.nvim_create_autocmd(
 
 if vim.g.neovide then
   -- {{{
-
   vim.g.neovide_refresh_rate_idle = 5
   vim.g.neovide_cursor_hack = false
   vim.g.neovide_scale_factor = 0.95
@@ -1100,6 +1067,7 @@ if vim.g.neovide then
   --  }}}
 elseif vim.fn.has("gui_running") == 1 then
   -- {{{
+
   --  }}}
 else
   -- {{{
@@ -1455,12 +1423,11 @@ function CODE()
                 { desc = "go to declaration", buffer = bufnr }
               )
               vim.keymap.set(
-                "n", "<Leader>di", H.wrap_qfloc(vim.lsp.buf.implementation)
-                , { desc = "go to implementation", buffer = bufnr }
+                "n", "<Leader>di", H.wrap_qfloc(vim.lsp.buf.implementation),
+                { desc = "go to implementation", buffer = bufnr }
               )
               vim.keymap.set(
-                "n", "<Leader>dt", H.wrap_qfloc(vim.lsp.buf.type_definition)
-                ,
+                "n", "<Leader>dt", H.wrap_qfloc(vim.lsp.buf.type_definition),
                 { desc = "go to type definition", buffer = bufnr }
               )
 
@@ -1501,19 +1468,15 @@ function CODE()
               -- actions {{{
 
               vim.keymap.set(
-                "n", "<Leader>dr", vim.lsp.buf.rename, {
-                  desc = "rename symbol under cursor",
-                  buffer = bufnr,
-                }
+                "n", "<Leader>dr", vim.lsp.buf.rename,
+                { desc = "rename symbol under cursor", buffer = bufnr }
               )
               vim.keymap.set(
                 { "n", "x" }, "<Leader>df", function()
                   vim.lsp.buf.format({ async = false })
                   vim.cmd.norm("zv")
-                end, {
-                  desc = "format buffer using lsp",
-                  buffer = bufnr,
-                }
+                end,
+                { desc = "format buffer using lsp", buffer = bufnr }
               )
               vim.keymap.set(
                 "n", "<Leader>da", vim.lsp.buf.code_action,
@@ -1626,6 +1589,7 @@ function CODE()
 
       --  }}}
     else -- {{{
+
     end  --  }}}
   end
 
@@ -1659,9 +1623,7 @@ function CODE()
   -- because code command may be run after opening some buffers and lsp
   -- or orther goodies won't be loaded automatically then
   vim.api.nvim_create_autocmd(
-    "BufEnter", {
-      callback = filetype_detect_callback
-    }
+    "BufEnter", { callback = filetype_detect_callback }
   )
   filetype_detect_callback({ buf = vim.fn.bufnr() })
 
