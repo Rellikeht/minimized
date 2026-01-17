@@ -221,6 +221,7 @@ vim.keymap.set("n", "Q", "<Nop>", { remap = true })
 vim.keymap.set("", "<C-h>", "<C-]>", { remap = true })
 vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
 
+-- TODO candidate for removal
 vim.keymap.set("n", "<Space>y", "\"+y", { noremap = true })
 vim.keymap.set("n", "<Space>Y", "\"+Y", { noremap = true })
 vim.keymap.set("n", "<Space>u", "\"+p", { noremap = true })
@@ -582,15 +583,13 @@ H.table_join(
         vim.keymap.set("n", "<Space>ll", "<Plug>AList", {})
         vim.keymap.set("n", "<Space>lL", "<Plug>AVertList", {})
         vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
-        vim.keymap.set("n", "<Space>la", ":AAddBuf<Space>", {})
+        vim.keymap.set("n", "<Space>lA", ":AAddBuf<Space>", {})
         vim.keymap.set("n", "<Space>lr", ":AReplace<Space>", {})
         vim.keymap.set("n", "<Space>lR", ":AReplaceBuf<Space>", {})
         vim.keymap.set("n", "<Space>lm", ":AMoveCurN<CR>", {})
         vim.keymap.set("n", "<Space>lM", ":<C-u>AMoveCur<Space>", {})
         vim.keymap.set("n", "<Space>lc", "<Plug>AGlobToLoc", {})
-
         vim.keymap.set("n", "<Space>ld", ":<C-u>ADelN<CR>", {})
-        vim.keymap.set("n", "<Space>lD", ":<C-u>ADel<CR>", {})
         vim.keymap.set("n", "<Space>lq", ":<C-u>ABufDelN<Space>", {})
         vim.keymap.set("n", "<Space>lQ", ":<C-u>ABufWipeN<Space>", {})
 
@@ -640,7 +639,7 @@ H.table_join(
           "GV",
           -- a dog (https://stackoverflow.com/a/35075021)
           -- "G log --all --decorate --oneline --graph",
-          -- overengineered version
+          -- more overengineered version
           function(opts)
             vim.cmd(
               "G log" ..
@@ -660,6 +659,7 @@ H.table_join(
     {
       "mbbill/undotree", --  {{{
       config = function()
+        vim.g.undotree_SplitWidth = 40
       end
     }, --  }}}
 
