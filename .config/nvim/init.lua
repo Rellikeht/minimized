@@ -555,6 +555,16 @@ H.table_join(
       config = function()
         vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>", {})
         EXTRAS = require("extras")
+        vim.api.nvim_create_user_command(
+          "QFilterCfile", function(_)
+            if vim.g.qfloc == 1 then
+              vim.cmd.LFilterCfile()
+            else
+              vim.cmd.CFilterCfile()
+            end
+          end,
+          {}
+        )
       end
     }, --  }}}
 
