@@ -1203,6 +1203,7 @@ function CODE()
     {
       "mhinz/vim-signify", --  {{{
       config = function()
+        -- TODO for some reason this fails after fresh setup
         vim.cmd.SignifyToggle()
         vim.keymap.set(
           "n", "+", "<Plug>(signify-next-hunk)", { noremap = true }
@@ -1570,6 +1571,7 @@ function CODE()
     for key, name in pairs({
       ["*"] = "comment",
       [{ "sh", "bash", "zsh" }] = "bash",
+      "lua",
       "python",
       "powershell",
       "go",
@@ -1579,6 +1581,7 @@ function CODE()
       "html",
       "css",
       "java",
+      "erlang",
       "elixir",
       "julia",
       "ocaml",
@@ -1613,20 +1616,19 @@ function CODE()
   -- auto filetype detect {{{
 
   local function filetype_detect_callback(ev)
-    if vim.b[ev.buf].filetype_detected or vim.bo[ev.buf].buftype ~= "" then
+    if vim.b[ev.buf] or vim.b[ev.buf].filetype_detected or
+        (vim.bo[ev.buf].buftype and vim.bo[ev.buf].buftype ~= "")
+    then
       return
     end
     local omnifunc = vim.bo[ev.buf].omnifunc
-    -- seems to work the same
-    -- vim.cmd("silent! filetype detect")
     vim.cmd({
       cmd = "filetype",
       args = { "detect" },
       mods = { silent = true },
     })
     vim.b[ev.buf].filetype_detected = true
-    -- custom and lsp omnifunc gets overwritten during filetype
-    -- detection
+    -- custom and lsp omnifunc gets overwritten during filetype detection
     vim.bo[ev.buf].omnifunc = omnifunc
   end
 
