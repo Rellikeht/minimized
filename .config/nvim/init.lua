@@ -969,6 +969,21 @@ end
 
 --  }}}
 
+-- diff {{{
+
+-- TODO verify
+-- imprefect helpers because :diffg //2<CR> is long
+for key, cmd in pairs({
+  ["o2"] = ":<C-u>diffget //2<CR>",
+  ["o3"] = ":<C-u>diffget //3<CR>",
+  ["p2"] = ":<C-u>diffput //2<CR>",
+  ["p3"] = ":<C-u>diffput //3<CR>",
+}) do
+  vim.keymap.set("n", "<Space>d" .. key, cmd, { noremap = true })
+end
+
+--  }}}
+
 -- other {{{
 
 for key, cmd in pairs({
