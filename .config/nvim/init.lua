@@ -644,6 +644,7 @@ H.table_join(
       "tpope/vim-fugitive", --  {{{
       config = function()
         vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
+
         -- TODO is this enough (https://github.com/junegunn/gv.vim exists)
         vim.api.nvim_create_user_command(
           "GV",
@@ -662,6 +663,36 @@ H.table_join(
             )
           end,
           { bang = true, nargs = "*" }
+        )
+
+        -- two way diff almost like in
+        -- https://github.com/whiteinge/diffconflicts
+        -- (automatically mergable fragments aren't merged)
+        vim.api.nvim_create_user_command(
+          "Gvdiff2", function(_)
+            local autoread = vim.o.autoread
+            vim.o.autoread = true
+            vim.cmd.G({ "checkout --ours %" })
+            vim.cmd.diffthis()
+            vim.cmd.G({ args = { "show :3:%" }, mods = { vertical = true } })
+            vim.cmd.diffthis()
+            vim.cmd.execute('"normal \\<C-w>w"')
+            vim.o.autoread = autoread
+          end,
+          { nargs = 0 }
+        )
+        vim.api.nvim_create_user_command(
+          "Gdiff2", function(_)
+            local autoread = vim.o.autoread
+            vim.o.autoread = true
+            vim.cmd.G("checkout --ours %")
+            vim.cmd.diffthis()
+            vim.cmd.G({ args = { "show :3:%" }, mods = { horizontal = true } })
+            vim.cmd.diffthis()
+            vim.cmd.execute('"normal \\<C-w>w"')
+            vim.o.autoread = autoread
+          end,
+          { nargs = 0 }
         )
       end
     }, --  }}}
@@ -835,8 +866,10 @@ H.table_join(
         vim.keymap.set("n", "<Leader>sa", ":<C-u>Dag<Space>")
         vim.keymap.set("n", "<Leader>sA", ":<C-u>Dau<Space>")
       end
-    } --  }}}
+    }, --  }}}
 
+    -- TODO https://github.com/whiteinge/diffconflicts ???
+    -- "whiteinge/diffconflicts",
   }
 ) --  }}}
 
