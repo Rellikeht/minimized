@@ -555,6 +555,7 @@ H.table_join(
       config = function()
         vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>", {})
         EXTRAS = require("extras")
+
         vim.api.nvim_create_user_command(
           "QFilterCfile", function(_)
             if vim.g.qfloc == 1 then
@@ -564,6 +565,16 @@ H.table_join(
             end
           end,
           {}
+        )
+        vim.api.nvim_create_user_command(
+          "QSysExpr", function(args)
+            if vim.g.qfloc == 1 then
+              vim.cmd.LSysExpr(args.args)
+            else
+              vim.cmd.CSysExpr(args.args)
+            end
+          end,
+          { nargs = 1, complete = "shellcmdline" }
         )
       end
     }, --  }}}
