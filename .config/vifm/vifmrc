@@ -142,8 +142,7 @@ map gm :move<CR>
 
 " history {{{
 
-map K :histnext<CR>
-map J :histprev<CR>
+map <C-j> :histnext<CR>
 
 map ,gu :pushd .<CR>
 map ,gg :pushd %c<CR>

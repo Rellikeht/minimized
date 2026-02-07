@@ -974,6 +974,7 @@ vim.keymap.set("n", "<Tab>H", ":<C-u>-tab help<Space>", {})
 for key, cmd in pairs({
   m = ":<C-u>marks<CR>",
   b = ":<C-u>ls<CR>",
+  p = ":<C-u>pwd<CR>",
 }) do
   vim.keymap.set("n", "<Space>i" .. key, cmd, {})
 end
