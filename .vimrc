@@ -4,8 +4,6 @@
 
 " settings {{{
 
-"let g:data_dir = '~/.vim'
-
 set nocompatible " why does this even exist
 set number relativenumber " <3
 set smarttab " just in case really
@@ -189,40 +187,64 @@ augroup END
 
 " }}}
 
-" TODO plugins {{{
+function s:FullConfig() abort
 
-" manager setup {{{
+  " vim-plug setup {{{ 
 
-" }}}
+  let g:plug_threads = 32
+  let g:vim_share_dir = '~/.local/share/vim'
+  let g:vim_plug_dir = g:vim_share_dir..'/plugged'
 
-" plugin list {{{
+  " auto install
+  let plug_src = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  let g:data_dir = has('nvim') ? stdpath('config') : '~/.vim'
+  if empty(glob(g:data_dir . '/autoload/plug.vim'))
+    silent execute '!curl -fLo '.g:data_dir.
+          \'/autoload/plug.vim --create-dirs '.plug_src
+    autocmd VimEnter * 
+          \ PlugInstall --sync | source $MYVIMRC
+  endif
 
-"Rellikeht/arglist-plus"
-"Rellikeht/vim-extras"
-"mbbill/undotree"
-"justinmk/vim-sneak",
-"tpope/vim-fugitive"
-"tpope/vim-abolish"
-"tpope/vim-eunuch"
-"tpope/vim-tbone"
-"tpope/vim-commentary"
-"tpope/vim-repeat" " ??
-"andymass/vim-matchup"
-"wellle/targets.vim"
-"machakann/vim-sandwich"
-"ryvnf/readline.vim"
+  execute "source ".g:data_dir."/autoload/plug.vim"
 
-" ???
-"junegunn/fzf"
-"junegunn/fzf.vim"
-"Rellikeht/lazy-utils"
-"Rellikeht/fzf-vim-extras"
+  " }}} 
 
-" }}}
+  call plug#begin(g:vim_plug_dir) " TODO {{{
 
-" configs {{{
+  Plug 'Rellikeht/arglist-plus'
+  Plug 'Rellikeht/vim-extras'
+  Plug 'mbbill/undotree'
+  Plug 'justinmk/vim-sneak',
+  Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-abolish'
+  Plug 'tpope/vim-eunuch'
+  Plug 'tpope/vim-tbone'
+  Plug 'tpope/vim-commentary'
+  Plug 'tpope/vim-repeat' " ??
+  Plug 'wellle/targets.vim'
+  Plug 'machakann/vim-sandwich'
+  Plug 'ryvnf/readline.vim'
 
-" }}}
+  " ??
+  "andymass/vim-matchup"
+  "mhinz/vim-signify"
+  "junegunn/fzf"
+  "junegunn/fzf.vim"
+  "Rellikeht/lazy-utils"
+  "Rellikeht/fzf-vim-extras"
+
+  " ???
+  " https://github.com/whiteinge/diffconflicts
+
+  call plug#end() " }}}
+
+endfunction
+
+command! Full call s:FullConfig()
+
+" TODO plugin configs {{{
+
+" TODO can this be done just here
 
 " }}}
 
