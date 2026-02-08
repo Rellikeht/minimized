@@ -94,20 +94,26 @@ highlight MatchParen cterm=bold gui=bold
 
 " better diff colors
 highlight DiffAdd
-            \ ctermbg=DarkGreen guibg=#0d5826
-            \ ctermfg=NONE guifg=NONE
+      \ ctermbg=DarkGreen guibg=#0d5826
+      \ ctermfg=NONE guifg=NONE
 highlight DiffText
-            \ ctermbg=Gray guibg=#566670
-            \ ctermfg=NONE guifg=NONE
+      \ ctermbg=Gray guibg=#566670
+      \ ctermfg=NONE guifg=NONE
 highlight DiffChange
-            \ ctermbg=DarkBlue guibg=#0f1a7f
-            \ ctermfg=NONE guifg=NONE
+      \ ctermbg=DarkBlue guibg=#0f1a7f
+      \ ctermfg=NONE guifg=NONE
 highlight DiffDelete
-            \ ctermbg=DarkRed guibg=#800620
-            \ ctermfg=NONE guifg=NONE
+      \ ctermbg=DarkRed guibg=#800620
+      \ ctermfg=NONE guifg=NONE
 
 let g:markdown_recommended_style = 0
 let g:markdown_minlines = 500
+
+" Just in case for gui
+" Turn off menu bar
+set guioptions-=m
+" Turn off toolbar
+set guioptions-=T
 
 " }}}
 
