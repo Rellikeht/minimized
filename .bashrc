@@ -13,7 +13,7 @@ source_if_exists() {
 }
 
 update_path() {
-    [[ "$PATH" =~ "(.*:)?$1(:.*)?"* ]] || export PATH="$PATH:$1"
+    [[ "$PATH" =~ (.*":")*$1(":".*)* ]] || export PATH="$PATH:$1"
 }
 
 source_if_exists "$HOME/.bashrc.pre.local"
@@ -192,16 +192,16 @@ activate_z_lua() {
     TEMP1="$(mktemp)"
     TEMP2="$(mktemp)"
     cat > "$TEMP2" << 'EOF'
-    --- f.orig	2024-08-06 17:50:22.159686827 +0200
-    +++ f	2024-08-06 17:50:32.406544343 +0200
-    @@ -55,6 +55,7 @@
-     alias ${_ZL_CMD:-z}='_zlua'
-     
-     _zlua_precmd() {
-    +    EXIT="$?"
-         [ "$_ZL_PREVIOUS_PWD" = "$PWD" ] && return
-         _ZL_PREVIOUS_PWD="$PWD"
-         (_zlua --add "$PWD" 2> /dev/null &)
+--- f.orig	2024-08-06 17:50:22.159686827 +0200
++++ f	2024-08-06 17:50:32.406544343 +0200
+@@ -55,6 +55,7 @@
+ alias ${_ZL_CMD:-z}='_zlua'
+
+ _zlua_precmd() {
++    EXIT="$?"
+     [ "$_ZL_PREVIOUS_PWD" = "$PWD" ] && return
+     _ZL_PREVIOUS_PWD="$PWD"
+     (_zlua --add "$PWD" 2> /dev/null &)
 EOF
     "$@" bash once enhanced echo fzf >"$TEMP1"
     patch -u "$TEMP1" -i "$TEMP2" &>/dev/null
@@ -215,6 +215,8 @@ EOF
 ZLUA_FILE="$HOME/.local/share/z.lua/z.lua"
 if [ -r "$ZLUA_FILE" ] && has_exe lua; then
     activate_z_lua lua "$ZLUA_FILE"
+    alias z.lua='lua "$ZLUA_FILE"'
+    alias z=z.lua
 elif has_exe z.lua; then
     activate_z_lua z.lua --init
 elif has_exe z; then
