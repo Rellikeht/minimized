@@ -27,6 +27,8 @@ bind '"[A" history-search-backward'
 bind '"[B" history-search-forward'
 bind '"" history-search-backward'
 bind '"" history-search-forward'
+bind '"[3~" forward-backward-delete-char'
+bind '"[3;5~" kill-word'
 
 # may be better, but is acceptable
 bind '"\ei":"**	"'
@@ -164,6 +166,15 @@ PROMPT_COMMAND=__prompt_command
 alias ls='ls --color=auto'
 alias ll='ls -la'
 alias grep='grep --color=auto'
+
+alias b1='cd ..'
+alias b2='cd ../..'
+alias b3='cd ../../..'
+alias b4='cd ../../../..'
+alias b5='cd ../../../../..'
+alias b6='cd  ../../../../../..'
+alias b7='cd  ../../../../../../..'
+alias b8='cd  ../../../../../../../..'
 
 source_if_exists "$HOME/.bash_aliases"
 
