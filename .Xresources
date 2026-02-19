@@ -1,0 +1,5 @@
+st.font: MesloLGS NF:size=12:antialias=true:autohint=true
+dwm.font: MesloLGS NF:size=12:antialias=true:autohint=true
+dwm.dmenufont: MesloLGS NF:size=12:antialias=true:autohint=true
+tabbed.font: MesloLGS NF:size=12:antialias=true:autohint=true
+dmenu.font: MesloLGS NF:size=13:antialias=true:autohint=true

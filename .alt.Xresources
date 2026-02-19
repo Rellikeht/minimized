@@ -1,0 +1,5 @@
+st.font: MesloLGS Nerd Font:size=12:antialias=true:autohint=true
+dwm.font: MesloLGS Nerd Font:size=12:antialias=true:autohint=true
+dwm.dmenufont: MesloLGS Nerd Font:size=12:antialias=true:autohint=true
+tabbed.font: MesloLGS Nerd Font:size=12:antialias=true:autohint=true
+dmenu.font: MesloLGS Nerd Font:size=13:antialias=true:autohint=true
