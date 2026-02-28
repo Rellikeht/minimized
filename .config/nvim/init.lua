@@ -143,6 +143,7 @@ vim.opt.pumwidth = 50     -- to see anything in completion window
 vim.opt.pumheight = H.calc_pumheight()
 vim.opt.cmdwinheight = 25 -- more commands in command line window
 vim.opt.cedit = "<C-j>"   -- key to open command-line window in command mode
+vim.opt.regexpengine = 1  -- fastest option (at least for now)
 
 --  }}}
 
@@ -1642,6 +1643,8 @@ function CodeInternal()
     for key, name in pairs({
       ["*"] = "comment",
       [{ "sh", "bash", "zsh" }] = "bash",
+      "vim",
+      "vimdoc",
       "lua",
       "python",
       "powershell",

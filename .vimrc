@@ -74,6 +74,8 @@ set history=10000
 " those make <Esc> work instantly
 set ttimeout
 set ttimeoutlen=100
+set regexpengine=1 " fastest option (at least for now)
+set t_u7= " fixes problems with ssh from windows
 
 set cedit=<C-j> " key to open command-line window in command mode
 let mapleader = ','
@@ -171,7 +173,7 @@ noremap gt :tabnext<CR>
 
 " }}}
 
-" {{{
+" filetype and syntax trickery {{{
 
 " sometimes it is better to have 2 spaces instead of 4
 autocmd FileType
@@ -185,19 +187,8 @@ autocmd Filetype sh,bash,zsh,csh,tcsh,fish,tcl,ps1
       \ nnoremap <buffer> K :call dist#man#PreGetPage(0)<CR>
 unmap <Leader>K
 
-" `syntax on`, `filetype * on` and `filetype detect` can take (mostly visualy)
-" long time and slow down startup
-" this hack makes this faster (only visually)
-augroup ft_syn
-  autocmd!
-  autocmd BufEnter *
-        \ filetype plugin indent on
-        \ | filetype detect
-        \ | syntax on
-        \ | augroup ft_syn
-        \ | autocmd!
-        \ | augroup END
-augroup END
+filetype plugin indent on
+syntax on
 
 " }}}
 
