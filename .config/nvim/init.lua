@@ -1146,6 +1146,112 @@ end --  }}}
 function CODE()
   if CODE_LOADED ~= nil then return end
 
+  if vim.fn.has("nvim-0.11") == 1 then       -- {{{
+    -- for backwards compatibility
+    function NvimDiagPrev(config)
+      return function()
+        H.table_join(config, { count = -vim.v.count1, float = true })
+        vim.diagnostic.jump(config)
+      end
+    end
+
+    function NvimDiagNext(config)
+      return function()
+        H.table_join(config, { count = vim.v.count1, float = true })
+        vim.diagnostic.jump(config)
+      end
+    end
+  else
+    function NvimDiagNext()
+      ---@diagnostic disable-next-line: deprecated
+      vim.diagnostic.goto_next()
+    end
+
+    function NvimDiagPrev()
+      ---@diagnostic disable-next-line: deprecated
+      vim.diagnostic.goto_prev()
+    end
+  end       --  }}}
+
+  -- keybindings {{{
+
+  -- diagnostic {{{
+
+  vim.keymap
+      .set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>", {})
+  vim.keymap.set(
+    "n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {}
+  )
+  vim.keymap.set(
+    "n", "<Leader>de", vim.diagnostic.open_float,
+    { desc = "show diagnostics under cursor" }
+  )
+
+  vim.keymap.set(
+    "n", "<Leader>dp",
+    NvimDiagPrev({
+      severity = {
+        vim.diagnostic.severity.ERROR,
+        vim.diagnostic.severity.WARN
+      }
+    }), { desc = "[N] prev error or warning" }
+  )
+  vim.keymap.set(
+    "n", "<Leader>dn",
+    NvimDiagNext({
+      severity = {
+        vim.diagnostic.severity.ERROR,
+        vim.diagnostic.severity.WARN,
+      },
+    }), { desc = "[N] next error or warning" }
+  )
+
+  vim.keymap.set(
+    "n", "<Leader>dP", NvimDiagPrev(
+      { severity = { vim.diagnostic.severity.ERROR } }
+    ), { desc = "[N] prev error" }
+  )
+  vim.keymap.set(
+    "n", "<Leader>dN", NvimDiagNext(
+      { severity = { vim.diagnostic.severity.ERROR } }
+    ), { desc = "[N] next error" }
+  )
+
+  vim.keymap.set(
+    "n", "<Leader>dk",
+    NvimDiagPrev({
+      severity = {
+        vim.diagnostic.severity.INFO,
+        vim.diagnostic.severity.HINT,
+      },
+    }), { desc = "[N] prev hint/info" }
+  )
+  vim.keymap.set(
+    "n", "<Leader>dj", NvimDiagNext({
+      severity = {
+        vim.diagnostic.severity.INFO,
+        vim.diagnostic.severity.HINT,
+      },
+    }), { desc = "[N] next hint/info" }
+  )
+
+  vim.keymap.set(
+    "n", "<Leader>dll", function(_)
+      if vim.g.qfloc == 1 then
+        vim.diagnostic.setloclist({ open = true })
+      else
+        vim.diagnostic.setqflist({ open = true })
+      end
+    end, {
+      noremap = true,
+      desc = "populate quickfix/loclist with diagnostics",
+    }
+  )
+
+  --  }}}
+
+  --  }}}
+
   PCKR.add({ -- {{{
 
     {
@@ -1346,32 +1452,6 @@ function CODE()
       },
       config = function()
         if vim.fn.has("nvim-0.10") == 0 then return end
-        if vim.fn.has("nvim-0.11") == 1 then -- {{{
-          -- for backwards compatibility
-          function NvimDiagPrev(config)
-            return function()
-              H.table_join(config, { count = -vim.v.count1, float = true })
-              vim.diagnostic.jump(config)
-            end
-          end
-
-          function NvimDiagNext(config)
-            return function()
-              H.table_join(config, { count = vim.v.count1, float = true })
-              vim.diagnostic.jump(config)
-            end
-          end
-        else
-          function NvimDiagNext()
-            ---@diagnostic disable-next-line: deprecated
-            vim.diagnostic.goto_next()
-          end
-
-          function NvimDiagPrev()
-            ---@diagnostic disable-next-line: deprecated
-            vim.diagnostic.goto_prev()
-          end
-        end --  }}}
 
         local lspconfig = require("lspconfig")
         lspconfig.util.default_config = vim.tbl_extend(
@@ -1379,81 +1459,6 @@ function CODE()
           lspconfig.util.default_config,
           { message_level = nil }
         )
-
-        -- commands {{{
-
-        vim.keymap
-            .set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>", {})
-        vim.keymap.set(
-          "n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {}
-        )
-        vim.keymap.set(
-          "n", "<Leader>de", vim.diagnostic.open_float,
-          { desc = "show diagnostics under cursor" }
-        )
-
-        vim.keymap.set(
-          "n", "<Leader>dp",
-          NvimDiagPrev({
-            severity = {
-              vim.diagnostic.severity.ERROR,
-              vim.diagnostic.severity.WARN
-            }
-          }), { desc = "[N] prev error or warning" }
-        )
-        vim.keymap.set(
-          "n", "<Leader>dn",
-          NvimDiagNext({
-            severity = {
-              vim.diagnostic.severity.ERROR,
-              vim.diagnostic.severity.WARN,
-            },
-          }), { desc = "[N] next error or warning" }
-        )
-
-        vim.keymap.set(
-          "n", "<Leader>dP", NvimDiagPrev(
-            { severity = { vim.diagnostic.severity.ERROR } }
-          ), { desc = "[N] prev error" }
-        )
-        vim.keymap.set(
-          "n", "<Leader>dN", NvimDiagNext(
-            { severity = { vim.diagnostic.severity.ERROR } }
-          ), { desc = "[N] next error" }
-        )
-
-        vim.keymap.set(
-          "n", "<Leader>dk",
-          NvimDiagPrev({
-            severity = {
-              vim.diagnostic.severity.INFO,
-              vim.diagnostic.severity.HINT,
-            },
-          }), { desc = "[N] prev hint/info" }
-        )
-        vim.keymap.set(
-          "n", "<Leader>dj", NvimDiagNext({
-            severity = {
-              vim.diagnostic.severity.INFO,
-              vim.diagnostic.severity.HINT,
-            },
-          }), { desc = "[N] next hint/info" }
-        )
-
-        vim.keymap.set(
-          "n", "<Leader>dll", function(_)
-            if vim.g.qfloc == 1 then
-              vim.diagnostic.setloclist({ open = true })
-            else
-              vim.diagnostic.setqflist({ open = true })
-            end
-          end, {
-            noremap = true,
-            desc = "populate quickfix/loclist with diagnostics",
-          }
-        )
-
-        --  }}}
 
         vim.api.nvim_create_autocmd( -- {{{
           "LspAttach", {
@@ -1622,6 +1627,7 @@ function CODE()
     }, --  }}}
 
     -- TODO rainbow ?
+    -- TODO linters ?
     -- TODO formatters (neoformat)
     -- TODO snippets
   }
