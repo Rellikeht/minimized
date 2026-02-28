@@ -193,6 +193,37 @@ augroup END
 
 " }}}
 
+function s:ConfigPlugins() abort " TODO {{{
+
+  let g:undotree_SplitWidth = 40
+
+  if get(g:, "loaded_aplus", 0) && !get(g:, "configured_aplus", 0)
+    let g:configured_aplus = 1
+    " TODO
+  endif
+
+  if get(g:, "loaded_fugitive", 0) && !get(g:, "configured_fugitive", 0)
+    let g:configured_fugitive = 1
+    " TODO
+  endif
+
+  if get(g:, "loaded_commentary", 0) && !get(g:, "configured_commentary", 0)
+    let g:configured_commentary = 1
+    " TODO
+  endif
+
+  if get(g:, "loaded_sandwich", 0) && !get(g:, "configured_sandwich", 0)
+    let g:configured_sandwich = 1
+    " TODO
+  endif
+
+  if get(g:, "loaded_ale", 0) && !get(g:, "configured_ale", 0)
+    let g:configured_ale = 1
+    " TODO
+  endif
+
+endfunction " }}}
+
 function s:FullConfig() abort
 
   " vim-plug setup {{{ 
@@ -257,10 +288,11 @@ function s:FullConfig() abort
     call plug#load(plugin)
   endfor
 
-" TODO can this be done just here
+  call s:ConfigPlugins()
 endfunction
 
 command! Full call s:FullConfig()
+call s:ConfigPlugins()
 
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc
