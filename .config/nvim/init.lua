@@ -967,6 +967,10 @@ vim.keymap.set("n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {})
 vim.keymap.set("n", "<Tab>h", ":<C-u>tab help<Space>", {})
 vim.keymap.set("n", "<Tab>H", ":<C-u>-tab help<Space>", {})
 
+-- I don't like original gt
+vim.keymap.set("n", "gt", ":tabnext<CR>", {})
+vim.keymap.set("n", "g<C-t>", "gt", { noremap = true })
+
 --  }}}
 
 -- info {{{
@@ -975,6 +979,7 @@ for key, cmd in pairs({
   m = ":<C-u>marks<CR>",
   b = ":<C-u>ls<CR>",
   p = ":<C-u>pwd<CR>",
+  j = ":<C-u>jumps<CR>",
 }) do
   vim.keymap.set("n", "<Space>i" .. key, cmd, {})
 end

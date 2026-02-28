@@ -120,10 +120,10 @@ set guioptions-=T
 " bindings {{{
 
 " TODO temporary until vim-sneak is configured properly
-map <C-p> ,
-map <C-n> ;
+noremap <C-p> ,
+noremap <C-n> ;
 
-map <C-h> <C-]>
+noremap <C-h> <C-]>
 nnoremap <C-w><C-h> :<C-u>exe 'tab tag '.Expand('<cword>')<CR>
 
 " n and N do zv when not mapped manually to anything
@@ -166,6 +166,8 @@ inoremap <expr> <C-@> (pumvisible()) ?
 map <Space> <Nop>
 map <Space>qh :<C-u>set hlsearch!<CR>
 map <Space>qw :<C-u>set wrap!<CR>
+noremap g<C-t> gt
+noremap gt :tabnext<CR>
 
 " }}}
 
@@ -177,6 +179,12 @@ autocmd FileType
       \ setlocal softtabstop=2 shiftwidth=2
 
 runtime! ftplugin/man.vim
+" I want K doesn't work anyway and <Leader> (,) and <Leader>K may be 
+" useful in some other way
+autocmd Filetype sh,bash,zsh,csh,tcsh,fish,tcl,ps1
+      \ nnoremap <buffer> K :call dist#man#PreGetPage(0)<CR>
+unmap <Leader>K
+
 filetype plugin on
 filetype indent on
 
