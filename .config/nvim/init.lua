@@ -1146,7 +1146,7 @@ end --  }}}
 function CODE()
   if CODE_LOADED ~= nil then return end
 
-  if vim.fn.has("nvim-0.11") == 1 then       -- {{{
+  if vim.fn.has("nvim-0.11") == 1 then -- {{{
     -- for backwards compatibility
     function NvimDiagPrev(config)
       return function()
@@ -1171,7 +1171,7 @@ function CODE()
       ---@diagnostic disable-next-line: deprecated
       vim.diagnostic.goto_prev()
     end
-  end       --  }}}
+  end --  }}}
 
   -- keybindings {{{
 
@@ -1681,29 +1681,29 @@ function CODE()
 
   -- auto filetype detect {{{
 
-  local function filetype_detect_callback(ev)
-    if vim.b[ev.buf] or vim.b[ev.buf].filetype_detected or
-        (vim.bo[ev.buf].buftype and vim.bo[ev.buf].buftype ~= "")
-    then
-      return
-    end
-    local omnifunc = vim.bo[ev.buf].omnifunc
-    vim.cmd({
-      cmd = "filetype",
-      args = { "detect" },
-      mods = { silent = true },
-    })
-    vim.b[ev.buf].filetype_detected = true
-    -- custom and lsp omnifunc gets overwritten during filetype detection
-    vim.bo[ev.buf].omnifunc = omnifunc
-  end
-
-  -- because code command may be run after opening some buffers and lsp
-  -- or orther goodies won't be loaded automatically then
-  vim.api.nvim_create_autocmd(
-    "BufEnter", { callback = filetype_detect_callback }
-  )
-  filetype_detect_callback({ buf = vim.fn.bufnr() })
+  -- local function filetype_detect_callback(ev)
+  --   if vim.b[ev.buf] or vim.b[ev.buf].filetype_detected or
+  --       (vim.bo[ev.buf].buftype and vim.bo[ev.buf].buftype ~= "")
+  --   then
+  --     return
+  --   end
+  --   local omnifunc = vim.bo[ev.buf].omnifunc
+  --   vim.cmd({
+  --     cmd = "filetype",
+  --     args = { "detect" },
+  --     mods = { silent = true },
+  --   })
+  --   vim.b[ev.buf].filetype_detected = true
+  --   -- custom and lsp omnifunc gets overwritten during filetype detection
+  --   vim.bo[ev.buf].omnifunc = omnifunc
+  -- end
+  --
+  -- -- because code command may be run after opening some buffers and lsp
+  -- -- or orther goodies won't be loaded automatically then
+  -- vim.api.nvim_create_autocmd(
+  --   "BufEnter", { callback = filetype_detect_callback }
+  -- )
+  -- filetype_detect_callback({ buf = vim.fn.bufnr() })
 
   --  }}}
 
