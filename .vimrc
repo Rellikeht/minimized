@@ -215,21 +215,21 @@ function s:FullConfig() abort
 
   " }}} 
 
-  call plug#begin(g:vim_plug_dir) " TODO {{{
-
-  Plug 'Rellikeht/arglist-plus'
-  Plug 'Rellikeht/vim-extras'
-  Plug 'mbbill/undotree'
-  Plug 'justinmk/vim-sneak',
-  Plug 'tpope/vim-fugitive'
-  Plug 'tpope/vim-abolish'
-  Plug 'tpope/vim-eunuch'
-  Plug 'tpope/vim-tbone'
-  Plug 'tpope/vim-commentary'
-  Plug 'tpope/vim-repeat' " ??
-  Plug 'wellle/targets.vim'
-  Plug 'machakann/vim-sandwich'
-  Plug 'ryvnf/readline.vim'
+  let l:plugins = [
+        \ ['Rellikeht', 'arglist-plus'],
+        \ ['Rellikeht', 'vim-extras'],
+        \ ['mbbill', 'undotree'],
+        \ ['justinmk', 'vim-sneak'],
+        \ ['tpope', 'vim-fugitive'],
+        \ ['tpope', 'vim-abolish'],
+        \ ['tpope', 'vim-eunuch'],
+        \ ['tpope', 'vim-tbone'],
+        \ ['tpope', 'vim-commentary'],
+        \ ['tpope', 'vim-repeat'],
+        \ ['wellle', 'targets.vim'],
+        \ ['machakann', 'vim-sandwich'],
+        \ ['ryvnf', 'readline.vim']
+        \ ]
 
   " ??
   "andymass/vim-matchup"
@@ -242,17 +242,25 @@ function s:FullConfig() abort
   " ???
   " https://github.com/whiteinge/diffconflicts
 
+  call plug#begin(g:vim_plug_dir) " TODO {{{
+
+  " inform plug about plugins to load
+  for [author, plugin] in l:plugins
+    " this call is slightly faster than :execute
+    call plug#(author."/".plugin, { 'on': [] })
+  endfor
+
   call plug#end() " }}}
 
+  " force loading plugins
+  for [_, plugin] in l:plugins
+    call plug#load(plugin)
+  endfor
+
+" TODO can this be done just here
 endfunction
 
 command! Full call s:FullConfig()
-
-" TODO plugin configs {{{
-
-" TODO can this be done just here
-
-" }}}
 
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc
