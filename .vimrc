@@ -203,6 +203,11 @@ augroup END
 
 " pre-load plugin configuration {{{
 
+let g:sneak#prompt = " <sneak> "
+let g:sneak#use_ic_scs = 1
+let g:sneak#label = 1
+let g:sneak#s_next = 0
+
 " }}}
 
 function s:ConfigPlugins() abort " {{{
@@ -216,27 +221,48 @@ function s:ConfigPlugins() abort " {{{
 
   if get(g:, "loaded_fugitive", 0) && !get(g:, "configured_fugitive", 0)
     let g:configured_fugitive = 1
-    " TODO
+    " empty block for completness
   endif
 
   if get(g:, "loaded_commentary", 0) && !get(g:, "configured_commentary", 0)
     let g:configured_commentary = 1
-    " TODO
+    " empty block for completness
   endif
 
   if get(g:, "loaded_sneak_plugin", 0) && !get(g:, "configured_sneak_plugin", 0)
     let g:configured_sneak_plugin = 1
-    " TODO
+    map <C-n> <Plug>Sneak_;
+    map <C-p> <Plug>Sneak_,
+    map s <Plug>Sneak_s
+    map S <Plug>Sneak_S
+    map f <Plug>Sneak_f
+    map F <Plug>Sneak_F
+    map t <Plug>Sneak_t
+    map T <Plug>Sneak_T
   endif
 
   if get(g:, "loaded_sandwich", 0) && !get(g:, "configured_sandwich", 0)
     let g:configured_sandwich = 1
-    " TODO
+    runtime! macros/sandwich/keymap/surround.vim
+
+    xmap zs <Plug>(sandwich-add)
+    xmap is <Plug>(textobj-sandwich-query-i)
+    xmap as <Plug>(textobj-sandwich-query-a)
+    xmap iS <Plug>(textobj-sandwich-auto-i)
+    xmap aS <Plug>(textobj-sandwich-auto-a)
+    omap is <Plug>(textobj-sandwich-query-i)
+    omap as <Plug>(textobj-sandwich-query-a)
+    omap iS <Plug>(textobj-sandwich-auto-i)
+    omap aS <Plug>(textobj-sandwich-auto-a)
   endif
 
   if get(g:, "loaded_vim_extras", 0) && !get(g:, "configured_vim_extras", 0)
     let g:configured_vim_extras = 1
     " TODO
+  endif
+
+  if get(g:, "loaded_repeat", 0) && !get(g:, "configured_repeat", 0)
+    let g:configured_repeat = 1
   endif
 
   if get(g:, "loaded_ale", 0) && !get(g:, "configured_ale", 0)
@@ -249,6 +275,8 @@ function s:ConfigPlugins() abort " {{{
   " others {{{
 
   let g:undotree_SplitWidth = 40
+  " fallback for repeat (and sandwich?) not working
+  nnoremap <Space>. .
 
   " }}}
 
