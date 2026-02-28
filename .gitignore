@@ -31,3 +31,6 @@ venv/
 *.png
 *.jpg
 *.pdf
+
+.config/vifm/*
+!.config/vifm/vifmrc

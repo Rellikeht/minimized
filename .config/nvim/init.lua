@@ -1646,6 +1646,7 @@ function CodeInternal()
       [{ "sh", "bash", "zsh" }] = "bash",
       "vim",
       "vimdoc",
+
       "lua",
       "python",
       "powershell",
@@ -1653,16 +1654,22 @@ function CodeInternal()
       "rust",
       "cpp",
       "c",
-      "html",
-      "css",
       "java",
       "erlang",
       "elixir",
       "julia",
       "ocaml",
       "haskell",
+
+      "html",
+      "css",
       "typst",
       "latex",
+
+      "toml",
+      "yaml",
+      "json",
+      "xml",
     }
     ) do
       local filetypes = nil
