@@ -185,15 +185,15 @@ autocmd Filetype sh,bash,zsh,csh,tcsh,fish,tcl,ps1
       \ nnoremap <buffer> K :call dist#man#PreGetPage(0)<CR>
 unmap <Leader>K
 
-filetype plugin on
-filetype indent on
-
-" syntax on can take long time and slow down startup
-" this hack makes this faster (only) visually
+" `syntax on`, `filetype * on` and `filetype detect` can take (mostly visualy)
+" long time and slow down startup
+" this hack makes this faster (only visually)
 augroup ft_syn
   autocmd!
   autocmd BufEnter *
-        \ syntax on
+        \ filetype plugin indent on
+        \ | filetype detect
+        \ | syntax on
         \ | augroup ft_syn
         \ | autocmd!
         \ | augroup END
@@ -282,7 +282,7 @@ function s:ConfigPlugins() abort " {{{
 
 endfunction " }}}
 
-function s:FullConfig() abort
+function s:FullConfigCommit() abort
 
   " vim-plug setup {{{ 
 
@@ -303,6 +303,8 @@ function s:FullConfig() abort
   execute "source ".g:data_dir."/autoload/plug.vim"
 
   " }}} 
+
+  " plugin list {{{
 
   let l:plugins = [
         \ ['Rellikeht', 'arglist-plus'],
@@ -330,6 +332,8 @@ function s:FullConfig() abort
   " ???
   " https://github.com/whiteinge/diffconflicts
 
+  " }}}
+
   call plug#begin(g:vim_plug_dir) " TODO {{{
 
   " inform plug about plugins to load
@@ -338,18 +342,38 @@ function s:FullConfig() abort
     call plug#(author."/".plugin, { 'on': [] })
   endfor
 
-  call plug#end() " }}}
+  call plug#end()
 
   " force loading plugins
   for [_, plugin] in l:plugins
     call plug#load(plugin)
   endfor
 
+  " }}}
+
   call s:ConfigPlugins()
 endfunction
 
+" plugins ondemand machinery {{{
+
+function s:FullConfig() abort
+  if get(g:, "full_config_applied", 0)
+    return
+  endif
+  let g:full_config_applied = 1
+  if get(g:, "vim_started", 0)
+    call s:FullConfigCommit()
+  else
+    " little hack to make this visually faster during vim startup
+    autocmd VimEnter * call s:FullConfigCommit()
+  endif
+endfunction
+
 command! Full call s:FullConfig()
+autocmd VimEnter * let g:vim_started = 1
 call s:ConfigPlugins()
+
+" }}}
 
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc
