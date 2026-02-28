@@ -743,10 +743,12 @@ H.table_join(
       branch = "master",
       config = function()
         TREESITTER = require("nvim-treesitter")
+        TSCONFIGS = require("nvim-treesitter.configs")
         TREESITTER.prefer_git = false
+
         LAZY_UTILS.load_on_startup(
           function()
-            TREESITTER.setup({
+            TSCONFIGS.setup({
               highlight = {
                 enable = true,
                 additional_vim_regex_highlighting = false,
@@ -755,9 +757,8 @@ H.table_join(
               incremental_selection = { enable = true },
               sync_install = false,
               auto_install = false,
-
               matchup = {
-                enable = true,
+                enable = false,
                 disable_virtual_text = true,
                 include_match_words = true,
               },
@@ -890,7 +891,7 @@ PCKR.add(plugin_configs)
 -- other settings {{{
 
 vim.cmd.filetype("plugin", "indent", "on")
-vim.cmd.syntax("on")
+vim.cmd.syntax("off")
 vim.cmd.packadd("cfilter")
 
 vim.opt.autochdir = true
