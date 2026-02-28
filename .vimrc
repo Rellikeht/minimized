@@ -193,9 +193,13 @@ augroup END
 
 " }}}
 
-function s:ConfigPlugins() abort " TODO {{{
+" pre-load plugin configuration {{{
 
-  let g:undotree_SplitWidth = 40
+" }}}
+
+function s:ConfigPlugins() abort " {{{
+  " this slightly overcomplicated logic makes configuring plugins work 
+  " with on demand loading using special command
 
   if get(g:, "loaded_aplus", 0) && !get(g:, "configured_aplus", 0)
     let g:configured_aplus = 1
@@ -212,15 +216,33 @@ function s:ConfigPlugins() abort " TODO {{{
     " TODO
   endif
 
+  if get(g:, "loaded_sneak_plugin", 0) && !get(g:, "configured_sneak_plugin", 0)
+    let g:configured_sneak_plugin = 1
+    " TODO
+  endif
+
   if get(g:, "loaded_sandwich", 0) && !get(g:, "configured_sandwich", 0)
     let g:configured_sandwich = 1
     " TODO
   endif
 
-  if get(g:, "loaded_ale", 0) && !get(g:, "configured_ale", 0)
-    let g:configured_ale = 1
+  if get(g:, "loaded_vim_extras", 0) && !get(g:, "configured_vim_extras", 0)
+    let g:configured_vim_extras = 1
     " TODO
   endif
+
+  if get(g:, "loaded_ale", 0) && !get(g:, "configured_ale", 0)
+    let g:configured_ale = 1
+    " there exist machines where it is installed so it would be nice to 
+    " configure it even if it isn't as minimal as I want
+    " TODO
+  endif
+
+  " others {{{
+
+  let g:undotree_SplitWidth = 40
+
+  " }}}
 
 endfunction " }}}
 
@@ -263,11 +285,10 @@ function s:FullConfig() abort
         \ ]
 
   " ??
-  "andymass/vim-matchup"
   "mhinz/vim-signify"
+  "Rellikeht/lazy-utils"
   "junegunn/fzf"
   "junegunn/fzf.vim"
-  "Rellikeht/lazy-utils"
   "Rellikeht/fzf-vim-extras"
 
   " ???
