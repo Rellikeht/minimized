@@ -1148,7 +1148,7 @@ else
   -- {{{
 end --  }}}
 
-function CODE()
+function CodeInternal()
   if CODE_LOADED ~= nil then return end
 
   if vim.fn.has("nvim-0.11") == 1 then -- {{{
@@ -1714,6 +1714,20 @@ function CODE()
 
   CODE_LOADED = true
 end
+
+function CODE()
+  if vim.g.vim_started == 1 then
+    CodeInternal()
+  else
+    vim.api.nvim_create_autocmd("VimEnter", {
+      pattern = "*", callback = CodeInternal
+    })
+  end
+end
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  pattern = "*", command = "let g:vim_started = 1"
+})
 
 -- additional {{{
 
