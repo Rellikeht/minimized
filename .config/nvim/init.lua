@@ -548,8 +548,24 @@ H.table_join(
   plugin_configs,
   { --  {{{
     "ryvnf/readline.vim",
-    "kmonad/kmonad-vim",
-    "CervEdin/vim-minizinc",
+
+    {
+      "CervEdin/vim-minizinc", --  {{{
+      config = function()
+        vim.api.nvim_create_autocmd(
+          "FileType", { pattern = "minizinc", command = "syntax on" }
+        )
+      end
+    }, --  }}}
+
+    {
+      "kmonad/kmonad-vim", --  {{{
+      config = function()
+        vim.api.nvim_create_autocmd(
+          "FileType", { pattern = "kbd", command = "syntax on" }
+        )
+      end
+    }, --  }}}
 
     {
       "Rellikeht/vim-extras", --  {{{
@@ -706,6 +722,10 @@ H.table_join(
           end,
           { nargs = 0 }
         )
+
+        vim.api.nvim_create_autocmd(
+          "FileType", { pattern = "fugitive", command = "syntax on" }
+        )
       end
     }, --  }}}
 
@@ -713,6 +733,9 @@ H.table_join(
       "mbbill/undotree", --  {{{
       config = function()
         vim.g.undotree_SplitWidth = 40
+        vim.api.nvim_create_autocmd(
+          "FileType", { pattern = "undotree", command = "syntax on" }
+        )
       end
     }, --  }}}
 
@@ -916,6 +939,13 @@ vim.api.nvim_create_autocmd(
         { noremap = true, buffer = true, }
       )
     end
+  }
+)
+
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = { "man" },
+    command = "syntax on",
   }
 )
 
