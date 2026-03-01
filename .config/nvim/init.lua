@@ -745,6 +745,9 @@ H.table_join(
         TREESITTER = require("nvim-treesitter")
         TSCONFIGS = require("nvim-treesitter.configs")
         TREESITTER.prefer_git = false
+        if vim.fn.has("win32") == 1 then
+          TREESITTER.compilers = { "zig", "cl", "cc", "gcc", "clang" }
+        end
 
         LAZY_UTILS.load_on_startup(
           function()
@@ -756,7 +759,7 @@ H.table_join(
               indent = { enable = true },
               incremental_selection = { enable = true },
               sync_install = false,
-              auto_install = false,
+              auto_install = true,
               matchup = {
                 enable = false,
                 disable_virtual_text = true,
@@ -765,11 +768,6 @@ H.table_join(
             })
           end
         )
-
-        if HOOKS.nvim_treesitter ~= nil then
-          HOOKS.nvim_treesitter()
-          HOOKS.nvim_treesitter = nil
-        end
       end,
     }, --  }}}
 
@@ -1638,62 +1636,7 @@ function CodeInternal()
     -- TODO formatters (neoformat)
     -- TODO snippets
   }
-  )                                  --  }}}
-
-  HOOKS.nvim_treesitter = function() -- treesitter {{{
-    for key, name in pairs({
-      ["*"] = "comment",
-      [{ "sh", "bash", "zsh" }] = "bash",
-      "vim",
-      "vimdoc",
-
-      "lua",
-      "python",
-      "powershell",
-      "go",
-      "rust",
-      "cpp",
-      "c",
-      "java",
-      "erlang",
-      "elixir",
-      "julia",
-      "ocaml",
-      "haskell",
-
-      "html",
-      "css",
-      "typst",
-      "latex",
-
-      "toml",
-      "yaml",
-      "json",
-      "xml",
-    }
-    ) do
-      local filetypes = nil
-      if type(key) == "string" or type(key) == "table" then
-        filetypes = key
-      end
-      H.lazy_ensure_ts_installed(name, filetypes)
-    end
-
-    if vim.fn.has("win32") == 1 then -- {{{
-      TREESITTER.compilers = { "zig", "cl", "cc", "gcc", "clang" }
-
-      --  }}}
-    else -- {{{
-
-    end  --  }}}
-  end
-
-  if TREESITTER ~= nil then
-    HOOKS.nvim_treesitter()
-    HOOKS.nvim_treesitter = nil
-  end
-
-  --  }}}
+  ) --  }}}
 
   -- auto filetype detect {{{
 
