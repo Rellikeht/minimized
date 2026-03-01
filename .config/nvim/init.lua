@@ -31,9 +31,9 @@ H = {
   end,
 
   qlcmd = function(cmd, count)
-    local prefix = "c"
-    if vim.g.qfloc == 1 then prefix = "l" end
     return function(...)
+      local prefix = "c"
+      if vim.g.qfloc == 1 then prefix = "l" end
       local ccount = count
       if type(count) == "string" and #count > 0 then
         ccount = vim.v[count]
@@ -1100,10 +1100,10 @@ vim.api.nvim_create_autocmd(
         { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", "J", "j<CR>", { noremap = true, buffer = true, silent = true }
+        "n", "J", "j<C-h>", { remap = true, buffer = true, silent = true }
       )
       vim.keymap.set(
-        "n", "K", "k<CR>", { noremap = true, buffer = true, silent = true }
+        "n", "K", "k<C-h>", { remap = true, buffer = true, silent = true }
       )
 
       -- just a default <CR> with fold opening
@@ -1115,8 +1115,9 @@ vim.api.nvim_create_autocmd(
       vim.keymap.set(
         "n", "<C-h>", function()
           local qpos = vim.fn.getcurpos()
+          local wid = vim.fn.win_getid()
           vim.cmd.execute("\"normal \\<CR>\"")
-          vim.cmd.execute("\"normal \\<C-w>w\"")
+          vim.fn.win_gotoid(wid)
           vim.fn.setpos(".", qpos)
         end, { buffer = true, noremap = true, }
       )
