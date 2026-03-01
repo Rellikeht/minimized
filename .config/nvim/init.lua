@@ -548,15 +548,7 @@ H.table_join(
   plugin_configs,
   { --  {{{
     "ryvnf/readline.vim",
-
-    {
-      "CervEdin/vim-minizinc", --  {{{
-      config = function()
-        vim.api.nvim_create_autocmd(
-          "FileType", { pattern = "zinc", command = "syntax on" }
-        )
-      end
-    }, --  }}}
+    "CervEdin/vim-minizinc",
 
     {
       "kmonad/kmonad-vim", --  {{{
@@ -767,6 +759,8 @@ H.table_join(
       config = function()
         TREESITTER = require("nvim-treesitter")
         TSCONFIGS = require("nvim-treesitter.configs")
+        local parser_configs =
+            require("nvim-treesitter.parsers").get_parser_configs()
         TREESITTER.prefer_git = false
         if vim.fn.has("win32") == 1 then
           TREESITTER.compilers = { "zig", "cl", "cc", "gcc", "clang" }
@@ -789,7 +783,19 @@ H.table_join(
                 include_match_words = true,
               },
             })
+            vim.cmd.syntax("on")
           end
+        )
+
+        vim.api.nvim_create_autocmd(
+          "FileType", {
+            pattern = "*",
+            callback = function(args)
+              if parser_configs[args.match] == nil then
+                vim.bo.syntax = args.match
+              end
+            end
+          }
         )
       end,
     }, --  }}}
@@ -919,33 +925,16 @@ vim.cmd.packadd("cfilter")
 vim.cmd.runtime({ args = { "ftplugin/man.vim" }, bang = true })
 vim.api.nvim_create_autocmd(
   "FileType", {
-    pattern = {
-      "sh",
-      "bash",
-      "zsh",
-      "csh",
-      "tcsh",
-      "fish",
-      "tcl",
-      "ps1",
-    },
+    pattern = { "sh", "bash", "zsh", "csh", "tcsh", "fish", "tcl", "ps1" },
     callback = function()
       vim.keymap.set("n", "<C-q>K", "K", { noremap = true })
       vim.keymap.set("n", "K", function()
-          local ok = pcall(vim.cmd.Man)
-          if ok then return end
+          if pcall(vim.cmd.Man) then return end
           vim.cmd.execute("\"normal \\<C-q>K\"")
         end,
         { noremap = true, buffer = true, }
       )
     end
-  }
-)
-
-vim.api.nvim_create_autocmd(
-  "FileType", {
-    pattern = { "man" },
-    command = "syntax on",
   }
 )
 
