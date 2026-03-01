@@ -549,15 +549,7 @@ H.table_join(
   { --  {{{
     "ryvnf/readline.vim",
     "CervEdin/vim-minizinc",
-
-    {
-      "kmonad/kmonad-vim", --  {{{
-      config = function()
-        vim.api.nvim_create_autocmd(
-          "FileType", { pattern = "kbd", command = "syntax on" }
-        )
-      end
-    }, --  }}}
+  "kmonad/kmonad-vim",
 
     {
       "Rellikeht/vim-extras", --  {{{
@@ -714,10 +706,6 @@ H.table_join(
           end,
           { nargs = 0 }
         )
-
-        vim.api.nvim_create_autocmd(
-          "FileType", { pattern = "fugitive", command = "syntax on" }
-        )
       end
     }, --  }}}
 
@@ -725,9 +713,6 @@ H.table_join(
       "mbbill/undotree", --  {{{
       config = function()
         vim.g.undotree_SplitWidth = 40
-        vim.api.nvim_create_autocmd(
-          "FileType", { pattern = "undotree", command = "syntax on" }
-        )
       end
     }, --  }}}
 
@@ -783,10 +768,10 @@ H.table_join(
                 include_match_words = true,
               },
             })
-            vim.cmd.syntax("on")
           end
         )
 
+        -- full auto syntax fallback when treesitter is not available
         vim.api.nvim_create_autocmd(
           "FileType", {
             pattern = "*",
@@ -918,7 +903,8 @@ PCKR.add(plugin_configs)
 -- other settings {{{
 
 vim.cmd.filetype("plugin", "indent", "on")
-vim.cmd.syntax("off")
+-- to be set for specific filetypes that don't have treesitter grammars
+vim.cmd.syntax("manual")
 vim.cmd.packadd("cfilter")
 
 -- better man for shell
@@ -1671,7 +1657,6 @@ function CodeInternal()
               vim.keymap.set("n", "<Leader>u", "<Plug>(InfoPrev)", { noremap = true })
               vim.keymap.set("n", "<Leader>m", "<Plug>(InfoMenu)", { noremap = true })
               vim.keymap.set("n", "<Leader>o", "<Plug>(InfoGoto)", { noremap = true })
-              vim.cmd.syntax("on")
             end,
           }
         )
