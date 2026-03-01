@@ -892,6 +892,33 @@ vim.cmd.filetype("plugin", "indent", "on")
 vim.cmd.syntax("off")
 vim.cmd.packadd("cfilter")
 
+-- better man for shell
+vim.cmd.runtime({ args = { "ftplugin/man.vim" }, bang = true })
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = {
+      "sh",
+      "bash",
+      "zsh",
+      "csh",
+      "tcsh",
+      "fish",
+      "tcl",
+      "ps1",
+    },
+    callback = function()
+      vim.keymap.set("n", "<C-q>K", "K", { noremap = true })
+      vim.keymap.set("n", "K", function()
+          local ok = pcall(vim.cmd.Man)
+          if ok then return end
+          vim.cmd.execute("\"normal \\<C-q>K\"")
+        end,
+        { noremap = true, buffer = true, }
+      )
+    end
+  }
+)
+
 vim.opt.autochdir = true
 
 vim.opt.softtabstop = 4         -- amount of spaces when pressing tab
