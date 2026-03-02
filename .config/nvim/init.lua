@@ -14,16 +14,6 @@ H = {
     end
   end,
 
-  lazy_ensure_ts_installed = function(name, filetypes)
-    if filetypes == nil then filetypes = name end
-    LAZY_UTILS.load_on_filetypes(
-      filetypes, function()
-        -- TODO make this fail silently when network not available
-        vim.cmd("silent! TSUpdate " .. name)
-      end
-    )
-  end,
-
   calc_pumheight = function()
     local result = vim.opt.lines._value
     result = (result - result % 3) / 3
@@ -741,6 +731,16 @@ H.table_join(
                 enable = false,
                 disable_virtual_text = true,
                 include_match_words = true,
+              },
+              ensure_installed = {
+                "vim",
+                "vimdoc",
+                "diff",
+                "bash",
+                "lua",
+                "python",
+                "markdown",
+                "typst",
               },
             })
           end
