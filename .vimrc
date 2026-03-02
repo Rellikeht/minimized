@@ -33,16 +33,15 @@ set noswapfile " TODO
 set noautoread " disable automatic read file when changed from outside
 
 set scrolloff=5 " lines from edge when scrolling
-set splitkeep=screen " TODO
 set shortmess=atsOF " less annoying messages
 set mouse=a " enable full mouse experience
 set backspace=indent,eol,start " normal backspace behavior unlike default
 set wildchar=<Tab> " TODO
 set wildmode=list:longest,full " TODO
-set wildoptions=fuzzy,tagfile " TODO
+set wildoptions=tagfile " TODO
 set complete=w,b,s,i,d,.,k " helpful (and not too costly) complete sources
 " best completion options out there
-set completeopt=menu,menuone,noselect,noinsert,fuzzy
+set completeopt=menu,menuone,noselect,noinsert
 set omnifunc=syntaxcomplete#Complete " <C-x>o complete
 set cmdwinheight=25 " more commands in command line window
 set redrawtime=5000 " wait longer for drawging (helpful in bigger files)
@@ -80,6 +79,12 @@ set t_u7= " fixes problems with ssh from windows
 set cedit=<C-j> " key to open command-line window in command mode
 let mapleader = ','
 let maplocalleader = '_' " TODO do this better
+
+if v:version >= 900
+  set splitkeep=screen " TODO
+  set wildoptions+=fuzzy " TODO
+  set completeopt+=fuzzy
+endif
 
 if has('win32') " windows friendly options, just in case {{{ 
   set shell=powershell.exe
