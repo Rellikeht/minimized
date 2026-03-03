@@ -65,6 +65,7 @@ set updatetime=2000 " waiting for CursorHold and writing to swap
 set conceallevel=1 " show concealled characters under cursor
 set foldmethod=marker " I don't like automatic folding
 set foldmarker=\ {{{,\ }}} " just in case
+set foldlevelstart=99 " turns out sometimes folds closed by default are slow
 set showbreak=>\  " wrap indicator
 set wrapmargin=1 " size of margin on the right
 set undolevels=12000
@@ -190,7 +191,7 @@ runtime! ftplugin/man.vim
 " useful in some other way
 autocmd Filetype sh,bash,zsh,csh,tcsh,fish,tcl,ps1
       \ nnoremap <buffer> K :call dist#man#PreGetPage(0)<CR>
-unmap <Leader>K
+silent! unmap <Leader>K
 
 filetype plugin indent on
 syntax on

@@ -915,7 +915,7 @@ vim.opt.history = 10000
 vim.opt.conceallevel = 1         -- show concealled characters under cursor
 vim.opt.foldmethod = "marker"    -- I don't like automatic folding
 vim.opt.foldmarker = " {{{, }}}" -- just in case some formatter fucks up
-vim.opt.foldlevel = 0
+vim.opt.foldlevelstart = 99
 vim.opt.showbreak = "> "         -- wrap indicator
 vim.opt.wrapmargin = 1           -- size of margin on the right
 
