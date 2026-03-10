@@ -139,7 +139,6 @@ vim.opt.regexpengine = 1  -- fastest option (at least for now)
 
 -- initialization {{{
 
-vim.g.loaded_matchit = 1
 vim.g.ql_height = 12
 
 --  }}}
@@ -600,20 +599,6 @@ H.table_join(
           }
         )
       end
-    }, --  }}}
-
-    {
-      "andymass/vim-matchup", --  {{{
-      config_pre = function()
-        -- this makes things little faster and isn't that useful
-        vim.g.matchup_matchparen_enabled = false
-        -- not really needed, but nice when matchparen gets enabled
-        vim.g.matchup_matchparen_offscreen = { method = "popup" }
-        vim.g.matchup_surround_enabled = true
-        vim.g.matchup_delim_noskips = false
-        vim.g.matchup_delim_stopline = 100000
-        vim.g.matchup_motion_cursor_end = true
-      end,
     }, --  }}}
 
     {
@@ -1260,6 +1245,21 @@ function CodeInternal()
   --  }}}
 
   PCKR.add({ -- {{{
+
+    {
+      -- TODO isn't this an overkill
+      "andymass/vim-matchup", --  {{{
+      config_pre = function()
+        -- this makes things little faster and isn't that useful
+        vim.g.matchup_matchparen_enabled = false
+        -- not really needed, but nice when matchparen gets enabled
+        vim.g.matchup_matchparen_offscreen = { method = "popup" }
+        vim.g.matchup_surround_enabled = true
+        vim.g.matchup_delim_noskips = false
+        vim.g.matchup_delim_stopline = 100000
+        vim.g.matchup_motion_cursor_end = true
+      end,
+    }, --  }}}
 
     {
       "jpalardy/vim-slime",   --  {{{
