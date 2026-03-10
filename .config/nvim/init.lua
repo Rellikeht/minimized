@@ -548,7 +548,6 @@ H.table_join(
     {
       "Rellikeht/lazy-utils", --  {{{
       config = function()
-        LAZY_UTILS = require("lazy_utils")
         if HOOKS.lazy_utils ~= nil then
           HOOKS.lazy_utils()
           HOOKS.lazy_utils = nil
@@ -707,44 +706,39 @@ H.table_join(
       run = ":TSUpdate",
       branch = "master",
       config = function()
-        TREESITTER = require("nvim-treesitter")
-        TSCONFIGS = require("nvim-treesitter.configs")
+        local treesitter = require("nvim-treesitter")
         local parser_configs =
             require("nvim-treesitter.parsers").get_parser_configs()
-        TREESITTER.prefer_git = false
+        treesitter.prefer_git = false
         if vim.fn.has("win32") == 1 then
-          TREESITTER.compilers = { "zig", "cl", "cc", "gcc", "clang" }
+          treesitter.compilers = { "zig", "cl", "cc", "gcc", "clang" }
         end
 
-        LAZY_UTILS.load_on_startup(
-          function()
-            TSCONFIGS.setup({
-              highlight = {
-                enable = true,
-                additional_vim_regex_highlighting = false,
-              },
-              indent = { enable = true },
-              incremental_selection = { enable = true },
-              sync_install = false,
-              auto_install = true,
-              matchup = {
-                enable = false,
-                disable_virtual_text = true,
-                include_match_words = true,
-              },
-              ensure_installed = {
-                "vim",
-                "vimdoc",
-                "diff",
-                "bash",
-                "lua",
-                "python",
-                "markdown",
-                "typst",
-              },
-            })
-          end
-        )
+        require("nvim-treesitter.configs").setup({
+          highlight = {
+            enable = true,
+            additional_vim_regex_highlighting = false,
+          },
+          indent = { enable = true },
+          incremental_selection = { enable = true },
+          sync_install = false,
+          auto_install = true,
+          matchup = {
+            enable = false,
+            disable_virtual_text = true,
+            include_match_words = true,
+          },
+          ensure_installed = {
+            "vim",
+            "vimdoc",
+            "diff",
+            "bash",
+            "lua",
+            "python",
+            "markdown",
+            "typst",
+          },
+        })
 
         -- full auto syntax fallback when treesitter is not available
         vim.api.nvim_create_autocmd(
