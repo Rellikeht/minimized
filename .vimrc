@@ -43,7 +43,7 @@ set complete=w,b,s,i,d,.,k " helpful (and not too costly) complete sources
 " best completion options out there
 set completeopt=menu,menuone,noselect,noinsert
 set omnifunc=syntaxcomplete#Complete " <C-x>o complete
-set cmdwinheight=25 " more commands in command line window
+set cmdwinheight=999999 " more commands in command line window
 set redrawtime=5000 " wait longer for drawging (helpful in bigger files)
 set pumwidth=50 " to see anything in completion window
 set switchbuf+=usetab,useopen " TODO
@@ -65,7 +65,7 @@ set updatetime=2000 " waiting for CursorHold and writing to swap
 set conceallevel=1 " show concealled characters under cursor
 set foldmethod=marker " I don't like automatic folding
 set foldmarker=\ {{{,\ }}} " just in case
-set foldlevelstart=99 " turns out sometimes folds closed by default are slow
+set foldlevelstart=99 " turns out folds closed by default are slow
 set showbreak=>\  " wrap indicator
 set wrapmargin=1 " size of margin on the right
 set undolevels=12000
@@ -79,7 +79,7 @@ set t_u7= " fixes problems with ssh from windows
 
 set cedit=<C-j> " key to open command-line window in command mode
 let mapleader = ','
-let maplocalleader = '_' " TODO do this better
+let maplocalleader = '_'
 
 if v:version >= 900
   set splitkeep=screen " TODO

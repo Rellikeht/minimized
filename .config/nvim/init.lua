@@ -128,18 +128,14 @@ if vim.fn.has("nvim-0.11") == 1 then
   vim.opt.completeopt:append("fuzzy")
 end
 
-vim.opt.redrawtime = 5000 -- wait longer for drawging (helpful in bigger files)
-vim.opt.pumwidth = 50     -- to see anything in completion window
+vim.opt.redrawtime = 5000    -- wait longer for drawging (helpful in bigger files)
+vim.opt.pumwidth = 50        -- to see anything in completion window
 vim.opt.pumheight = H.calc_pumheight()
-vim.opt.cmdwinheight = 25 -- more commands in command line window
-vim.opt.cedit = "<C-j>"   -- key to open command-line window in command mode
-vim.opt.regexpengine = 1  -- fastest option (at least for now)
+vim.opt.cmdwinheight = 99999 -- more commands in command line window
+vim.opt.cedit = "<C-j>"      -- key to open command-line window in command mode
+vim.opt.regexpengine = 1     -- fastest option (at least for now)
 
---  }}}
-
--- initialization {{{
-
-vim.g.ql_height = 12
+vim.g.ql_height = 16         -- sensible default
 
 --  }}}
 
@@ -210,12 +206,6 @@ vim.keymap.set("n", "yaee ", "gg0vG$y`'", { noremap = true })
 vim.keymap.set("n", "Q", "<Nop>", { remap = true })
 vim.keymap.set("", "<C-h>", "<C-]>", { remap = true })
 vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
-
--- TODO candidate for removal
-vim.keymap.set("n", "<Space>y", "\"+y", { noremap = true })
-vim.keymap.set("n", "<Space>Y", "\"+Y", { noremap = true })
-vim.keymap.set("n", "<Space>u", "\"+p", { noremap = true })
-vim.keymap.set("n", "<Space>U", "\"+P", { noremap = true })
 
 --  }}}
 
@@ -894,7 +884,7 @@ vim.opt.history = 10000
 vim.opt.conceallevel = 1         -- show concealled characters under cursor
 vim.opt.foldmethod = "marker"    -- I don't like automatic folding
 vim.opt.foldmarker = " {{{, }}}" -- just in case some formatter fucks up
-vim.opt.foldlevelstart = 99
+vim.opt.foldlevelstart = 0       -- nice to have
 vim.opt.showbreak = "> "         -- wrap indicator
 vim.opt.wrapmargin = 1           -- size of margin on the right
 
