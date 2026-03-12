@@ -199,6 +199,70 @@ syntax on
 
 " }}}
 
+" quickfix/loclist management {{{
+
+let g:qfloc = 1
+
+function QFToggle() abort
+  let g:qfloc = (g:qfloc + 1) % 2
+  if g:qfloc
+    echo "Using location list (local)"
+  else
+    echo "Using quickfix list (global)"
+  endif
+endfunction
+
+nnoremap ;t :<C-u>call QFToggle()<CR>
+nnoremap <expr> ;w (g:qfloc ? ":lopen<CR>" : ":copen<CR>")
+nnoremap <expr> ;w (g:qfloc ? ":lopen<CR>" : ":copen<CR>")
+" TODO little more helpers
+
+function QF_BS() abort
+  execute "normal <CR>"
+  if g:qfloc
+    lclose
+  else
+    cclose
+  endif
+endfunction
+
+function QF_C_H() abort
+  let l:qpos = getcurpos()
+  let l:wid = win_getid()
+  execute "normal <CR>zv"
+  call win_gotoid(l:wid)
+  call setpos(".", l:qpos)
+endfunction
+
+autocmd FileType qf
+      \ nmap <buffer> Z :<C-u>q<CR>
+      \ | nnoremap <buffer> <silent> <CR> <CR>zv
+      \ | nnoremap <buffer> <silent> <expr> <BS> 
+      \ "<CR>zv".(g:qfloc ? ":lclose<CR>" : ":cclose<CR>")
+      \ | nnoremap <buffer> <C-h> :<C-u>call QF_C_H()<CR>
+
+function s:prepare_qf_elements(cmd) abort
+  return map(
+    \ split(system(a:cmd), "\n"),
+    \ "{'filename': v:val, 'text': v:val}"
+  \ )
+endfunction
+
+" little helper to fill quickfix/loclist from shell command
+if v:version >= 900 || has("nvim-0.11")
+  command! -nargs=1 -complete=shellcmdline CSysExpr
+        \ call setqflist(s:prepare_qf_elements(<f-args>), "r")
+  command! -nargs=1 -complete=shellcmdline LSysExpr
+        \ call setloclist(0, s:prepare_qf_elements(<f-args>), "r")
+else
+  command! -nargs=1 -complete=shellcmd CSysExpr
+        \ call setqflist(s:prepare_qf_elements(<f-args>), "r")
+  command! -nargs=1 -complete=shellcmd LSysExpr
+        \ call setloclist(0, s:prepare_qf_elements(<f-args>), "r")
+endif
+
+" }}}
+
 " pre-load plugin configuration {{{
 
 let g:sneak#prompt = " <sneak> "
