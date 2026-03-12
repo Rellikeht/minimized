@@ -1064,7 +1064,7 @@ vim.api.nvim_create_autocmd(
     pattern = "qf",
     callback = function()
       vim.keymap.set(
-        { "n", "v" }, "q", ":q<CR>", { noremap = true, buffer = true }
+        { "n", "v" }, "Z", ":<C-u>q<CR>", { noremap = true, buffer = true }
       )
       vim.keymap.set(
         "n", "<", H.qlcmd("older", "count1"),

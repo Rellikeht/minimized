@@ -213,23 +213,21 @@ function QFToggle() abort
 endfunction
 
 nnoremap ;t :<C-u>call QFToggle()<CR>
-nnoremap <expr> ;w (g:qfloc ? ":lopen<CR>" : ":copen<CR>")
-nnoremap <expr> ;w (g:qfloc ? ":lopen<CR>" : ":copen<CR>")
-" TODO little more helpers
-
-function QF_BS() abort
-  execute "normal <CR>"
-  if g:qfloc
-    lclose
-  else
-    cclose
-  endif
-endfunction
+nnoremap <silent> <expr> ;w (g:qfloc ? ":lopen" : ":copen")."<CR>"
+nnoremap <silent> <expr> ;w (g:qfloc ? ":lopen" : ":copen")."<CR>"
+nnoremap <silent> <expr> ;n
+      \ ":<C-u>".v:count1.(g:qfloc ? "lnext" : "cnext")."<CR>"
+nnoremap <silent> <expr> ;p
+      \ ":<C-u>".v:count1.(g:qfloc ? "lprev" : "cprev")."<CR>"
+nnoremap <silent> <expr> ;<
+      \ ":<C-u>".v:count1.(g:qfloc ? "lolder" : "colder")."<CR>"
+nnoremap <silent> <expr> ;>
+      \ ":<C-u>".v:count1.(g:qfloc ? "lnewer" : "cnewer")."<CR>"
 
 function QF_C_H() abort
   let l:qpos = getcurpos()
   let l:wid = win_getid()
-  execute "normal <CR>zv"
+  execute "normal \<CR>"
   call win_gotoid(l:wid)
   call setpos(".", l:qpos)
 endfunction
