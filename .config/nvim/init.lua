@@ -106,25 +106,25 @@ for _, option in pairs({
   vim.opt[option] = false
 end
 
-vim.opt.scrolloff = 5                              -- lines from edge when scrolling
-vim.opt.shortmess = "atsOF"                        -- less annoying messages
-vim.opt.mouse = "a"                                -- enable full mouse experience
-vim.opt.formatoptions:remove({ "j", "t" })         -- TODO document
-vim.opt.formatoptions:append("croqlwn")            -- TODO document
+vim.opt.scrolloff = 5                             -- lines from edge when scrolling
+vim.opt.shortmess = "atsOF"                       -- less annoying messages
+vim.opt.mouse = "a"                               -- enable full mouse experience
+vim.opt.formatoptions:remove({ "j", "t" })        -- TODO document
+vim.opt.formatoptions:append("croqlwn")           -- TODO document
 
-vim.opt.wildchar = string.byte("\t")               -- TODO document
-vim.opt.wildmode = "list:longest,full"             -- TODO document
-vim.opt.wildoptions = "tagfile"                    -- ??
-vim.opt.omnifunc = "syntaxcomplete#Complete"       -- default vim function for <C-x>o
-vim.opt.complete = "w,b,s,i,d,.,k"                 -- TODO document
-vim.opt.switchbuf:append({ "usetab", "useopen" })  -- TODO document
+vim.opt.wildchar = string.byte("\t")              -- TODO document
+vim.opt.wildmode = "list:longest,full"            -- TODO document
+vim.opt.wildoptions = "tagfile"                   -- ??
+vim.opt.omnifunc = "syntaxcomplete#Complete"      -- default vim function for <C-x>o
+vim.opt.complete = "w,b,s,i,d,.,k"                -- TODO document
+vim.opt.switchbuf:append({ "usetab", "useopen" }) -- TODO document
 
 -- best completion settings out there
 vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
 
 if vim.fn.has("nvim-0.9") == 1 then
   vim.opt.splitkeep = "screen" -- TODO document
-  vim.opt.wildoptions:append({"fuzzy"})
+  vim.opt.wildoptions:append({ "fuzzy" })
 end
 if vim.fn.has("nvim-0.11") == 1 then
   vim.opt.completeopt:append("fuzzy")
