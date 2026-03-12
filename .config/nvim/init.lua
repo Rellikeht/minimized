@@ -137,13 +137,23 @@ vim.opt.cmdwinheight = 99999 -- more commands in command line window
 vim.opt.cedit = "<C-j>"      -- key to open command-line window in command mode
 vim.opt.regexpengine = 1     -- fastest option (at least for now)
 
-vim.g.ql_height = 16         -- sensible default
+--  }}}
+
+-- helper variables {{{
+
+vim.g.ql_height = 16 -- sensible default
+
+vim.g.grep_grepprg = "grep\\ -HEInr"
+vim.g.rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S"
+vim.g.ag_grepprg = "ag\\ --vimgrep\\ --hidden\\ -S"
+vim.g.win_grepprg = "findstr\\ /n\\ $*\\ nul"
 
 --  }}}
 
 if vim.fn.has("win32") == 1 then -- {{{
   -- must have really
   vim.opt.shell = "powershell.exe"
+  GIT_EXECUTABLE = "git.exe"
 
   -- some nice options
   vim.opt.shellcmdflag =
@@ -152,12 +162,13 @@ if vim.fn.has("win32") == 1 then -- {{{
   vim.opt.shellpipe = "| Out-File -Encoding UTF8 %s"
   vim.opt.shellredir = "| Out-File -Encoding UTF8 %s"
 
-  GIT_EXECUTABLE = "git.exe"
+  vim.cmd("set grepprg=" .. vim.g.win_grepprg)
 
   --  }}}
 else -- {{{
   GIT_EXECUTABLE = "git"
-end  --  }}}
+  vim.cmd("set grepprg=" .. vim.g.grep_grepprg)
+end --  }}}
 
 -- colors {{{
 

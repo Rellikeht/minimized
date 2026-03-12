@@ -89,6 +89,11 @@ if v:version >= 900 || has("nvim-0.11")
   set completeopt+=fuzzy
 endif
 
+let g:grep_grepprg = "grep\\ -HEInr\\ $*\\ /dev/null"
+let g:rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S\\ $*\\ /dev/null"
+let g:ag_grepprg = "ag\\ --vimgrep\\ --hidden\\ -S\\ $*\\ /dev/null"
+let g:win_grepprg = "findstr\\ /n\\ $*\\ nul"
+
 if has('win32') " windows friendly options, just in case {{{ 
   set shell=powershell.exe
   set shellxquote=
@@ -96,6 +101,9 @@ if has('win32') " windows friendly options, just in case {{{
   let &shellquote=''
   let &shellpipe='| Out-File -Encoding UTF8 %s'
   let &shellredir='| Out-File -Encoding UTF8 %s'
+  execute "set grepprg=".g:win_grepprg
+else
+  execute "set grepprg=".g:grep_grepprg
 endif " }}} 
 
 "set background=dark
