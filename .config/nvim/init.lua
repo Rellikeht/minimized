@@ -1078,19 +1078,35 @@ vim.api.nvim_create_autocmd(
         { "n", "v" }, "Z", ":<C-u>q<CR>", { noremap = true, buffer = true }
       )
       vim.keymap.set(
-        "n", "<", H.qlcmd("older", "count1"),
-        { noremap = true, buffer = true }
-      )
-      vim.keymap.set(
-        "n", ">", H.qlcmd("newer", "count1"),
-        { noremap = true, buffer = true }
-      )
-      vim.keymap.set(
         "n", "J", "j<C-h>", { remap = true, buffer = true, silent = true }
       )
       vim.keymap.set(
         "n", "K", "k<C-h>", { remap = true, buffer = true, silent = true }
       )
+
+      if vim.fn.win_gettype() == "loclist" then
+        vim.keymap.set(
+          "n", "<",
+          function() vim.cmd.lolder({ count = vim.v.count1 }) end,
+          { noremap = true, buffer = true }
+        )
+        vim.keymap.set(
+          "n", ">",
+          function() vim.cmd.lnewer({ count = vim.v.count1 }) end,
+          { noremap = true, buffer = true }
+        )
+      else
+        vim.keymap.set(
+          "n", "<",
+          function() vim.cmd.colder({ count = vim.v.count1 }) end,
+          { noremap = true, buffer = true }
+        )
+        vim.keymap.set(
+          "n", ">",
+          function() vim.cmd.cnewer({ count = vim.v.count1 }) end,
+          { noremap = true, buffer = true }
+        )
+      end
 
       -- just a default <CR> with fold opening
       vim.keymap.set(
@@ -1114,6 +1130,7 @@ vim.api.nvim_create_autocmd(
           H.qlcmd("close")()
         end, { buffer = true, silent = true, noremap = true }
       )
+
     end
   }
 )

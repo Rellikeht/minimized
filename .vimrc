@@ -221,16 +221,11 @@ function QFToggle() abort
 endfunction
 
 nnoremap ;t :<C-u>call QFToggle()<CR>
-nnoremap <silent> <expr> ;w (g:qfloc ? ":lopen" : ":copen")."<CR>"
-nnoremap <silent> <expr> ;w (g:qfloc ? ":lopen" : ":copen")."<CR>"
-nnoremap <silent> <expr> ;n
-      \ ":<C-u>".v:count1.(g:qfloc ? "lnext" : "cnext")."<CR>"
-nnoremap <silent> <expr> ;p
-      \ ":<C-u>".v:count1.(g:qfloc ? "lprev" : "cprev")."<CR>"
-nnoremap <silent> <expr> ;<
-      \ ":<C-u>".v:count1.(g:qfloc ? "lolder" : "colder")."<CR>"
-nnoremap <silent> <expr> ;>
-      \ ":<C-u>".v:count1.(g:qfloc ? "lnewer" : "cnewer")."<CR>"
+nnoremap <silent> <expr> ;w (g:qfloc ? ":l" : ":c")."copen<CR>"
+nnoremap <silent> <expr> ;n ":<C-u>".v:count1.(g:qfloc ? "l" : "c")."next<CR>"
+nnoremap <silent> <expr> ;p ":<C-u>".v:count1.(g:qfloc ? "l" : "c")."prev<CR>"
+nnoremap <silent> <expr> ;h 
+      \ ":<C-u>".v:count1.(g:qfloc ? "l" : "c")."history<CR>"
 
 function QF_C_H() abort
   let l:qpos = getcurpos()
@@ -246,6 +241,13 @@ autocmd FileType qf
       \ | nnoremap <buffer> <silent> <expr> <BS> 
       \ "<CR>zv".(g:qfloc ? ":lclose<CR>" : ":cclose<CR>")
       \ | nnoremap <buffer> <C-h> :<C-u>call QF_C_H()<CR>
+      \ | if win_gettype() == "loclist"
+      \ | nnoremap <silent> <expr> < ":<C-u>".v:count1."lolder<CR>"
+      \ | nnoremap <silent> <expr> > ":<C-u>".v:count1."lnewer<CR>"
+      \ | else
+      \ | nnoremap <silent> <expr> < ":<C-u>".v:count1."colder<CR>"
+      \ | nnoremap <silent> <expr> > ":<C-u>".v:count1."cnewer<CR>"
+      \ | endif
 
 function s:prepare_qf_elements(cmd) abort
   return map(
@@ -289,12 +291,7 @@ function s:ConfigPlugins() abort " {{{
 
   if get(g:, "loaded_fugitive", 0) && !get(g:, "configured_fugitive", 0)
     let g:configured_fugitive = 1
-    " empty block for completness
-  endif
-
-  if get(g:, "loaded_commentary", 0) && !get(g:, "configured_commentary", 0)
-    let g:configured_commentary = 1
-    " empty block for completness
+    nnoremap <Leader>G :<C-u>G
   endif
 
   if get(g:, "loaded_sneak_plugin", 0) && !get(g:, "configured_sneak_plugin", 0)
