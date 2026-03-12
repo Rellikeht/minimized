@@ -35,3 +35,4 @@ venv/
 
 .config/vifm/*
 !.config/vifm/vifmrc
+.config/nvim/autoload

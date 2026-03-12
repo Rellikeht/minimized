@@ -81,9 +81,11 @@ set cedit=<C-j> " key to open command-line window in command mode
 let mapleader = ','
 let maplocalleader = '_'
 
-if v:version >= 900
+if v:version >= 900 || has("nvim-0.9")
   set splitkeep=screen " TODO
   set wildoptions+=fuzzy " TODO
+endif
+if v:version >= 900 || has("nvim-0.11")
   set completeopt+=fuzzy
 endif
 
@@ -127,7 +129,6 @@ set guioptions-=T
 
 " bindings {{{
 
-" TODO temporary until vim-sneak is configured properly
 noremap <C-p> ,
 noremap <C-n> ;
 
@@ -255,11 +256,12 @@ function s:ConfigPlugins() abort " {{{
 
   if get(g:, "loaded_vim_extras", 0) && !get(g:, "configured_vim_extras", 0)
     let g:configured_vim_extras = 1
-    " TODO
+    nmap <Tab>o :+0TabOpen<Space>
   endif
 
   if get(g:, "loaded_repeat", 0) && !get(g:, "configured_repeat", 0)
     let g:configured_repeat = 1
+    " TODO ?
   endif
 
   if get(g:, "loaded_ale", 0) && !get(g:, "configured_ale", 0)
@@ -316,7 +318,7 @@ function s:FullConfigCommit() abort
         \ ['tpope', 'vim-repeat'],
         \ ['wellle', 'targets.vim'],
         \ ['machakann', 'vim-sandwich'],
-        \ ['ryvnf', 'readline.vim']
+        \ ['ryvnf', 'readline.vim'],
         \ ]
 
   " ??
