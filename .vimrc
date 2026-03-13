@@ -89,6 +89,14 @@ if v:version >= 900 || has("nvim-0.11")
   set completeopt+=fuzzy
 endif
 
+if has("nvim")
+  let g:data_dir = stdpath("data")
+else
+  let g:data_dir = "$HOME/.local/share/vim"
+  set undodir=~/.local/state/vim/undo
+  call mkdir(&undodir, "p")
+endif
+
 let g:grep_grepprg = "grep\\ -HEInr\\ $*\\ /dev/null"
 let g:rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S\\ $*\\ /dev/null"
 let g:ag_grepprg = "ag\\ --vimgrep\\ --hidden\\ -S\\ $*\\ /dev/null"
@@ -353,12 +361,10 @@ function s:FullConfigCommit() abort
   " vim-plug setup {{{ 
 
   let g:plug_threads = 32
-  let g:vim_share_dir = '~/.local/share/vim'
-  let g:vim_plug_dir = g:vim_share_dir..'/plugged'
+  let g:vim_plug_dir = g:data_dir..'/plugged'
 
   " auto install
   let plug_src = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  let g:data_dir = has('nvim') ? stdpath('config') : '~/.vim'
   if empty(glob(g:data_dir . '/autoload/plug.vim'))
     silent execute '!curl -fLo '.g:data_dir.
           \'/autoload/plug.vim --create-dirs '.plug_src
