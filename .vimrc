@@ -198,6 +198,8 @@ noremap gt :tabnext<CR>
 
 " filetype and syntax trickery {{{
 
+autocmd BufNewFile,BufRead *.v set filetype=verilog
+
 " sometimes it is better to have 2 spaces instead of 4
 autocmd FileType
       \ python,nix,lua,vim,zig,nim,markdown,ocaml,elixir,haskell,kbd

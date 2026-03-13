@@ -1021,6 +1021,13 @@ vim.keymap.set("i", "<C-Space>",
 
 -- filetypes {{{
 
+vim.api.nvim_create_autocmd(
+  { "BufRead", "BufNewFile" }, {
+    pattern = "*.v",
+    callback = function() vim.o.filetype = "verilog" end
+  }
+)
+
 -- ugly but handy
 vim.api.nvim_create_autocmd(
   "FileType", {
