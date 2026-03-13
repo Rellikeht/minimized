@@ -130,18 +130,24 @@ if vim.fn.has("nvim-0.11") == 1 then
   vim.opt.completeopt:append("fuzzy")
 end
 
-vim.opt.redrawtime = 5000    -- wait longer for drawging (helpful in bigger files)
-vim.opt.pumwidth = 50        -- to see anything in completion window
+-- wait longer for drawging (helpful in bigger files)
+vim.opt.redrawtime = 5000
+-- to see anything in completion window
+vim.opt.pumwidth = math.ceil(vim.o.lines / 2)
 vim.opt.pumheight = H.calc_pumheight()
-vim.opt.cmdwinheight = 99999 -- more commands in command line window
-vim.opt.cedit = "<C-j>"      -- key to open command-line window in command mode
-vim.opt.regexpengine = 1     -- fastest option (at least for now)
+-- more commands in command line window
+vim.opt.cmdwinheight = 99999
+-- key to open command-line window in command mode
+vim.opt.cedit = "<C-j>"
+-- fastest option (at least for now)
+vim.opt.regexpengine = 1
 
 --  }}}
 
 -- helper variables {{{
 
-vim.g.ql_height = 16 -- sensible default
+-- sensible default
+vim.g.ql_height = math.floor(2 * vim.o.lines / 5)
 
 vim.g.grep_grepprg = "grep\\ -HEInr"
 vim.g.rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S"
@@ -1056,11 +1062,7 @@ end, { noremap = true })
 for key, map in pairs({
   [";n"] = H.qlcmd("next", "count1"),
   [";p"] = H.qlcmd("previous", "count1"),
-  [";0"] = H.qlcmd("first"),
-  [";$"] = H.qlcmd("last"),
   [";h"] = H.qlcmd("history", "count1"),
-  [";<"] = H.qlcmd("older", "count1"),
-  [";>"] = H.qlcmd("newer", "count1"),
   [";w"] = function()
     local height = vim.v.count
     if height == 0 then height = vim.g.ql_height end
@@ -1130,7 +1132,6 @@ vim.api.nvim_create_autocmd(
           H.qlcmd("close")()
         end, { buffer = true, silent = true, noremap = true }
       )
-
     end
   }
 )

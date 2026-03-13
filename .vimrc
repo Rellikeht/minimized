@@ -221,7 +221,7 @@ function QFToggle() abort
 endfunction
 
 nnoremap ;t :<C-u>call QFToggle()<CR>
-nnoremap <silent> <expr> ;w (g:qfloc ? ":l" : ":c")."copen<CR>"
+nnoremap <silent> <expr> ;w (g:qfloc ? ":l" : ":c")."open<CR>"
 nnoremap <silent> <expr> ;n ":<C-u>".v:count1.(g:qfloc ? "l" : "c")."next<CR>"
 nnoremap <silent> <expr> ;p ":<C-u>".v:count1.(g:qfloc ? "l" : "c")."prev<CR>"
 nnoremap <silent> <expr> ;h 
