@@ -215,6 +215,13 @@ silent! unmap <Leader>K
 filetype plugin indent on
 syntax on
 
+" Small qol thing (mainly for git and quickfix)
+let s:z_buftypes = {"nofile": 0, "nowrite": 0, "quickfix": 0, "help": 0}
+autocmd BufReadPost *
+      \ if has_key(s:z_buftypes, &buftype)
+      \ | nmap <buffer> Z :<C-u>q<CR>
+      \ | endif
+
 " }}}
 
 " quickfix/loclist management {{{
@@ -246,8 +253,7 @@ function QF_C_H() abort
 endfunction
 
 autocmd FileType qf
-      \ nmap <buffer> Z :<C-u>q<CR>
-      \ | nnoremap <buffer> <silent> <CR> <CR>zv
+      \ nnoremap <buffer> <silent> <CR> <CR>zv
       \ | nnoremap <buffer> <silent> <expr> <BS> 
       \ "<CR>zv".(g:qfloc ? ":lclose<CR>" : ":cclose<CR>")
       \ | nnoremap <buffer> <C-h> :<C-u>call QF_C_H()<CR>

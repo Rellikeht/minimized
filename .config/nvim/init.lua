@@ -1051,6 +1051,20 @@ vim.api.nvim_create_autocmd(
   }
 )
 
+-- small qol thing (mainly for git and quickfix)
+vim.api.nvim_create_autocmd(
+  { "BufReadPost" }, {
+    pattern = "*",
+    callback = function(args)
+      local buftypes = { "nofile", "nowrite", "quickfix", "help" }
+      if not vim.tbl_contains(buftypes, vim.bo.buftype) then
+        return
+      end
+      vim.keymap.set("n", "Z", ":<C-u>q<CR>", { buffer = true })
+    end
+  }
+)
+
 --  }}}
 
 -- quickfix {{{
@@ -1083,9 +1097,6 @@ vim.api.nvim_create_autocmd(
   "FileType", {
     pattern = "qf",
     callback = function()
-      vim.keymap.set(
-        { "n", "v" }, "Z", ":<C-u>q<CR>", { noremap = true, buffer = true }
-      )
       vim.keymap.set(
         "n", "J", "j<C-h>", { remap = true, buffer = true, silent = true }
       )
