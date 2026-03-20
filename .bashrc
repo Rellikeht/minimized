@@ -176,6 +176,18 @@ alias b6='cd  ../../../../../..'
 alias b7='cd  ../../../../../../..'
 alias b8='cd  ../../../../../../../..'
 
+__tmux_session_helper() {
+    tmux attach-session -t "$1" 2>/dev/null ||
+        tmux new-session -c "$2" -s "$1"
+}
+
+alias tp0='__tmux_session_helper "$PWD" "$PWD"'
+alias tp1='__tmux_session_helper "${PWD##*/}" "$PWD"'
+alias tp2='__tmux_session_helper "${${PWD%/*}##*/}/${PWD##*/}" "$PWD"'
+alias ta0='__tmux_session_helper "$PWD"'
+alias ta1='__tmux_session_helper "${PWD##*/}"'
+alias ta2='__tmux_session_helper "${${PWD%/*}##*/}/${PWD##*/}"'
+
 source_if_exists "$HOME/.bash_aliases"
 
 #  }}}
