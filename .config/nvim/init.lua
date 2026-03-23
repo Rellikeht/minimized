@@ -233,6 +233,10 @@ vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
 for key, cmd in pairs({
   h = ":<C-u>set hls!<CR>",
   c = ":<C-u>set ignorecase!<CR>",
+  w = ":<C-u>setlocal wrap!<CR>",
+  W = ":<C-u>set wrap!<CR>",
+  -- ????
+  s = ":<C-u>exe \"set laststatus=\".v:count<CR>",
 }) do
   vim.keymap.set("n", "<Space>q" .. key, cmd, {})
 end
@@ -1002,14 +1006,6 @@ end
 
 -- other {{{
 
-for key, cmd in pairs({
-  w = ":<C-u>setlocal wrap!<CR>",
-  W = ":<C-u>set wrap!<CR>",
-  s = ":<C-u>SetOptionCount laststatus<CR>",
-}) do
-  vim.keymap.set("n", "<Space>q" .. key, cmd, { noremap = true })
-end
-
 vim.keymap.set("i", "<C-Space>",
   "(pumvisible()) ? '<C-n>' : (&omnifunc == '') ? '<C-n>' : '<C-x><C-o>'",
   { expr = true, noremap = true }
@@ -1677,9 +1673,9 @@ function CodeInternal()
     }, --  }}}
 
     -- TODO rainbow ?
-    -- TODO linters ?
-    -- TODO formatters (neoformat)
-    -- TODO snippets
+    -- TODO linters, formatters (neoformat) or some general make plugin
+    -- with good config (probably impossible to find)
+    -- TODO snippets (probably too much work)
   }
   ) --  }}}
 

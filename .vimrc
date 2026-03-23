@@ -18,7 +18,7 @@ set secure " just in case something is wrong with modelines
 set autoindent " auto indent after <CR> in insert mode
 set cindent " TODO
 set wildmenu " TODO
-set termguicolors " TODO
+set termguicolors " truecolor for the win
 set undofile " undo history persistent throughout editor on and off
 set ruler " show line and column in bottom
 set autochdir " TODO
@@ -408,6 +408,7 @@ function s:FullConfigCommit() abort
   "junegunn/fzf"
   "junegunn/fzf.vim"
   "Rellikeht/fzf-vim-extras"
+  "vifm/vifm.vim"
 
   " ???
   " https://github.com/whiteinge/diffconflicts
