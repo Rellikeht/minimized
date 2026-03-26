@@ -190,9 +190,10 @@ inoremap <expr> <C-@> (pumvisible()) ?
 
 map <Space> <Nop>
 map <Space>qh :<C-u>set hlsearch!<CR>
-map <Space>qw :<C-u>set wrap!<CR>
+map <Space>qw :<C-u>setlocal wrap!<CR>
+map <Space>qW :<C-u>set wrap!<CR>
 noremap g<C-t> gt
-noremap gt :tabnext<CR>
+noremap gt :<C-u>exe 'tabnext '.(v:count ? '+'.v:count : '')<CR>
 
 " }}}
 

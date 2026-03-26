@@ -231,12 +231,12 @@ vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
 -- settings {{{
 
 for key, cmd in pairs({
-  h = ":<C-u>set hls!<CR>",
+  h = ":<C-u>set hlsearch!<CR>",
   c = ":<C-u>set ignorecase!<CR>",
   w = ":<C-u>setlocal wrap!<CR>",
   W = ":<C-u>set wrap!<CR>",
-  -- ????
   s = ":<C-u>exe \"set laststatus=\".v:count<CR>",
+  v = ":<C-u>exe \"set conceallevel=\".v:count<CR>",
 }) do
   vim.keymap.set("n", "<Space>q" .. key, cmd, {})
 end
@@ -959,8 +959,7 @@ vim.g.markdown_minlines = 1000
 -- tabs {{{
 
 vim.keymap.set(
-  "n", "<C-w><C-h>",
-  ":<C-u>exe 'tab tag '.expand('<cword>')<CR>", {}
+  "n", "<C-w><C-h>", ":<C-u>exe 'tab tag '.expand('<cword>')<CR>"
 )
 
 vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
@@ -971,7 +970,9 @@ vim.keymap.set("n", "<Tab>h", ":<C-u>tab help<Space>", {})
 vim.keymap.set("n", "<Tab>H", ":<C-u>-tab help<Space>", {})
 
 -- I don't like original gt
-vim.keymap.set("n", "gt", ":tabnext<CR>", {})
+vim.keymap.set(
+  "n", "gt", ":<C-u>exe 'tabnext '.(v:count ? '+'.v:count : '')<CR>"
+)
 vim.keymap.set("n", "g<C-t>", "gt", { noremap = true })
 
 --  }}}
