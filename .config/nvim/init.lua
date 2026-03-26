@@ -209,7 +209,7 @@ vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv")
 
 -- just in case
-vim.keymap.set("n", "<Space>", "<Nop>", {})
+vim.keymap.set("n", "<Space>", "<Nop>")
 vim.keymap.set("n", ",", "<Nop>", { remap = true })
 vim.keymap.set("n", ";", "<Nop>", { remap = true })
 
@@ -238,7 +238,7 @@ for key, cmd in pairs({
   s = ":<C-u>exe \"set laststatus=\".v:count<CR>",
   v = ":<C-u>exe \"set conceallevel=\".v:count<CR>",
 }) do
-  vim.keymap.set("n", "<Space>q" .. key, cmd, {})
+  vim.keymap.set("n", "<Space>q" .. key, cmd)
 end
 
 --  }}}
@@ -531,7 +531,7 @@ H.table_join(
     {
       "Rellikeht/vim-extras", --  {{{
       config = function()
-        vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>", {})
+        vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>")
         EXTRAS = require("extras")
 
         vim.api.nvim_create_user_command(
@@ -574,33 +574,33 @@ H.table_join(
     {
       "Rellikeht/arglist-plus", --  {{{
       config = function()
-        vim.keymap.set("n", "<Space>n", "<Plug>ANext", {})
-        vim.keymap.set("n", "<Space>p", "<Plug>APrev", {})
-        vim.keymap.set("n", "<Space>o", ":AEdit<Space>", {})
-        vim.keymap.set("n", "<Space>O", ":AEditBuf<Space>", {})
-        vim.keymap.set("n", "<Space>e", ":<C-u>AGo<Space>", {})
-        vim.keymap.set("n", "<Space>E", ":<C-u>AGo!<Space>", {})
-        vim.keymap.set("n", "<Space>j", ":ASelect<CR>", {})
-        vim.keymap.set("n", "<Space>J", ":ASelect!<CR>", {})
-        vim.keymap.set("n", "<Space>ll", "<Plug>AList", {})
-        vim.keymap.set("n", "<Space>lL", "<Plug>AVertList", {})
-        vim.keymap.set("n", "<Space>la", ":AAdd<Space>", {})
-        vim.keymap.set("n", "<Space>lA", ":AAddBuf<Space>", {})
-        vim.keymap.set("n", "<Space>lr", ":AReplace<Space>", {})
-        vim.keymap.set("n", "<Space>lR", ":AReplaceBuf<Space>", {})
-        vim.keymap.set("n", "<Space>lm", ":AMoveCurN<CR>", {})
-        vim.keymap.set("n", "<Space>lM", ":<C-u>AMoveCur<Space>", {})
-        vim.keymap.set("n", "<Space>lc", "<Plug>AGlobToLoc", {})
-        vim.keymap.set("n", "<Space>ld", ":<C-u>ADelN<CR>", {})
-        vim.keymap.set("n", "<Space>lq", ":<C-u>ABufDelN<Space>", {})
-        vim.keymap.set("n", "<Space>lQ", ":<C-u>ABufWipeN<Space>", {})
+        vim.keymap.set("n", "<Space>n", "<Plug>ANext")
+        vim.keymap.set("n", "<Space>p", "<Plug>APrev")
+        vim.keymap.set("n", "<Space>o", ":AEdit<Space>")
+        vim.keymap.set("n", "<Space>O", ":AEditBuf<Space>")
+        vim.keymap.set("n", "<Space>e", ":<C-u>AGo<Space>")
+        vim.keymap.set("n", "<Space>E", ":<C-u>AGo!<Space>")
+        vim.keymap.set("n", "<Space>j", ":ASelect<CR>")
+        vim.keymap.set("n", "<Space>J", ":ASelect!<CR>")
+        vim.keymap.set("n", "<Space>ll", "<Plug>AList")
+        vim.keymap.set("n", "<Space>lL", "<Plug>AVertList")
+        vim.keymap.set("n", "<Space>la", ":AAdd<Space>")
+        vim.keymap.set("n", "<Space>lA", ":AAddBuf<Space>")
+        vim.keymap.set("n", "<Space>lr", ":AReplace<Space>")
+        vim.keymap.set("n", "<Space>lR", ":AReplaceBuf<Space>")
+        vim.keymap.set("n", "<Space>lm", ":AMoveCurN<CR>")
+        vim.keymap.set("n", "<Space>lM", ":<C-u>AMoveCur<Space>")
+        vim.keymap.set("n", "<Space>lc", "<Plug>AGlobToLoc")
+        vim.keymap.set("n", "<Space>ld", ":<C-u>ADelN<CR>")
+        vim.keymap.set("n", "<Space>lq", ":<C-u>ABufDelN<Space>")
+        vim.keymap.set("n", "<Space>lQ", ":<C-u>ABufWipeN<Space>")
 
         vim.keymap.set("n", "<Space>lu", function()
           vim.cmd.AEdit(vim.fn.expand("<cfile>"))
-        end, {})
+        end)
         vim.keymap.set("n", "<Space>lU", function()
           vim.cmd.AAdd(vim.fn.expand("<cfile>"))
-        end, {})
+        end)
 
         vim.api.nvim_create_autocmd(
           "FileType", {
@@ -621,7 +621,7 @@ H.table_join(
     {
       "tpope/vim-fugitive", --  {{{
       config = function()
-        vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>", {})
+        vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>")
 
         -- TODO is this enough (https://github.com/junegunn/gv.vim exists)
         vim.api.nvim_create_user_command(
@@ -964,10 +964,10 @@ vim.keymap.set(
 
 vim.keymap.set("n", "<Tab>", "<Nop>", { noremap = true })
 vim.keymap.set("n", "<C-j>", "<Tab>", { noremap = true })
-vim.keymap.set("n", "<Tab><Tab>", ":<C-u>tab<Space>", {})
-vim.keymap.set("n", "<Tab><S-Tab>", ":<C-u>-tab<Space>", {})
-vim.keymap.set("n", "<Tab>h", ":<C-u>tab help<Space>", {})
-vim.keymap.set("n", "<Tab>H", ":<C-u>-tab help<Space>", {})
+vim.keymap.set("n", "<Tab><Tab>", ":<C-u>tab<Space>")
+vim.keymap.set("n", "<Tab><S-Tab>", ":<C-u>-tab<Space>")
+vim.keymap.set("n", "<Tab>h", ":<C-u>tab help<Space>")
+vim.keymap.set("n", "<Tab>H", ":<C-u>-tab help<Space>")
 
 -- I don't like original gt
 vim.keymap.set(
@@ -985,7 +985,7 @@ for key, cmd in pairs({
   p = ":<C-u>pwd<CR>",
   j = ":<C-u>jumps<CR>",
 }) do
-  vim.keymap.set("n", "<Space>i" .. key, cmd, {})
+  vim.keymap.set("n", "<Space>i" .. key, cmd)
 end
 
 --  }}}
@@ -1210,10 +1210,8 @@ function CodeInternal()
   -- diagnostic {{{
 
   vim.keymap
-      .set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>", {})
-  vim.keymap.set(
-    "n", "<Leader>dqr", ":<C-u>LspRestart<CR>", {}
-  )
+      .set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>")
+  vim.keymap.set("n", "<Leader>dqr", ":<C-u>LspRestart<CR>")
   vim.keymap.set(
     "n", "<Leader>de", vim.diagnostic.open_float,
     { desc = "show diagnostics under cursor" }
