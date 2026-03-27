@@ -1048,6 +1048,19 @@ vim.api.nvim_create_autocmd(
   }
 )
 
+-- all those backslashes are annoying
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = { "markdown" },
+    callback = function()
+      vim.cmd([[
+        syntax match ConcealedEscape "\\\ze\([*_`<>$]\|\[\|\]\)" conceal
+        syntax match ConcealedEscape "\\\zs\\" conceal
+      ]])
+    end
+  }
+)
+
 -- small qol thing (mainly for git and quickfix)
 vim.api.nvim_create_autocmd(
   { "BufReadPost" }, {

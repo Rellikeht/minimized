@@ -223,6 +223,16 @@ autocmd BufReadPost *
       \ | nmap <buffer> Z :<C-u>q<CR>
       \ | endif
 
+" why by default is there a background
+highlight Conceal guibg=NONE
+
+" because all those backslashes are annoying
+autocmd FileType markdown
+      \ syntax match ConcealedEscape "\\\ze\([*_<>$]\|\[\|\]\)" conceal
+      \ | syntax match ConcealedEscape "\\`" conceal cchar=`
+      \ | syntax match ConcealedEscape "\\\\" conceal cchar=\
+" two last because \zs and \ze somehow don't work properly 
+
 " }}}
 
 " quickfix/loclist management {{{
