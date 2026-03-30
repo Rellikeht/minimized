@@ -203,7 +203,7 @@ autocmd BufNewFile,BufRead *.v set filetype=verilog
 
 " sometimes it is better to have 2 spaces instead of 4
 autocmd FileType
-      \ python,nix,lua,vim,zig,nim,markdown,ocaml,elixir,haskell,kbd
+      \ nix,lua,vim,zig,nim,markdown,ocaml,elixir,haskell,kbd
       \ setlocal softtabstop=2 shiftwidth=2
 
 runtime! ftplugin/man.vim

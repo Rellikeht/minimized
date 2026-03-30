@@ -358,7 +358,8 @@ if vim.g.vscode then
   --  {{{
 
   VSCODE = require("vscode")
-  -- TODO make 'autochdir' work with vscode
+  -- TODO make 'autochdir' work with vscode (almost certainly
+  -- impossible)
 
   -- action binds {{{
 
@@ -1029,7 +1030,6 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   "FileType", {
     pattern = { --  {{{
-      -- "python",
       "nix",
       "lua",
       "vim",
@@ -1100,7 +1100,7 @@ for key, map in pairs({
     H.qlcmd("open", height)()
   end,
 }) do
-  vim.keymap.set("n", key, map, { noremap = true, silent = true })
+  vim.keymap.set("n", key, map, { silent = true })
 end
 
 vim.api.nvim_create_autocmd(
@@ -1114,29 +1114,22 @@ vim.api.nvim_create_autocmd(
         "n", "K", "k<C-h>", { remap = true, buffer = true, silent = true }
       )
 
+      local hist_funcs
       if vim.fn.win_gettype() == "loclist" then
-        vim.keymap.set(
-          "n", "<",
-          function() vim.cmd.lolder({ count = vim.v.count1 }) end,
-          { noremap = true, buffer = true }
-        )
-        vim.keymap.set(
-          "n", ">",
-          function() vim.cmd.lnewer({ count = vim.v.count1 }) end,
-          { noremap = true, buffer = true }
-        )
+        hist_funcs = {vim.cmd.lolder, vim.cmd.lnewer}
       else
-        vim.keymap.set(
-          "n", "<",
-          function() vim.cmd.colder({ count = vim.v.count1 }) end,
-          { noremap = true, buffer = true }
-        )
-        vim.keymap.set(
-          "n", ">",
-          function() vim.cmd.cnewer({ count = vim.v.count1 }) end,
-          { noremap = true, buffer = true }
-        )
+        hist_funcs = {vim.cmd.colder, vim.cmd.cnewer}
       end
+      vim.keymap.set(
+        "n", "<",
+        function() hist_funcs[1]({ count = vim.v.count1 }) end,
+        { buffer = true }
+      )
+      vim.keymap.set(
+        "n", ">",
+        function() hist_funcs[2]({ count = vim.v.count1 }) end,
+        { buffer = true }
+      )
 
       -- just a default <CR> with fold opening
       vim.keymap.set(
