@@ -609,10 +609,10 @@ H.table_join(
             callback = function()
               vim.keymap.set("n", "<Space>lu", function()
                 vim.cmd.AEdit(vim.g["extras#get_netrw_fp"]())
-              end, { buffer = true, silent = true })
+              end, { buffer = true })
               vim.keymap.set("n", "<Space>lU", function()
                 vim.cmd.AAdd(vim.g["extras#get_netrw_fp"]())
-              end, { buffer = true, silent = true })
+              end, { buffer = true })
             end
           }
         )
@@ -1144,7 +1144,7 @@ vim.api.nvim_create_autocmd(
           vim.cmd.execute("\"normal \\<CR>\"")
           vim.fn.win_gotoid(wid)
           vim.fn.setpos(".", qpos)
-        end, { buffer = true, noremap = true, }
+        end, { buffer = true, noremap = true, silent = true }
       )
       -- jump to element and close window
       vim.keymap.set(
@@ -1454,7 +1454,7 @@ function CodeInternal()
     }, --  }}}
 
     {
-      "norcalli/nvim-colorizer.lua", --  {{{
+      "catgoose/nvim-colorizer.lua", --  {{{
       config = function()
         local color_css_conf = {
           -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB

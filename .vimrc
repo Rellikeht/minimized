@@ -267,7 +267,7 @@ autocmd FileType qf
       \ nnoremap <buffer> <silent> <CR> <CR>zv
       \ | nnoremap <buffer> <silent> <expr> <BS> 
       \ "<CR>zv".(g:qfloc ? ":lclose<CR>" : ":cclose<CR>")
-      \ | nnoremap <buffer> <C-h> :<C-u>call QF_C_H()<CR>
+      \ | nnoremap <buffer> <silent> <C-h> :<C-u>call QF_C_H()<CR>
       \ | if win_gettype() == "loclist"
       \ | nnoremap <silent> <expr> < ":<C-u>".v:count1."lolder<CR>"
       \ | nnoremap <silent> <expr> > ":<C-u>".v:count1."lnewer<CR>"
