@@ -701,63 +701,6 @@ H.table_join(
     }, --  }}}
 
     {
-      "nvim-treesitter/nvim-treesitter", --  {{{
-      requires = {
-        -- for helpers in config
-        "Rellikeht/lazy-utils"
-      },
-      run = ":TSUpdate",
-      branch = "master",
-      config = function()
-        local treesitter = require("nvim-treesitter")
-        local parser_configs =
-            require("nvim-treesitter.parsers").get_parser_configs()
-        treesitter.prefer_git = false
-        if vim.fn.has("win32") == 1 then
-          treesitter.compilers = { "zig", "cl", "cc", "gcc", "clang" }
-        end
-
-        require("nvim-treesitter.configs").setup({
-          highlight = {
-            enable = true,
-            additional_vim_regex_highlighting = false,
-          },
-          indent = { enable = true },
-          incremental_selection = { enable = true },
-          sync_install = false,
-          auto_install = true,
-          matchup = {
-            enable = false,
-            disable_virtual_text = true,
-            include_match_words = true,
-          },
-          ensure_installed = {
-            "vim",
-            "vimdoc",
-            "diff",
-            "bash",
-            "lua",
-            "python",
-            "markdown",
-            "typst",
-          },
-        })
-
-        -- full auto syntax fallback when treesitter is not available
-        vim.api.nvim_create_autocmd(
-          "FileType", {
-            pattern = "*",
-            callback = function(args)
-              if parser_configs[args.match] == nil then
-                vim.bo.syntax = args.match
-              end
-            end
-          }
-        )
-      end,
-    }, --  }}}
-
-    {
       "junegunn/fzf.vim", --  {{{
       requires = {
         "junegunn/fzf",
@@ -875,8 +818,7 @@ PCKR.add(plugin_configs)
 -- other settings {{{
 
 vim.cmd.filetype("plugin", "indent", "on")
--- to be set for specific filetypes that don't have treesitter grammars
-vim.cmd.syntax("manual")
+vim.cmd.syntax("on")
 vim.cmd.packadd("cfilter")
 
 -- better man for shell
