@@ -13,7 +13,7 @@ set smartcase " <3
 set incsearch " <3
 set showmatch " show matching brackets when inserting
 set hidden " allow leaving buffers unwritten when jumping
-set modeline " it may be useful sometimes
+set nomodeline " maybe it is too dangerous
 set secure " just in case something is wrong with modelines
 set autoindent " auto indent after <CR> in insert mode
 set cindent " TODO
@@ -32,6 +32,7 @@ set noautoread " TODO
 set noswapfile " TODO
 set noautoread " disable automatic read file when changed from outside
 
+set modelines=3 " why are there 5 by default
 set scrolloff=5 " lines from edge when scrolling
 set shortmess=atsOF " less annoying messages
 set mouse=a " enable full mouse experience

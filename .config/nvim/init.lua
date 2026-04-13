@@ -99,9 +99,10 @@ end
 for _, option in pairs({
   "shelltemp", -- TODO document
   "timeout",   -- wait for next key in combination until it is pressed
-  "autoread",  --  disable automatic read file when changed from outside
+  "autoread",  -- disable automatic read file when changed from outside
   "swapfile",  --
-  "hlsearch",  -- let t be set
+  "hlsearch",  -- 
+  "modeline",  -- maybe it is too dangerous
 }) do
   vim.opt[option] = false
 end
