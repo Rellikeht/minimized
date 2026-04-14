@@ -536,30 +536,10 @@ H.table_join(
         vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>")
         EXTRAS = require("extras")
 
-        vim.api.nvim_create_user_command(
-          "QFilterCfile", function(_)
-            if vim.g.qfloc == 1 then
-              vim.cmd.LFilterCfile()
-            else
-              vim.cmd.CFilterCfile()
-            end
-          end,
-          {}
-        )
         local shell_cmd_complete = "shellcmd"
         if vim.fn.has("nvim-0.11") == 1 then
           shell_cmd_complete = "shellcmdline"
         end
-        vim.api.nvim_create_user_command(
-          "QSysExpr", function(args)
-            if vim.g.qfloc == 1 then
-              vim.cmd.LSysExpr(args.args)
-            else
-              vim.cmd.CSysExpr(args.args)
-            end
-          end,
-          { nargs = 1, complete = shell_cmd_complete }
-        )
       end
     }, --  }}}
 
@@ -588,14 +568,9 @@ H.table_join(
         vim.keymap.set("n", "<Space>lL", "<Plug>AVertList")
         vim.keymap.set("n", "<Space>la", ":AAdd<Space>")
         vim.keymap.set("n", "<Space>lA", ":AAddBuf<Space>")
-        vim.keymap.set("n", "<Space>lr", ":AReplace<Space>")
-        vim.keymap.set("n", "<Space>lR", ":AReplaceBuf<Space>")
         vim.keymap.set("n", "<Space>lm", ":AMoveCurN<CR>")
         vim.keymap.set("n", "<Space>lM", ":<C-u>AMoveCur<Space>")
-        vim.keymap.set("n", "<Space>lc", "<Plug>AGlobToLoc")
         vim.keymap.set("n", "<Space>ld", ":<C-u>ADelN<CR>")
-        vim.keymap.set("n", "<Space>lq", ":<C-u>ABufDelN<Space>")
-        vim.keymap.set("n", "<Space>lQ", ":<C-u>ABufWipeN<Space>")
 
         vim.keymap.set("n", "<Space>lu", function()
           vim.cmd.AEdit(vim.fn.expand("<cfile>"))
@@ -641,8 +616,7 @@ H.table_join(
               " --format='%h %cd%d %s (%an)'" ..
               (opts.bang and " %" or "")
             )
-          end,
-          { bang = true, nargs = "*" }
+          end, { bang = true, nargs = "*" }
         )
 
         -- two way diff almost like in
@@ -658,8 +632,7 @@ H.table_join(
             vim.cmd.diffthis()
             vim.cmd.execute('"normal \\<C-w>w"')
             vim.o.autoread = autoread
-          end,
-          { nargs = 0 }
+          end, { nargs = 0 }
         )
         vim.api.nvim_create_user_command(
           "Gdiff2", function(_)
@@ -671,8 +644,7 @@ H.table_join(
             vim.cmd.diffthis()
             vim.cmd.execute('"normal \\<C-w>w"')
             vim.o.autoread = autoread
-          end,
-          { nargs = 0 }
+          end, { nargs = 0 }
         )
       end
     }, --  }}}
@@ -1059,9 +1031,9 @@ vim.api.nvim_create_autocmd(
 
       local hist_funcs
       if vim.fn.win_gettype() == "loclist" then
-        hist_funcs = {vim.cmd.lolder, vim.cmd.lnewer}
+        hist_funcs = { vim.cmd.lolder, vim.cmd.lnewer }
       else
-        hist_funcs = {vim.cmd.colder, vim.cmd.cnewer}
+        hist_funcs = { vim.cmd.colder, vim.cmd.cnewer }
       end
       vim.keymap.set(
         "n", "<",
@@ -1098,6 +1070,21 @@ vim.api.nvim_create_autocmd(
       )
     end
   }
+)
+
+--  }}}
+
+-- commands {{{
+
+vim.api.nvim_create_user_command(
+  "ServerStart", function(args)
+    vim.fn.serverstart(args.args)
+  end, { nargs = 1 }
+)
+vim.api.nvim_create_user_command(
+  "ServerStop", function(args)
+    vim.fn.serverstop(args.args)
+  end, { nargs = 1 }
 )
 
 --  }}}
