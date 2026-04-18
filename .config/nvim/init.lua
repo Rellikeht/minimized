@@ -300,6 +300,8 @@ local plugin_configs = { -- {{{
   "tpope/vim-abolish",
   "tpope/vim-eunuch",
   "wellle/targets.vim",
+  "kmonad/kmonad-vim",
+  "vifm/vifm.vim",
 
   {
     "machakann/vim-sandwich", --  {{{
@@ -528,7 +530,6 @@ H.table_join(
   { --  {{{
     "ryvnf/readline.vim",
     "CervEdin/vim-minizinc",
-    "kmonad/kmonad-vim",
 
     {
       "Rellikeht/vim-extras", --  {{{

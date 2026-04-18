@@ -200,7 +200,12 @@ noremap gt :<C-u>exe 'tabnext '.(v:count ? '+'.v:count : '')<CR>
 
 " filetype and syntax trickery {{{
 
+" not following this trend
 autocmd BufNewFile,BufRead *.v set filetype=verilog
+" almost works
+autocmd BufNewFile,BufRead *.vifm,vifmrc set filetype=vim
+" this is bad
+"autocmd BufNewFile,BufRead *.kbd set filetype=scheme
 
 " sometimes it is better to have 2 spaces instead of 4
 autocmd FileType

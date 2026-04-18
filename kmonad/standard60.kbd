@@ -32,6 +32,7 @@
   sym (layer-toggle symbols)
   ss  (layer-toggle shift-symbols)
   tad (tap-next tab (layer-toggle additional))
+  QUT " ;; " for tricking scheme syntax highlighting
 )
 
 (deflayer main
@@ -45,7 +46,7 @@
 (deflayer symbols
   _    `    [    ]    _    _    _    _    _    _    _    _    _    _
   _    _    _    ę    _    _    _    _    _    ó    _    _    _    _
-  _    ą    ś    {    }    _    _    "    '    ł    _    _    _
+  _    ą    ś    {    }    _    _    @QUT '    ł    _    _    _
   @ss  ż    ź    ć    _    _    ń    _    _    _    _    @ss
   _    _    _              _              _         _    _
 )
