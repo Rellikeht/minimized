@@ -21,22 +21,24 @@ set wildmenu " TODO
 set termguicolors " truecolor for the win
 set undofile " undo history persistent throughout editor on and off
 set ruler " show line and column in bottom
-set autochdir " TODO
+set autochdir " life without this is sad
 set splitright
 set splitbelow
 set wrap
 
 set notimeout " wait for next key in combination until it is pressed
 set noshelltemp " TODO
-set noautoread " TODO
-set noswapfile " TODO
-set noautoread " disable automatic read file when changed from outside
+set noswapfile " those files are messy
+set noautoread
 
-set modelines=3 " why are there 5 by default
+set laststatus=1 "  TODO
 set scrolloff=5 " lines from edge when scrolling
 set shortmess=atsOF " less annoying messages
 set mouse=a " enable full mouse experience
-set backspace=indent,eol,start " normal backspace behavior unlike default
+" normal backspace behavior unlike default
+set backspace=indent,eol,start
+set modelines=3 " why are there 5 by default
+
 set wildchar=<Tab> " TODO
 set wildmode=list:longest,full " TODO
 set wildoptions=tagfile " TODO

@@ -101,12 +101,13 @@ for _, option in pairs({
   "timeout",   -- wait for next key in combination until it is pressed
   "autoread",  -- disable automatic read file when changed from outside
   "swapfile",  --
-  "hlsearch",  -- 
+  "hlsearch",  -- no idea which default is saner
   "modeline",  -- maybe it is too dangerous
 }) do
   vim.opt[option] = false
 end
 
+vim.opt.laststatus = 1                            --  TODO
 vim.opt.scrolloff = 5                             -- lines from edge when scrolling
 vim.opt.shortmess = "atsOF"                       -- less annoying messages
 vim.opt.mouse = "a"                               -- enable full mouse experience
