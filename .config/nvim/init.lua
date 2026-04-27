@@ -1089,6 +1089,19 @@ vim.api.nvim_create_user_command(
   end, { nargs = 1 }
 )
 
+if vim.fn.has("nvim-0.12") == 1 then
+  -- why did they remove something so nice
+  vim.api.nvim_create_user_command("LspInfo", ":checkhealth vim.lsp", {})
+  vim.api.nvim_create_user_command(
+    "LspLog", function()
+      vim.cmd("tabedit " .. vim.lsp.log.get_filename())
+    end, {}
+  )
+  vim.keymap.set("n", "<Leader>dqr", ":<C-u>lsp restart<CR>")
+else
+  vim.keymap.set("n", "<Leader>dqr", ":<C-u>LspRestart<CR>")
+end
+
 --  }}}
 
 if vim.g.neovide then
@@ -1147,9 +1160,7 @@ function CodeInternal()
 
   -- diagnostic {{{
 
-  vim.keymap
-      .set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>")
-  vim.keymap.set("n", "<Leader>dqr", ":<C-u>LspRestart<CR>")
+  vim.keymap.set("n", "<Leader>dqi", ":<C-u>LspInfo<CR>")
   vim.keymap.set(
     "n", "<Leader>de", vim.diagnostic.open_float,
     { desc = "show diagnostics under cursor" }

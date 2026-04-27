@@ -88,17 +88,6 @@ if v:version >= 900 || has("nvim-0.9")
   set splitkeep=screen " TODO
   set wildoptions+=fuzzy " TODO
 endif
-if v:version >= 900 || has("nvim-0.11")
-  set completeopt+=fuzzy
-endif
-
-if has("nvim")
-  let g:data_dir = stdpath("data")
-else
-  let g:data_dir = "$HOME/.local/share/vim"
-  set undodir=~/.local/state/vim/undo
-  call mkdir(&undodir, "p")
-endif
 
 let g:grep_grepprg = "grep\\ -HEInr\\ $*\\ /dev/null"
 let g:rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S\\ $*\\ /dev/null"
@@ -293,6 +282,8 @@ endfunction
 
 " little helper to fill quickfix/loclist from shell command
 if v:version >= 900 || has("nvim-0.11")
+  set completeopt+=fuzzy
+
   command! -nargs=1 -complete=shellcmdline CSysExpr
         \ call setqflist(s:prepare_qf_elements(<f-args>), "r")
   command! -nargs=1 -complete=shellcmdline LSysExpr
@@ -474,6 +465,22 @@ autocmd VimEnter * let g:vim_started = 1
 call s:ConfigPlugins()
 
 " }}}
+
+if has("nvim") " {{{
+  let g:data_dir = stdpath("data")
+
+  if has("nvim-0.12")
+    -- I like those commands
+    command! LspInfo checkhealth vim.lsp
+    command! LspLog exe 'tabedit '.luaeval("vim.lsp.log.get_filename()")
+  endif
+
+  " }}}
+else " {{{
+  let g:data_dir = "$HOME/.local/share/vim"
+  set undodir=~/.local/state/vim/undo
+  call mkdir(&undodir, "p")
+endif " }}}
 
 if filereadable(expand('~/.local.vimrc'))
   source ~/.local.vimrc
