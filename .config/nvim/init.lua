@@ -97,7 +97,7 @@ for _, option in pairs({
 end
 
 for _, option in pairs({
-  "shelltemp", -- TODO document
+  "shelltemp", -- temp files for commands aren't necessary anyway
   "timeout",   -- wait for next key in combination until it is pressed
   "autoread",  -- disable automatic read file when changed from outside
   "swapfile",  --
@@ -107,19 +107,21 @@ for _, option in pairs({
   vim.opt[option] = false
 end
 
-vim.opt.laststatus = 1                            --  TODO
-vim.opt.scrolloff = 5                             -- lines from edge when scrolling
-vim.opt.shortmess = "atsOF"                       -- less annoying messages
-vim.opt.mouse = "a"                               -- enable full mouse experience
-vim.opt.formatoptions:remove({ "j", "t" })        -- TODO document
-vim.opt.formatoptions:append("croqlwn")           -- TODO document
+vim.opt.laststatus = 1                       --  status bar is annoying with only one window
+vim.opt.scrolloff = 5                        -- lines from edge when scrolling
+vim.opt.shortmess = "atsOF"                  -- less annoying messages
+vim.opt.mouse = "a"                          -- enable full mouse experience
+vim.opt.formatoptions:remove({ "j", "t" })   -- TODO document
+vim.opt.formatoptions:append("croqlwn")      -- TODO document
 
-vim.opt.wildchar = string.byte("\t")              -- TODO document
-vim.opt.wildmode = "list:longest,full"            -- TODO document
-vim.opt.wildoptions = "tagfile"                   -- ??
-vim.opt.omnifunc = "syntaxcomplete#Complete"      -- default vim function for <C-x>o
-vim.opt.complete = "w,b,s,i,d,.,k"                -- TODO document
-vim.opt.switchbuf:append({ "usetab", "useopen" }) -- TODO document
+vim.opt.wildchar = string.byte("\t")         -- TODO document
+vim.opt.wildmode = "list:longest,full"       -- TODO document
+vim.opt.wildoptions = "tagfile"              -- ??
+vim.opt.omnifunc = "syntaxcomplete#Complete" -- default vim function for <C-x>o
+vim.opt.complete = "w,b,s,i,d,.,k"           -- TODO document
+
+-- TODO document
+vim.opt.switchbuf:append({ "usetab", "useopen" })
 
 -- best completion settings out there
 vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
@@ -815,10 +817,10 @@ vim.api.nvim_create_autocmd(
 
 vim.opt.autochdir = true
 
-vim.opt.softtabstop = 4         -- amount of spaces when pressing tab
-vim.opt.shiftwidth = 4          -- amount of spaces for other indentation
-vim.opt.tabstop = 4             -- width of tab characters
-vim.opt.textwidth = 72          -- TODO should this be set here
+vim.opt.softtabstop = 4        -- amount of spaces when pressing tab
+vim.opt.shiftwidth = 4         -- amount of spaces for other indentation
+vim.opt.tabstop = 4            -- width of tab characters
+vim.opt.textwidth = 72         -- TODO should this be set here
 
 vim.opt.maxmempattern = 200000 -- don't crash vim on patterns problem
 vim.opt.fileencoding = "utf8"  -- why isn't this a default

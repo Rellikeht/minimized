@@ -17,7 +17,7 @@ set nomodeline " maybe it is too dangerous
 set secure " just in case something is wrong with modelines
 set autoindent " auto indent after <CR> in insert mode
 set cindent " TODO
-set wildmenu " TODO
+set wildmenu " nice help for :
 set termguicolors " truecolor for the win
 set undofile " undo history persistent throughout editor on and off
 set ruler " show line and column in bottom
@@ -27,11 +27,11 @@ set splitbelow
 set wrap
 
 set notimeout " wait for next key in combination until it is pressed
-set noshelltemp " TODO
+set noshelltemp " temp files for commands aren't necessary anyway
 set noswapfile " those files are messy
-set noautoread
+set noautoread " it is better to ask
 
-set laststatus=1 "  TODO
+set laststatus=1 " status bar is annoying with only one window
 set scrolloff=5 " lines from edge when scrolling
 set shortmess=atsOF " less annoying messages
 set mouse=a " enable full mouse experience
@@ -61,7 +61,7 @@ set formatoptions+=croqlwn
 set softtabstop=4 " amount of spaces when pressing tab
 set shiftwidth=4 " amount of spaces for other indentation
 set tabstop=4 " width of tab characters
-"set textwidth=80 " TODO does this matter
+set textwidth=72 " TODO does this matter
 set maxmempattern=200000 " don't crash vim on pattern problem
 set fileencoding=utf8 " why isn't this a default
 set updatetime=2000 " waiting for CursorHold and writing to swap 
@@ -71,7 +71,7 @@ set foldmarker=\ {{{,\ }}} " just in case
 set foldlevelstart=99 " turns out folds closed by default are slow
 set showbreak=>\  " wrap indicator
 set wrapmargin=1 " size of margin on the right
-set undolevels=12000
+set undolevels=10000
 set history=10000
 
 " those make <Esc> work instantly
