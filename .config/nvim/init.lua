@@ -1024,6 +1024,7 @@ vim.api.nvim_create_autocmd(
   "FileType", {
     pattern = "qf",
     callback = function()
+      vim.bo.buflisted = false
       vim.keymap.set(
         "n", "J", "j<C-h>", { remap = true, buffer = true, silent = true }
       )

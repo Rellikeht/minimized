@@ -272,6 +272,7 @@ autocmd FileType qf
       \ | nnoremap <silent> <expr> < ":<C-u>".v:count1."colder<CR>"
       \ | nnoremap <silent> <expr> > ":<C-u>".v:count1."cnewer<CR>"
       \ | endif
+      \ | setlocal nobuflisted
 
 function s:prepare_qf_elements(cmd) abort
   return map(
