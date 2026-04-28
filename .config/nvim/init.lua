@@ -820,9 +820,9 @@ vim.opt.shiftwidth = 4          -- amount of spaces for other indentation
 vim.opt.tabstop = 4             -- width of tab characters
 vim.opt.textwidth = 72          -- TODO should this be set here
 
-vim.opt.maxmempattern = 2000000 -- computers are fast enough for big patterns
-vim.opt.fileencoding = "utf8"   -- why isn't this a default
-vim.opt.updatetime = 2000       -- waiting for CursorHold and writing to swap
+vim.opt.maxmempattern = 200000 -- don't crash vim on patterns problem
+vim.opt.fileencoding = "utf8"  -- why isn't this a default
+vim.opt.updatetime = 2000      -- waiting for CursorHold and writing to swap
 vim.opt.undolevels = 20000
 vim.opt.history = 10000
 
@@ -1234,7 +1234,6 @@ function CodeInternal()
   PCKR.add({ -- {{{
 
     {
-      -- TODO isn't this an overkill
       "andymass/vim-matchup", --  {{{
       config_pre = function()
         -- this makes things little faster and isn't that useful
