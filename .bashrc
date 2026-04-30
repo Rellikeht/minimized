@@ -12,8 +12,12 @@ source_if_exists() {
     [ -r "$1" ] && source "$1"
 }
 
-update_path() {
+append_path() {
     [[ "$PATH" =~ (.*":")*$1(":".*)* ]] || export PATH="$PATH:$1"
+}
+
+insert_path() {
+    [[ "$PATH" =~ (.*":")*$1(":".*)* ]] || export PATH="$1:$PATH"
 }
 
 source_if_exists "$HOME/.bashrc.pre.local"
@@ -73,8 +77,8 @@ if [ -x /usr/bin/dircolors ]; then
     fi
 fi
 
-update_path "$HOME/bin"
-update_path "$HOME/.local/bin"
+insert_path "$HOME/bin"
+insert_path "$HOME/.local/bin"
 
 if [ -z "$EDITOR" ]; then
     if has_exe nvim; then
@@ -183,10 +187,10 @@ __tmux_session_helper() {
 
 alias tp0='__tmux_session_helper "$PWD" "$PWD"'
 alias tp1='__tmux_session_helper "${PWD##*/}" "$PWD"'
-alias tp2='__tmux_session_helper "${${PWD%/*}##*/}/${PWD##*/}" "$PWD"'
+alias tp2='__tmux_session_helper "$(echo "$PWD" | sed -E "s#^.*/([^/]+/[^/]+)\$#\1#")" "$PWD"'
 alias ta0='__tmux_session_helper "$PWD"'
 alias ta1='__tmux_session_helper "${PWD##*/}"'
-alias ta2='__tmux_session_helper "${${PWD%/*}##*/}/${PWD##*/}"'
+alias tp2='__tmux_session_helper "$(echo "$PWD" | sed -E "s#^.*/([^/]+/[^/]+)\$#\1#")"'
 
 source_if_exists "$HOME/.bash_aliases"
 
