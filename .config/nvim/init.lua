@@ -146,6 +146,9 @@ vim.opt.cedit = "<C-j>"
 -- fastest option (at least for now)
 vim.opt.regexpengine = 1
 
+-- IMPORTANT WHEN SWITCHING GREPS works with grep and rg
+vim.o.grepformat = "%f:%l:%c:%m,%f:%l:%c,%f:%l%m,%f  %l%m"
+
 --  }}}
 
 -- helper variables {{{
@@ -153,9 +156,13 @@ vim.opt.regexpengine = 1
 -- sensible default
 vim.g.ql_height = math.floor(2 * vim.o.lines / 5)
 
-vim.g.grep_grepprg = "grep\\ -HEInr"
+vim.g.grep_grepprg = "grep\\ -HInr"
 vim.g.rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S"
 vim.g.ag_grepprg = "ag\\ --vimgrep\\ --hidden\\ -S"
+vim.g.git_grepprg = "git\\ grep\\ -HInr"
+vim.g.pcre2_grepprg = "pcre2grep\\ -HInr"
+vim.g.pcre_grepprg = "pcregrep\\ -HInr"
+vim.g.ack_grepprg = "ack\\ -HS"
 vim.g.win_grepprg = "findstr\\ /n\\ $*\\ nul"
 
 --  }}}

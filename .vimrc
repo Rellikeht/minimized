@@ -89,10 +89,17 @@ if v:version >= 900 || has("nvim-0.9")
   set wildoptions+=fuzzy " TODO
 endif
 
-let g:grep_grepprg = "grep\\ -HEInr\\ $*\\ /dev/null"
-let g:rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S\\ $*\\ /dev/null"
-let g:ag_grepprg = "ag\\ --vimgrep\\ --hidden\\ -S\\ $*\\ /dev/null"
+let g:grep_grepprg = "grep\\ -HInr"
+let g:rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S"
+let g:ag_grepprg = "ag\\ --vimgrep\\ --hidden\\ -S"
+let g:git_grepprg = "git\\ grep\\ -HInr"
+let g:pcre2_grepprg = "pcre2grep\\ -HInr"
+let g:pcre_grepprg = "pcregrep\\ -HInr"
+let g:ack_grepprg = "ack\\ -HS"
 let g:win_grepprg = "findstr\\ /n\\ $*\\ nul"
+
+" IMPORTANT WHEN SWITCHING GREPS works with grep and rg
+set grepformat=%f:%l:%c:%m,%f:%l:%c,%f:%l%m,%f\ \ %l%m
 
 if has('win32') " windows friendly options, just in case {{{ 
   set shell=powershell.exe
@@ -471,7 +478,7 @@ if has("nvim") " {{{
   let g:data_dir = stdpath("data")
 
   if has("nvim-0.12")
-    -- I like those commands
+    " I like those commands
     command! LspInfo checkhealth vim.lsp
     command! LspLog exe 'tabedit '.luaeval("vim.lsp.log.get_filename()")
   endif
