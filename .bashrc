@@ -176,9 +176,9 @@ alias b2='cd ../..'
 alias b3='cd ../../..'
 alias b4='cd ../../../..'
 alias b5='cd ../../../../..'
-alias b6='cd  ../../../../../..'
-alias b7='cd  ../../../../../../..'
-alias b8='cd  ../../../../../../../..'
+alias b6='cd ../../../../../..'
+alias b7='cd ../../../../../../..'
+alias b8='cd ../../../../../../../..'
 
 __tmux_session_helper() {
     tmux attach-session -t "$1" 2>/dev/null ||
@@ -190,7 +190,7 @@ alias tp1='__tmux_session_helper "${PWD##*/}" "$PWD"'
 alias tp2='__tmux_session_helper "$(echo "$PWD" | sed -E "s#^.*/([^/]+/[^/]+)\$#\1#")" "$PWD"'
 alias ta0='__tmux_session_helper "$PWD"'
 alias ta1='__tmux_session_helper "${PWD##*/}"'
-alias tp2='__tmux_session_helper "$(echo "$PWD" | sed -E "s#^.*/([^/]+/[^/]+)\$#\1#")"'
+alias ta2='__tmux_session_helper "$(echo "$PWD" | sed -E "s#^.*/([^/]+/[^/]+)\$#\1#")"'
 
 source_if_exists "$HOME/.bash_aliases"
 
@@ -231,7 +231,7 @@ activate_z_lua() {
      (_zlua --add "$PWD" 2> /dev/null &)
 EOF
     "$@" bash once enhanced echo fzf >"$TEMP1"
-    patch -u "$TEMP1" -i "$TEMP2" &>/dev/null
+    patch --no-backup-if-mismatch -u "$TEMP1" -i "$TEMP2" &>/dev/null
     rm -f "*.orig"
     eval "$(cat "$TEMP1")"
     rm "$TEMP1" "$TEMP2"
