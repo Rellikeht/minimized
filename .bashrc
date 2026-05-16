@@ -198,6 +198,19 @@ source_if_exists "$HOME/.bash_aliases"
 
 # integrations {{{
 
+# they screwed up ...
+if [ "$__NIX_SOURCED" != "$UID" ]; then
+    source_if_exists "$HOME/.nix-profile/etc/profile.d/nix.sh"
+    export __NIX_SOURCED="$UID"
+fi
+
+# ... in two places
+export __HM_SESS_VARS_SOURCED=
+if [ "$__HM_SESS_SOURCED" != "$UID" ]; then
+    source_if_exists "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+    export __HM_SESS_SOURCED="$UID"
+fi
+
 if has_exe micromamba; then
     eval "$(micromamba shell hook -s bash)"
 elif has_exe conda; then
