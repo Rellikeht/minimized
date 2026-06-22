@@ -545,12 +545,8 @@ H.table_join(
       "Rellikeht/vim-extras", --  {{{
       config = function()
         vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>")
+        vim.keymap.set("n", "<Tab>O", ":-TabOpen<Space>")
         EXTRAS = require("extras")
-
-        local shell_cmd_complete = "shellcmd"
-        if vim.fn.has("nvim-0.11") == 1 then
-          shell_cmd_complete = "shellcmdline"
-        end
       end
     }, --  }}}
 
@@ -991,7 +987,7 @@ vim.api.nvim_create_autocmd(
 vim.api.nvim_create_autocmd(
   { "BufReadPost" }, {
     pattern = "*",
-    callback = function(args)
+    callback = function(_)
       local buftypes = { "nofile", "nowrite", "quickfix", "help" }
       if not vim.tbl_contains(buftypes, vim.bo.buftype) then
         return
@@ -1157,12 +1153,12 @@ function CodeInternal()
   else
     function NvimDiagNext()
       ---@diagnostic disable-next-line: deprecated
-      vim.diagnostic.goto_next()
+      return vim.diagnostic.goto_next
     end
 
     function NvimDiagPrev()
       ---@diagnostic disable-next-line: deprecated
-      vim.diagnostic.goto_prev()
+      return vim.diagnostic.goto_prev
     end
   end --  }}}
 
