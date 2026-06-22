@@ -477,6 +477,17 @@ call s:ConfigPlugins()
 if has("nvim") " {{{
   let g:data_dir = stdpath("data")
 
+  "https://www.reddit.com/r/neovim/comments/pibo9c/comment/hbvtrco/
+  function! s:GotoFirstFloat() abort
+    for w in range(1, winnr('$'))
+      let c = nvim_win_get_config(win_getid(w))
+      if c.focusable && !empty(c.relative)
+        execute w . 'wincmd w'
+      endif
+    endfor
+  endfunction
+  nnoremap <C-w><Space> :<C-u>call <SID>GotoFirstFloat()<CR>
+
   if has("nvim-0.12")
     " I like those commands
     command! LspInfo checkhealth vim.lsp
