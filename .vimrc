@@ -418,6 +418,7 @@ function s:FullConfigCommit() abort
         \ ['wellle', 'targets.vim'],
         \ ['machakann', 'vim-sandwich'],
         \ ['ryvnf', 'readline.vim'],
+        \ ['NickeZ', 'epics.vim'],
         \ ]
 
   " ??
