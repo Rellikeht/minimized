@@ -922,8 +922,15 @@ vim.keymap.set("n", "<Tab>h", ":<C-u>tab help<Space>")
 vim.keymap.set("n", "<Tab>H", ":<C-u>-tab help<Space>")
 
 -- I don't like original gt
+vim.g.TabCnt = function()
+  if vim.v.count == 0 then
+    return 0
+  end
+  local amount = vim.fn.tabpagenr("#")
+  return (vim.v.count - 1) % amount + 1
+end
 vim.keymap.set(
-  "n", "gt", ":<C-u>exe 'tabnext '.(v:count ? '+'.v:count : '')<CR>"
+  "n", "gt", ":<C-u>exe 'tabnext '.(TabCnt() ? '+'.TabCnt() : '')<CR>", { silent = true }
 )
 vim.keymap.set("n", "g<C-t>", "gt", { noremap = true })
 

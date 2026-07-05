@@ -194,12 +194,20 @@ inoremap <C-Space> <C-@>
 inoremap <expr> <C-@> (pumvisible()) ?
       \ '<C-n>' : (&omnifunc == '') ? '<C-n>' : '<C-x><C-o>'
 
+function TabCnt() abort
+  if !v:count
+    return 0
+  end
+  let l:amount = tabpagenr("#")
+  return (v:count - 1) % l:amount + 1
+endfunction
+
 map <Space> <Nop>
 map <Space>qh :<C-u>set hlsearch!<CR>
 map <Space>qw :<C-u>setlocal wrap!<CR>
 map <Space>qW :<C-u>set wrap!<CR>
 noremap g<C-t> gt
-noremap gt :<C-u>exe 'tabnext '.(v:count ? '+'.v:count : '')<CR>
+noremap <silent> gt :<C-u>exe 'tabnext '.(TabCnt() ? '+'.TabCnt() : '')<CR>
 
 " }}}
 
