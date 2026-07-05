@@ -78,16 +78,16 @@ HOOKS = {}
 for _, option in pairs({
   "number",
   "relativenumber",
-  "ruler",         -- show line and column in bottom
-  "incsearch",     -- <3
-  "ignorecase",    -- for smartcase to work
-  "smartcase",     -- <3
-  "showmatch",     -- show matching brackets when inserting
-  "hidden",        -- allow leaving buffers unwritten when jumping
-  "secure",        -- just in case something is wrong with modelines
-  "autoindent",    -- auto indent after <CR> in insert mode
-  "wildmenu",      -- TODO document
-  "undofile",      -- undo history persistent throughout editor on and off
+  "ruler",      -- show line and column in bottom
+  "incsearch",  -- <3
+  "ignorecase", -- for smartcase to work
+  "smartcase",  -- <3
+  "showmatch",  -- show matching brackets when inserting
+  "hidden",     -- allow leaving buffers unwritten when jumping
+  "secure",     -- just in case something is wrong with modelines
+  "autoindent", -- auto indent after <CR> in insert mode
+  "wildmenu",   -- TODO document
+  "undofile",   -- undo history persistent throughout editor on and off
   "splitright",
   "splitbelow",
   "wrap",
@@ -200,7 +200,7 @@ else
   vim.cmd.colorscheme("retrobox")
   -- to see difference between windows
   vim.api.nvim_set_hl(0, "StatusLine", {
-    cterm = nil, ctermbg="White", ctermfg="Black"
+    cterm = nil, ctermbg = "White", ctermfg = "Black"
   })
   vim.opt.cursorline = false
 end
@@ -1444,6 +1444,9 @@ function CodeInternal()
     {
       "catgoose/nvim-colorizer.lua", --  {{{
       config = function()
+        if not vim.o.termguicolors then
+          return
+        end
         local color_css_conf = {
           -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
           css = true,

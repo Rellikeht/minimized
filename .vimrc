@@ -332,7 +332,7 @@ function s:ConfigPlugins() abort " {{{
 
   if get(g:, "loaded_fugitive", 0) && !get(g:, "configured_fugitive", 0)
     let g:configured_fugitive = 1
-    nnoremap <Leader>G :<C-u>G
+    nnoremap <Leader>G :<C-u>G<CR>
   endif
 
   if get(g:, "loaded_sneak_plugin", 0) && !get(g:, "configured_sneak_plugin", 0)
