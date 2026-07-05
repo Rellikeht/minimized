@@ -973,7 +973,7 @@ vim.keymap.set("i", "<C-Space>",
 
 -- https://www.reddit.com/r/neovim/comments/pibo9c/comment/hbvtrco/
 vim.keymap.set("n", "<C-w><Space>", function()
-  for nr in 1, vim.fn.winnr("$") do
+  for nr = 1, vim.fn.winnr("$") do
     local conf = vim.api.nvim_win_get_config(vim.fn.win_getid(nr))
     if conf.focusable and conf.relative ~= "" then
       vim.cmd.wincmd({ args = { "w" }, count = nr })
