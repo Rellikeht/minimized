@@ -87,7 +87,6 @@ for _, option in pairs({
   "secure",        -- just in case something is wrong with modelines
   "autoindent",    -- auto indent after <CR> in insert mode
   "wildmenu",      -- TODO document
-  "termguicolors", -- 24 bit colors are nice (if they are available)
   "undofile",      -- undo history persistent throughout editor on and off
   "splitright",
   "splitbelow",
@@ -187,12 +186,24 @@ else -- {{{
   vim.cmd("set grepprg=" .. vim.g.grep_grepprg)
 end --  }}}
 
--- colors {{{
+-- looks {{{
 
--- TODO good looking in cterm
--- isn't available sometimes
-local success = pcall(vim.cmd.colorscheme, "zaibatsu")
-if not success then pcall(vim.cmd.colorscheme, "retrobox") end
+-- default logic fails to do this well in some cases
+if vim.env.DISPLAY ~= nil then
+  vim.opt.termguicolors = true
+  -- isn't available sometimes
+  local success = pcall(vim.cmd.colorscheme, "zaibatsu")
+  if not success then pcall(vim.cmd.colorscheme, "retrobox") end
+  vim.opt.cursorline = true
+else
+  vim.opt.termguicolors = false
+  vim.cmd.colorscheme("retrobox")
+  -- to see difference between windows
+  vim.api.nvim_set_hl(0, "StatusLine", {
+    cterm = nil, ctermbg="White", ctermfg="Black"
+  })
+  vim.opt.cursorline = false
+end
 
 -- simple yet effective
 vim.api.nvim_set_hl(0, "NormalFloat", { link = "CursorLine" })
@@ -858,7 +869,6 @@ vim.opt.showbreak = "> "         -- wrap indicator
 vim.opt.wrapmargin = 1           -- size of margin on the right
 
 vim.opt.expandtab = true         -- use spaces instead of tabs
-vim.opt.cursorline = true        -- highlight line where cursor is
 
 -- TODO is this necessary
 -- vim.opt.ttimeout = true
