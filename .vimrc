@@ -18,7 +18,6 @@ set secure " just in case something is wrong with modelines
 set autoindent " auto indent after <CR> in insert mode
 set cindent " TODO
 set wildmenu " nice help for :
-set termguicolors " truecolor for the win
 set undofile " undo history persistent throughout editor on and off
 set ruler " show line and column in bottom
 set autochdir " life without this is sad
@@ -87,6 +86,14 @@ let maplocalleader = '_'
 if v:version >= 900 || has("nvim-0.9")
   set splitkeep=screen " TODO
   set wildoptions+=fuzzy " TODO
+endif
+
+if $DISPLAY != ""
+  set termguicolors " truecolor for the win
+else
+  set notermguicolors
+  hi StatusLineNC cterm=bold
+  hi StatusLine cterm=reverse
 endif
 
 let g:grep_grepprg = "grep\\ -HInr"
