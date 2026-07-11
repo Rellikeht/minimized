@@ -213,12 +213,17 @@ noremap <silent> gt :<C-u>exe 'tabnext '.(TabCnt() ? '+'.TabCnt() : '')<CR>
 
 " filetype and syntax trickery {{{
 
-" not following this trend
+" not following v lang trend, there are more useful technologies
 autocmd BufNewFile,BufRead *.v set filetype=verilog
 " almost works
 autocmd BufNewFile,BufRead *.vifm,vifmrc set filetype=vim
-" this is bad
-"autocmd BufNewFile,BufRead *.kbd set filetype=scheme
+
+augroup BackupSyntax
+  " this is bad
+  "autocmd BufNewFile,BufRead *.kbd set filetype=scheme
+  " because builtin syntax isn't there sometimes somehow
+  autocmd BufNewFile,BufRead *.nim,*.nims,*.nimble set syntax=python
+augroup END
 
 " sometimes it is better to have 2 spaces instead of 4
 autocmd FileType
@@ -434,10 +439,10 @@ function s:FullConfigCommit() abort
         \ ['machakann', 'vim-sandwich'],
         \ ['ryvnf', 'readline.vim'],
         \ ['NickeZ', 'epics.vim'],
+        \ ['Rellikeht', 'nim.vim'],
         \ ]
 
   " ??
-  "mhinz/vim-signify"
   "Rellikeht/lazy-utils"
   "junegunn/fzf"
   "junegunn/fzf.vim"
@@ -449,7 +454,7 @@ function s:FullConfigCommit() abort
 
   " }}}
 
-  call plug#begin(g:vim_plug_dir) " TODO {{{
+  call plug#begin(g:vim_plug_dir) " {{{
 
   " inform plug about plugins to load
   for [author, plugin] in l:plugins
@@ -463,6 +468,12 @@ function s:FullConfigCommit() abort
   for [_, plugin] in l:plugins
     call plug#load(plugin)
   endfor
+
+  " }}}
+
+  " other {{{
+
+  silent! augroup! BackupSyntax
 
   " }}}
 

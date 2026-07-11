@@ -321,8 +321,6 @@ local plugin_configs = { -- {{{
   "tpope/vim-abolish",
   "tpope/vim-eunuch",
   "wellle/targets.vim",
-  "kmonad/kmonad-vim",
-  "vifm/vifm.vim",
 
   {
     "machakann/vim-sandwich", --  {{{
@@ -550,8 +548,11 @@ H.table_join(
   plugin_configs,
   { --  {{{
     "ryvnf/readline.vim",
+    "kmonad/kmonad-vim",
     "CervEdin/vim-minizinc",
     "NickeZ/epics.vim",
+    "vifm/vifm.vim",
+    "Rellikeht/nim.vim", -- because somehow syntax doesn't come built-in
 
     {
       "Rellikeht/vim-extras", --  {{{
@@ -1415,8 +1416,7 @@ function CodeInternal()
     {
       "mhinz/vim-signify", --  {{{
       config = function()
-        -- TODO for some reason this fails after fresh setup
-        vim.cmd.SignifyToggle()
+        pcall(vim.cmd.SignifyToggle)
         vim.keymap.set(
           "n", "+", "<Plug>(signify-next-hunk)", { noremap = true }
         )
