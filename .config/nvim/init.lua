@@ -340,6 +340,7 @@ PCKR.setup({
 --  }}}
 
 local plugin_configs = { -- {{{
+  -- TODO candidate for removal
   "tpope/vim-abolish",
   "tpope/vim-eunuch",
   "wellle/targets.vim",
@@ -360,7 +361,8 @@ local plugin_configs = { -- {{{
   }, --  }}}
 
   {
-    "justinmk/vim-sneak",   --  {{{
+    "justinmk/vim-sneak", --  {{{
+    requires = { "tpope/vim-repeat" },
 
     config_pre = function() --  {{{
       vim.g["sneak#prompt"] = " <sneak> "
@@ -688,6 +690,7 @@ H.table_join(
       end
     }, --  }}}
 
+    -- TODO candidate for removal
     {
       "windwp/nvim-autopairs", -- {{{
       config = function()
@@ -1299,6 +1302,7 @@ function CodeInternal()
 
   PCKR.add({ -- {{{
 
+    -- TODO candidate for removal
     {
       "andymass/vim-matchup", --  {{{
       config_pre = function()
@@ -1507,10 +1511,9 @@ function CodeInternal()
     },     --  }}}
 
     {
-      "neovim/nvim-lspconfig",  --  {{{
-      requires = {
-        "Rellikeht/vim-extras", -- for helpers in config
-      },
+      "neovim/nvim-lspconfig", --  {{{
+      -- for helpers in config
+      requires = { "Rellikeht/vim-extras" },
       config = function()
         if vim.fn.has("nvim-0.10") == 0 then return end
 
