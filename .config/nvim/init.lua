@@ -690,24 +690,6 @@ H.table_join(
       end
     }, --  }}}
 
-    -- TODO candidate for removal
-    {
-      "windwp/nvim-autopairs", -- {{{
-      config = function()
-        require("nvim-autopairs").setup({
-          disable_filetype = {
-            "markdown",
-            "text",
-            "fzf",
-            "fugitive",
-          },
-          disable_in_macro = true,
-          disable_in_visualblock = false,
-          disable_in_replace_mode = true,
-        })
-      end,
-    }, --  }}}
-
     {
       "junegunn/fzf.vim", --  {{{
       requires = {
