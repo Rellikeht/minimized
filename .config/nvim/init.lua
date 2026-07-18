@@ -65,8 +65,6 @@ H = {
   end,
 }
 
-HOOKS = {}
-
 --  }}}
 
 --  }}}
@@ -317,7 +315,6 @@ PCKR.setup({
 --  }}}
 
 local plugin_configs = { -- {{{
-  "tpope/vim-tbone",
   "tpope/vim-abolish",
   "tpope/vim-eunuch",
   "wellle/targets.vim",
@@ -560,16 +557,6 @@ H.table_join(
         vim.keymap.set("n", "<Tab>o", ":+0TabOpen<Space>")
         vim.keymap.set("n", "<Tab>O", ":-TabOpen<Space>")
         EXTRAS = require("extras")
-      end
-    }, --  }}}
-
-    {
-      "Rellikeht/lazy-utils", --  {{{
-      config = function()
-        if HOOKS.lazy_utils ~= nil then
-          HOOKS.lazy_utils()
-          HOOKS.lazy_utils = nil
-        end
       end
     }, --  }}}
 
@@ -1033,7 +1020,7 @@ vim.api.nvim_create_autocmd(
 
 -- small qol thing (mainly for git and quickfix)
 vim.api.nvim_create_autocmd(
-  { "BufReadPost" }, {
+  { "BufReadPost", "BufNew" }, {
     pattern = "*",
     callback = function(_)
       local buftypes = { "nofile", "nowrite", "quickfix", "help" }
@@ -1621,9 +1608,8 @@ function CodeInternal()
       "Rellikeht/nvim-lsp-config", --  {{{
       requires = {
         "neovim/nvim-lspconfig",
-        "Rellikeht/lazy-utils",
         "mfussenegger/nvim-jdtls",
-        "p00f/clangd_extensions.nvim",
+        "https://git.sr.ht/~chinmay/clangd_extensions.nvim",
       },
       config = function()
         LSP_CONFIG_CALLBACK = function(bufnr)
