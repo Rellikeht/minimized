@@ -184,6 +184,31 @@ else -- {{{
   vim.cmd("set grepprg=" .. vim.g.grep_grepprg)
 end --  }}}
 
+-- netrw {{{
+
+vim.g.netrw_banner = 0       -- no banner, more space
+vim.g.netrw_hide = 0         -- show all files
+vim.g.netrw_liststyle = 3    -- tree view
+vim.g.netrw_browse_split = 4 -- open in previous window by default
+vim.g.netrw_winsize = "40%"  -- default win size
+
+vim.api.nvim_create_autocmd(
+  "FileType", {
+    pattern = "netrw",
+    callback = function()
+      vim.keymap.set(
+        "n", "<BS>", function()
+          vim.g.netrw_browse_split = 0
+          vim.cmd.execute("\"normal \\<CR>\"")
+          vim.g.netrw_browse_split = 4
+        end, { buffer = true, silent = true, noremap = true }
+      )
+    end,
+  }
+)
+
+--  }}}
+
 -- looks {{{
 
 -- default logic fails to do this well in some cases
