@@ -430,9 +430,7 @@ function s:FullConfigCommit() abort
         \ ['mbbill', 'undotree'],
         \ ['justinmk', 'vim-sneak'],
         \ ['tpope', 'vim-fugitive'],
-        \ ['tpope', 'vim-abolish'],
         \ ['tpope', 'vim-eunuch'],
-        \ ['tpope', 'vim-tbone'],
         \ ['tpope', 'vim-commentary'],
         \ ['tpope', 'vim-repeat'],
         \ ['wellle', 'targets.vim'],
@@ -440,14 +438,8 @@ function s:FullConfigCommit() abort
         \ ['ryvnf', 'readline.vim'],
         \ ['NickeZ', 'epics.vim'],
         \ ['Rellikeht', 'nim.vim'],
+        \ ['CervEdin', 'vim-minizinc'],
         \ ]
-
-  " ??
-  "Rellikeht/lazy-utils"
-  "junegunn/fzf"
-  "junegunn/fzf.vim"
-  "Rellikeht/fzf-vim-extras"
-  "vifm/vifm.vim"
 
   " ???
   " https://github.com/whiteinge/diffconflicts
