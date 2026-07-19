@@ -155,7 +155,7 @@ noremap <C-p> ,
 noremap <C-n> ;
 
 noremap <C-h> <C-]>
-nnoremap <C-w><C-h> :<C-u>exe 'tab tag '.Expand('<cword>')<CR>
+noremap <C-k> :tag<CR>
 
 " n and N do zv when not mapped manually to anything
 " and don't when mapped
@@ -322,6 +322,25 @@ else
   command! -nargs=1 -complete=shellcmd LSysExpr
         \ call setloclist(0, s:prepare_qf_elements(<f-args>), "r")
 endif
+
+" }}}
+
+" netrw {{{
+
+let g:netrw_banner = 0 " no banner, more space
+let g:netrw_hide = 0 " show all files
+let g:netrw_liststyle = 3 " tree view
+let g:netrw_browse_split = 4 " open in previous window by default
+let g:netrw_winsize = "40%" " default win size
+
+function! s:NetrwBS() abort
+  let g:netrw_browse_split = 0
+  execute "normal \<CR>"
+  let g:netrw_browse_split = 4
+endfunction
+
+autocmd FileType netrw
+      \ nmap <buffer> <silent> <BS> :call <SID>NetrwBS()<CR>
 
 " }}}
 
