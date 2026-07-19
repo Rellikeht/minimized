@@ -579,6 +579,23 @@ H.table_join(
     "vifm/vifm.vim",
     "Rellikeht/nim.vim", -- because somehow syntax doesn't come built-in
 
+    -- TODO candidate for removal
+    -- for some reason this doesn't work with `:Code`
+    {
+      "andymass/vim-matchup", --  {{{
+      config_pre = function()
+        -- this makes things little faster and isn't that useful
+        vim.g.matchup_matchparen_enabled = false
+        -- not really needed, but nice when matchparen gets enabled
+        vim.g.matchup_matchparen_offscreen = { method = "popup" }
+        vim.g.matchup_surround_enabled = true
+        vim.g.matchup_delim_noskips = false
+        vim.g.matchup_delim_stopline = 100000
+        vim.g.matchup_matchparen_stopline = 1000
+        vim.g.matchup_motion_cursor_end = true
+      end,
+    }, --  }}}
+
     {
       "Rellikeht/vim-extras", --  {{{
       config = function()
@@ -1284,22 +1301,6 @@ function CodeInternal()
   --  }}}
 
   PCKR.add({ -- {{{
-
-    -- TODO candidate for removal
-    {
-      "andymass/vim-matchup", --  {{{
-      config_pre = function()
-        -- this makes things little faster and isn't that useful
-        vim.g.matchup_matchparen_enabled = false
-        -- not really needed, but nice when matchparen gets enabled
-        vim.g.matchup_matchparen_offscreen = { method = "popup" }
-        vim.g.matchup_surround_enabled = true
-        vim.g.matchup_delim_noskips = false
-        vim.g.matchup_delim_stopline = 100000
-        vim.g.matchup_motion_cursor_end = true
-      end,
-    }, --  }}}
-
     {
       "jpalardy/vim-slime",   --  {{{
 
