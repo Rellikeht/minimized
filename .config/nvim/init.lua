@@ -269,6 +269,7 @@ vim.keymap.set("n", "yaee ", "gg0vG$y`'", { noremap = true })
 
 vim.keymap.set("n", "Q", "<Nop>", { remap = true })
 vim.keymap.set("", "<C-h>", "<C-]>", { remap = true })
+vim.keymap.set("n", "<C-k>", ":tag<CR>", { silent = true })
 vim.keymap.set("s", "<BS>", "<BS>i", { noremap = true })
 
 --  }}}
@@ -1498,7 +1499,6 @@ function CodeInternal()
       requires = { "Rellikeht/vim-extras" },
       config = function()
         if vim.fn.has("nvim-0.10") == 0 then return end
-
         local lspconfig = require("lspconfig")
         lspconfig.util.default_config = vim.tbl_extend(
           "force",
@@ -1510,29 +1510,8 @@ function CodeInternal()
           "LspAttach", {
             group = vim.api.nvim_create_augroup("UserLspConfig", {}),
             callback = function(args)
-              -- helpers {{{
-
               local bufnr = args.buf
-              local client = vim.lsp.get_client_by_id(
-                args.data.client_id
-              )
-
-              --  }}}
-
-              -- insert mode {{{
-
-              if client and
-                  client.server_capabilities.completionProvider then
-                -- Enable completion triggered by <c-x><c-o>
-                -- TODO this seems to disappear
-                vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
-              end
-              if client and
-                  client.server_capabilities.definitionProvider then
-                vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
-              end
-
-              --  }}}
+              -- TODO omnifunc sometimes disappears
 
               -- navigation {{{
 
