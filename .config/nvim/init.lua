@@ -653,19 +653,28 @@ H.table_join(
         vim.keymap.set("n", "<Leader>G", ":<C-u>G<CR>")
 
         -- TODO is this enough (https://github.com/junegunn/gv.vim exists)
+        -- more overengineered version of "a dog"
+        -- (https://stackoverflow.com/a/35075021)
+        local gv_cmd =
+            "G log" ..
+            " --decorate" ..
+            " --graph" ..
+            " --date='format:%F %T'" ..
+            " --format='%h %cd%d %s (%an)'"
+
         vim.api.nvim_create_user_command(
           "GV",
-          -- a dog (https://stackoverflow.com/a/35075021)
-          -- "G log --all --decorate --oneline --graph",
-          -- more overengineered version
+          function(opts)
+            vim.cmd(gv_cmd .. " --all" .. (opts.bang and " %" or ""))
+          end, { bang = true, nargs = "*" }
+        )
+        vim.api.nvim_create_user_command(
+          "Gv",
+          -- little brother, more useful sometimes
           function(opts)
             vim.cmd(
-              "G log" ..
-              " --all" ..
-              " --decorate" ..
-              " --graph" ..
-              " --date='format:%F %T'" ..
-              " --format='%h %cd%d %s (%an)'" ..
+              gv_cmd ..
+              " --branches --tags" ..
               (opts.bang and " %" or "")
             )
           end, { bang = true, nargs = "*" }
