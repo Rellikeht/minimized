@@ -401,12 +401,12 @@ local plugin_configs = { -- {{{
 
 --  }}}
 
-if vim.g.vscode then
-  --  {{{
-
+if vim.g.vscode then --  {{{
   VSCODE = require("vscode")
   -- TODO make 'autochdir' work with vscode (almost certainly
   -- impossible)
+  -- TODO simulate tag stack for go to definition would be nice to do
+  -- this for general commands, but may be too hard
 
   -- action binds {{{
 
@@ -1182,8 +1182,7 @@ end
 
 --  }}}
 
-if vim.g.neovide then
-  -- {{{
+if vim.g.neovide then -- {{{
   vim.g.neovide_refresh_rate_idle = 5
   vim.g.neovide_cursor_hack = false
   vim.g.neovide_scale_factor = 0.95
@@ -1196,13 +1195,11 @@ if vim.g.neovide then
   end, { noremap = true })
 
   --  }}}
-elseif vim.fn.has("gui_running") == 1 then
-  -- {{{
-
+elseif vim.fn.has("gui_running") == 1 then -- {{{
   --  }}}
-else
-  -- {{{
-end --  }}}
+else                                       -- {{{
+
+end                                        --  }}}
 
 function CodeInternal()
   if CODE_LOADED ~= nil then return end
@@ -1310,6 +1307,7 @@ function CodeInternal()
   --  }}}
 
   PCKR.add({ -- {{{
+
     {
       "jpalardy/vim-slime",   --  {{{
 
