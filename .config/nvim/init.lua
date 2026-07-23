@@ -1016,7 +1016,16 @@ end)
 vim.api.nvim_create_autocmd(
   { "BufRead", "BufNewFile" }, {
     pattern = "*.v",
-    callback = function() vim.o.filetype = "verilog" end
+    callback = function() vim.bo.filetype = "verilog" end
+  }
+)
+
+-- I edit more EPICS .cmd files (some) than windows cmd files (none) so
+-- this nice workaround makes sense
+vim.api.nvim_create_autocmd(
+  { "BufRead", "BufNewFile" }, {
+    pattern = "*.cmd",
+    callback = function() vim.bo.filetype = "tcsh" end
   }
 )
 

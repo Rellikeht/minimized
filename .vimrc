@@ -217,6 +217,9 @@ noremap <silent> gt :<C-u>exe 'tabnext '.(TabCnt() ? '+'.TabCnt() : '')<CR>
 autocmd BufNewFile,BufRead *.v set filetype=verilog
 " almost works
 autocmd BufNewFile,BufRead *.vifm,vifmrc set filetype=vim
+" I edit more EPICS .cmd files (some) than windows cmd files (none) so
+" this nice workaround makes sense
+autocmd BufNewFile,BufRead *.cmd set filetype=tcsh
 
 augroup BackupSyntax
   " this is bad
