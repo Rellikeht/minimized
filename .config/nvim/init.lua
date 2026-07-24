@@ -84,7 +84,7 @@ for _, option in pairs({
   "hidden",     -- allow leaving buffers unwritten when jumping
   "secure",     -- just in case something is wrong with modelines
   "autoindent", -- auto indent after <CR> in insert mode
-  "wildmenu",   -- TODO document
+  "wildmenu",   -- nice command line completion
   "undofile",   -- undo history persistent throughout editor on and off
   "splitright",
   "splitbelow",
@@ -125,6 +125,7 @@ vim.opt.completeopt = { "menu", "menuone", "noselect", "noinsert" }
 
 if vim.fn.has("nvim-0.9") == 1 then
   vim.opt.splitkeep = "screen" -- TODO document
+  ---@diagnostic disable-next-line: undefined-field
   vim.opt.wildoptions:append({ "fuzzy" })
 end
 if vim.fn.has("nvim-0.11") == 1 then
@@ -341,7 +342,6 @@ PCKR.setup({
 --  }}}
 
 local plugin_configs = { -- {{{
-  -- TODO candidate for removal
   "tpope/vim-abolish",
   "tpope/vim-eunuch",
   "wellle/targets.vim",
@@ -976,7 +976,6 @@ end
 
 -- diff {{{
 
--- TODO verify
 -- imprefect helpers because :diffg //2<CR> is long
 for key, cmd in pairs({
   ["o0"] = ":<C-u>diffget //0<CR>",
@@ -1115,6 +1114,7 @@ end)
 -- filetypes {{{
 
 vim.api.nvim_create_autocmd(
+---@diagnostic disable-next-line: param-type-mismatch
   { "BufRead", "BufNewFile" }, {
     pattern = "*.v",
     callback = function() vim.bo.filetype = "verilog" end
@@ -1124,6 +1124,7 @@ vim.api.nvim_create_autocmd(
 -- I edit more EPICS .cmd files (some) than windows cmd files (none) so
 -- this nice workaround makes sense
 vim.api.nvim_create_autocmd(
+---@diagnostic disable-next-line: param-type-mismatch
   { "BufRead", "BufNewFile" }, {
     pattern = "*.cmd",
     callback = function() vim.bo.filetype = "tcsh" end
@@ -1167,6 +1168,7 @@ vim.api.nvim_create_autocmd(
 
 -- small qol thing (mainly for git and quickfix)
 vim.api.nvim_create_autocmd(
+---@diagnostic disable-next-line: param-type-mismatch
   { "BufReadPost", "BufNew" }, {
     pattern = "*",
     callback = function(_)
@@ -1437,6 +1439,7 @@ function CodeInternal()
           })
 
         vim.api.nvim_create_autocmd(
+        ---@diagnostic disable-next-line: param-type-mismatch
           "User", {
             pattern = "SignifyHunk",
             callback = function()
@@ -1675,7 +1678,7 @@ function CodeInternal()
     -- TODO rainbow ?
     -- TODO linters, formatters (neoformat) or some general make plugin
     -- with good config (probably impossible to find)
-    -- TODO snippets (probably too much work)
+    -- TODO snippets (probably overkill needing too much work)
   }
   ) --  }}}
 
@@ -1686,12 +1689,14 @@ function CODE()
   if vim.g.vim_started == 1 then
     CodeInternal()
   else
+    ---@diagnostic disable-next-line: param-type-mismatch
     vim.api.nvim_create_autocmd("VimEnter", {
       pattern = "*", callback = CodeInternal
     })
   end
 end
 
+---@diagnostic disable-next-line: param-type-mismatch
 vim.api.nvim_create_autocmd("VimEnter", {
   pattern = "*", command = "let g:vim_started = 1"
 })
