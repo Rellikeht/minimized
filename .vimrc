@@ -67,7 +67,7 @@ set updatetime=2000 " waiting for CursorHold and writing to swap
 set conceallevel=1 " show concealled characters under cursor
 set foldmethod=marker " I don't like automatic folding
 set foldmarker=\ {{{,\ }}} " just in case
-set foldlevelstart=99 " turns out folds closed by default are slow
+set foldlevelstart=999 " turns out folds closed by default are slow
 set showbreak=>\  " wrap indicator
 set wrapmargin=1 " size of margin on the right
 set undolevels=10000
@@ -164,10 +164,6 @@ nnoremap N Nzzzv
 
 " just in case
 snoremap <BS> <BS>i
-
-" Primeagen's moving visually selected lines
-xnoremap J :m '>+1<CR>gv=gv
-xnoremap K :m '<-2<CR>gv=gv
 
 " CTRL-X CTRL-D complete defined identifiers
 " CTRL-X CTRL-F complete file names

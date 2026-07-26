@@ -617,7 +617,7 @@ H.table_join(
         vim.keymap.set("n", "<Space>j", ":ASelect<CR>")
         vim.keymap.set("n", "<Space>J", ":ASelect!<CR>")
         vim.keymap.set("n", "<Space>ll", "<Plug>AList")
-        vim.keymap.set("n", "<Space>lL", "<Plug>AVertList")
+        vim.keymap.set("n", "<Space>lL", "<Plug>ANumList")
         vim.keymap.set("n", "<Space>la", ":AAdd<Space>")
         vim.keymap.set("n", "<Space>lA", ":AAddBuf<Space>")
         vim.keymap.set("n", "<Space>lm", ":AMoveCurN<CR>")
@@ -889,7 +889,7 @@ vim.opt.history = 10000
 vim.opt.conceallevel = 1         -- show concealled characters under cursor
 vim.opt.foldmethod = "marker"    -- I don't like automatic folding
 vim.opt.foldmarker = " {{{, }}}" -- just in case some formatter fucks up
-vim.opt.foldlevelstart = 0       -- nice to have
+vim.opt.foldlevelstart = 999     -- default folding got too annoying
 vim.opt.showbreak = "> "         -- wrap indicator
 vim.opt.wrapmargin = 1           -- size of margin on the right
 
