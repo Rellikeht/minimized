@@ -20,6 +20,15 @@ insert_path() {
     [[ "$PATH" =~ (.*":")*$1(":".*)* ]] || export PATH="$1:$PATH"
 }
 
+run_ssh_agent() {
+    [ -S "$SSH_AUTH_SOCK" ] && return
+    if [ -z "$SSH_AGENT_TIME" ]; then
+        ssh-agent -a "$SSH_AUTH_SOCK" -t "$SSH_AGENT_TIME" > "$SSH_AGENT_ENV"
+    else
+        ssh-agent -a "$SSH_AUTH_SOCK" > "$SSH_AGENT_ENV"
+    fi
+}
+
 source_if_exists "$HOME/.bashrc.pre.local"
 
 #  }}}
@@ -268,7 +277,10 @@ if has_exe direnv && [ -z "$__DIRENV_LOADED" ]; then
     __DIRENV_LOADED=1
 fi
 
-if [ -z "$SSH_AUTH_SOCK" ]; then
+if [ -z "$SSH_AGENT_ENV" ]; then
+    mkdir -p "$HOME/.ssh"
+    export SSH_AGENT_ENV="$HOME/.ssh/agent.env"
+elif [ -z "$SSH_AUTH_SOCK" ]; then
     if [ -d "$XDG_RUNTIME_DIR" ]; then
         SSH_AUTH_SOCK="$XDG_RUNTIME_DIR"
     elif [ -d "/run/user/$UID" ]; then
