@@ -1535,7 +1535,11 @@ function CodeInternal()
             group = vim.api.nvim_create_augroup("UserLspConfig", {}),
             callback = function(args)
               local bufnr = args.buf
-              -- TODO omnifunc sometimes disappears
+              local client = vim.lsp.get_client_by_id(args.data.client_id)
+              if client and client.server_capabilities.completionProvider then
+                -- TODO this seems to disappear
+                vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
+              end
 
               -- navigation {{{
 
