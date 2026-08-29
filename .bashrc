@@ -208,13 +208,15 @@ source_if_exists "$HOME/.bash_aliases"
 # integrations {{{
 
 # they screwed up ...
-if [ "$__NIX_SOURCED" != "$UID" ]; then
-    source_if_exists "$HOME/.nix-profile/etc/profile.d/nix.sh"
-    export __NIX_SOURCED="$UID"
+if ! echo "$PATH" | grep "$HOME/.nix-profile" &>/dev/null ; then
+    source_if_exists "$HOME/.nix-profile/etc/profile.d/nix.sh" ||
+        source_if_exists \
+        "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
 fi
+append_path "/nix/var/nix/profiles/default/bin/nix"
 
 # ... in two places
-export __HM_SESS_VARS_SOURCED=
+# TODO is this correct
 if [ "$__HM_SESS_SOURCED" != "$UID" ]; then
     source_if_exists "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
     export __HM_SESS_SOURCED="$UID"
