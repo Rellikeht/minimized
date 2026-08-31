@@ -116,6 +116,17 @@ endif
 
 " }}}
 
+" filetypes {{{
+
+" todo basic archives
+" todo pdf/ps/djvu/epub
+" todo basic images
+
+filetype * edit-text.sh
+fileviewer * view-text.sh
+
+" }}}
+
 " }}}
 
 " maps {{{
@@ -249,8 +260,11 @@ endif
 " other {{{
 
 " Open file in the background using its default program
-map go :file<CR>
-map gO :file &<CR>
+nmap go :file<CR>
+nmap gO :file &<CR>
+nmap w :view<CR>
+nmap W :view<CR><S-tab>
+qmap W qw
 
 " alt backspace won't work
 cnoremap <M-h> <M-b><M-d>
