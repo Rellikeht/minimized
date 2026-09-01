@@ -119,10 +119,8 @@ endif
 " filetypes {{{
 
 " TODO basic archives
-" TODO basic images
 " TODO basic audio
 " TODO basic video
-" TODO office files
 " TODO proper filextype
 
 filextype *.pdf,*.epub,*.ps,*.djvu
@@ -134,6 +132,19 @@ filextype *.pdf,*.epub,*.mobi,*.xps,*.ps
 filextype *.pdf
     \ xpdf %f %i,
 
+" TODO more of those I guess
+filextype *.png,*.jpg,*.jpeg,*.svg,*.gif,*.bmp,*.tiff,*.avif,*.webp
+    \ nsxiv -a %f %i,
+    \ sxiv -a %f %i,
+    \ feh %f %i,
+    \ ida %f %i,
+    \ gimp %f %i,
+    \ pinta %f %i,
+    \ krita %f %i,
+
+filextype *.doc,*.docx,*.odf,*.xls,*.xlsx,*.csv,*.tsv,*.ppt,*.pptx,*.ods
+    \ libreoffice %f,
+    \ onlyoffice %f,
 
 fileviewer *.json,*.jsonc
     \ cat %c | jq -C,
