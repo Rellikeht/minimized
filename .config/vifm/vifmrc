@@ -118,12 +118,33 @@ endif
 
 " filetypes {{{
 
-" todo basic archives
-" todo pdf/ps/djvu/epub
-" todo basic images
+" TODO basic archives
+" TODO pdf/ps/djvu/epub
+" TODO basic images
+" TODO basic audio
+" TODO basic video
+" TODO office files
+" TODO proper filextype
 
-filetype * edit-text.sh
-fileviewer * view-text.sh
+
+filetype *
+    \ {edit file if it is text}
+    \ edit-text.sh,
+fileviewer *
+    \ view-general.sh,
+
+
+filetype *
+    \ {check multimedia properties}
+    \ mediainfo,
+fileviewer *
+    \ file,
+
+filetype *
+    \ {don't open multimedia in text editor}
+    \ true,
+fileviewer *
+    \ true,
 
 " }}}
 
