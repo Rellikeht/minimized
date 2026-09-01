@@ -158,9 +158,27 @@ filextype *.png,*.jpg,*.jpeg,*.svg,*.gif,*.bmp,*.tiff,*.avif,*.webp
     \ krita %f %i,
 " TODO cli viewers
 
-" TODO basic audio
+filextype *.mp3,*.ogg,*.opus,*.m4a,*.flac,*.aac,*.wav,*.aiff,*.oga
+    \ mpv --player-operation-mode=pseudo-gui %f %i,
+    \ vlc %f %i,
+    \ mplayer %f %i,
+    \ smplayer %f %i,
+    \ mpv %f,
+    \ vlc %f,
 
-" TODO basic video
+filetype *.mp3,*.ogg,*.opus,*.m4a,*.flac,*.aac,*.wav,*.aiff,*.oga
+    \ mpv %f,
+    \ cvlc %f,
+    \ ffplay %f,
+
+filextype *.mp4,*.mkv,*.webm,*.avi,*.ogv,*.mov,*.flv,*.3gp,*.ogx,*.ts
+    \ mpv %f %i,
+    \ vlc %f %i,
+    \ ffplay %f,
+    \ mplayer %f %i,
+    \ smplayer %f %i,
+    \ mpv %f,
+    \ vlc %f,
 
 filextype *.doc,*.docx,*.odf,*.xls,*.xlsx,*.csv,*.tsv,*.ppt,*.pptx,*.ods
     \ libreoffice %f,
