@@ -118,15 +118,15 @@ endif
 
 " filetypes {{{
 
-filetype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.7z,*.rar
-    \ {try unpacking archive}
-    \ unarchive.sh %f,
-
 filextype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
     \ xarchiver %f %i,
     \ lxqt-archiver %f %i,
     \ engrampa %f %i,
     \ peazip %f %i,
+
+filetype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.7z,*.rar
+    \ {try unpacking archive}
+    \ unarchive.sh %f,
 
 fileviewer *.zip,*.jar,*.tar,*.tgz,*.gz,*.xz,*.bz2,*.bz,*.lzma,,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
     \ 7z l,

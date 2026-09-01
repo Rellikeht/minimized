@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+echo -n "Do you really want to unpack '$1'":
+read ANSWER
+echo "$ANSWER" | grep -Eiv '^y(es)?$' && exit 0
+
 case "$1" in
     *.tar | \
     *.tgz | \
