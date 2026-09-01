@@ -118,10 +118,25 @@ endif
 
 " filetypes {{{
 
-" TODO basic archives
-" TODO basic audio
-" TODO basic video
-" TODO proper filextype
+filetype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.7z,*.rar
+    \ {try unpacking archive}
+    \ unarchive.sh %f,
+
+filextype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
+    \ xarchiver %f %i,
+    \ lxqt-archiver %f %i,
+    \ engrampa %f %i,
+    \ peazip %f %i,
+
+fileviewer *.zip,*.jar,*.tar,*.tgz,*.gz,*.xz,*.bz2,*.bz,*.lzma,,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
+    \ 7z l,
+fileviewer *.rar
+    \ unrar-free l,
+    \ unrar l,
+fileviewer *.zip,*.jar
+    \ unzip -l,
+fileviewer *.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.tar.gz,*.tar.xz,*.tar.bz2,*.tar.bz3,*.tar.bz,*.tar.lz4,*.tar.zst
+    \ tar tf,
 
 filextype *.pdf,*.epub,*.ps,*.djvu
     \ zathura %f %i,
@@ -141,6 +156,11 @@ filextype *.png,*.jpg,*.jpeg,*.svg,*.gif,*.bmp,*.tiff,*.avif,*.webp
     \ gimp %f %i,
     \ pinta %f %i,
     \ krita %f %i,
+" TODO cli viewers
+
+" TODO basic audio
+
+" TODO basic video
 
 filextype *.doc,*.docx,*.odf,*.xls,*.xlsx,*.csv,*.tsv,*.ppt,*.pptx,*.ods
     \ libreoffice %f,
@@ -173,7 +193,9 @@ fileviewer *.epub
 
 filetype *
     \ {check multimedia properties}
-    \ mediainfo,
+    \ mediainfo %c | less,
+    \ {check file type}
+    \ file %c | less,
 fileviewer *
     \ file,
 
