@@ -119,13 +119,29 @@ endif
 " filetypes {{{
 
 " TODO basic archives
-" TODO pdf/ps/djvu/epub
 " TODO basic images
 " TODO basic audio
 " TODO basic video
 " TODO office files
 " TODO proper filextype
 
+filextype *.pdf,*.epub,*.ps,*.djvu
+    \ zathura %f %i,
+    \ evince %f %i,
+    \ atril %f %i,
+filextype *.pdf,*.epub,*.mobi,*.xps,*.ps
+    \ mupdf %f %i,
+filextype *.pdf
+    \ xpdf %f %i,
+
+
+fileviewer *.json,*.jsonc
+    \ cat %c | jq -C,
+" no color :(
+"fileviewer *.md
+"    \ glow -w %pw -p %c,
+filetype *.md
+    \ glow -w %pw -p %f,
 
 filetype *
     \ {edit file if it is text}
@@ -133,6 +149,16 @@ filetype *
 fileviewer *
     \ view-general.sh,
 
+filetype *.json,*.jsonc
+    \ {view using jq}
+    \ cat %f | jq -C | less -R,
+
+fileviewer *.pdf,*.ps
+    \ ps2ascii,
+fileviewer *.pdf
+    \ pdftotext,
+fileviewer *.epub
+    \ epub2txt,
 
 filetype *
     \ {check multimedia properties}
