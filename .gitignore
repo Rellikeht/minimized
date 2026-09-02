@@ -38,3 +38,6 @@ venv/
 !.config/vifm/scripts
 !.config/vifm/colors
 .config/nvim/autoload
+.config/fontconfig/*.conf
+.config/fontconfig/conf.d/*.conf
+!.config/fontconfig/conf.d/00-meslo-fallback.conf
