@@ -20,13 +20,52 @@ insert_path() {
     [[ "$PATH" =~ (.*":")*$1(":".*)* ]] || export PATH="$1:$PATH"
 }
 
+# ssh-agent machinery to handle:
+# - SSH_AUTH_SOCK set but nonexistent
+# - SSH_AUTH_SOCK existing
+# - SSH_AGENT_ENV providing correct agent info
+# - SSH_AGENT_ENV providing incorrect agent info
+# - nothing done at all
+
+# fails if SSH_AUTH_SOCK is useless
+set_ssh_auth_sock() {
+    [ -n "$SSH_AUTH_SOCK" ] && return
+    if [ -r "$SSH_AGENT_ENV" ]; then
+        eval "$(cat "$SSH_AGENT_ENV")" &>/dev/null
+        [ -n "$SSH_AUTH_SOCK" ] &&
+            [ -S "$SSH_AUTH_SOCK" ] ||
+            [ -w "${SSH_AUTH_SOCK%/*}" ]
+        return $?
+    fi
+    if [ -w "$XDG_RUNTIME_DIR" ]; then
+        export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+    elif [ -w "/run/user/$UID" ]; then
+        export SSH_AUTH_SOCK="/run/user/$UID/ssh-agent.socket"
+    elif [ -w "$HOME/.ssh" ] || mkdir -p "$HOME/.ssh" &>/dev/null; then
+        export SSH_AUTH_SOCK="$HOME/.ssh/ssh-agent.socket"
+    else
+        return 1
+    fi
+}
+
 run_ssh_agent() {
     [ -S "$SSH_AUTH_SOCK" ] && return
-    if [ -z "$SSH_AGENT_TIME" ]; then
-        ssh-agent -a "$SSH_AUTH_SOCK" -t "$SSH_AGENT_TIME" > "$SSH_AGENT_ENV"
-    else
-        ssh-agent -a "$SSH_AUTH_SOCK" > "$SSH_AGENT_ENV"
+    top -n 1 -b |
+        grep -E "^[0-9]+ $USER " |
+        grep ' ssh-agent ' &&
+        return 1
+    local args
+    if [ -n "$SSH_AGENT_TIME" ]; then
+        args="-t $SSH_AGENT_TIME"
     fi
+    if [ -n "$SSH_AUTH_SOCK" ]; then
+        args="$args -a $SSH_AUTH_SOCK"
+    fi
+    ssh-agent $args > "$SSH_AGENT_ENV"
+}
+
+activate_ssh_agent() {
+    set_ssh_auth_sock && [ -S "$SSH_AUTH_SOCK" ]
 }
 
 source_if_exists "$HOME/.bashrc.pre.local"
@@ -277,20 +316,6 @@ fi
 if has_exe direnv && [ -z "$__DIRENV_LOADED" ]; then
     eval "$(direnv hook bash)"
     __DIRENV_LOADED=1
-fi
-
-if [ -z "$SSH_AGENT_ENV" ]; then
-    mkdir -p "$HOME/.ssh"
-    export SSH_AGENT_ENV="$HOME/.ssh/agent.env"
-elif [ -z "$SSH_AUTH_SOCK" ]; then
-    if [ -d "$XDG_RUNTIME_DIR" ]; then
-        SSH_AUTH_SOCK="$XDG_RUNTIME_DIR"
-    elif [ -d "/run/user/$UID" ]; then
-        SSH_AUTH_SOCK="/run/user/$UID"
-    else
-        SSH_AUTH_SOCK="$HOME/.ssh"
-    fi
-    export SSH_AUTH_SOCK="$SSH_AUTH_SOCK/ssh-agent.socket"
 fi
 
 #  }}}
