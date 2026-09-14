@@ -63,9 +63,9 @@ set incsearch
 " neat
 set mouse='a'
 
-" make vifm more responsive I guess
-set mintimeoutlen=50
-set timeoutlen=100000
+" TODO what exactly this changes
+set mintimeoutlen=100
+set timeoutlen=9999999999
 
 " }}}
 
@@ -181,8 +181,8 @@ filextype *.mp4,*.mkv,*.webm,*.avi,*.ogv,*.mov,*.flv,*.3gp,*.ogx,*.ts
     \ vlc %f,
 
 filextype *.doc,*.docx,*.odf,*.xls,*.xlsx,*.csv,*.tsv,*.ppt,*.pptx,*.ods
-    \ libreoffice %f,
-    \ onlyoffice %f,
+    \ libreoffice %f %i,
+    \ onlyoffice %f %i,
 
 fileviewer *.json,*.jsonc
     \ cat %c | jq -C,
@@ -231,7 +231,7 @@ fileviewer *
 
 " basic {{{
 
-map <Space> <Nop>
+"map <Space> <Nop>
 map ; <C-w>
 map ;; <C-w><C-w>
 
@@ -249,10 +249,19 @@ map gm :move<CR>
 
 " }}}
 
+" movement {{{
+
+noremap <C-n> ;
+noremap <C-p> ,
+map , <Nop>
+
+" }}}
+
 " history {{{
 
 map <C-j> :histnext<CR>
 
+" ???
 map ,gu :pushd .<CR>
 map ,gg :pushd %c<CR>
 map ,gU :pushd<Space>

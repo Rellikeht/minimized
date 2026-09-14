@@ -209,7 +209,9 @@ __prompt_command() {
     fi
     PS1+="${RESET} "
 }
+
 PROMPT_COMMAND=__prompt_command
+PS1_HOST=1 # turns out to be sane default
 
 # }}}
 
