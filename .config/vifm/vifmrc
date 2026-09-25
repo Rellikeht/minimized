@@ -85,15 +85,11 @@ set trash
 " This is how many directories to store in the directory history.
 set history=5000
 
-" Command used to edit files in various contexts.  The default is vim.
-" If you would like to use another vi clone such as Elvis or Vile
-" you will need to change this setting.
-set vicmd="nvim -b"
-
 " If you would like to run an executable file when you
 " press Enter, l or Right Arrow, set this.
 set norunexec
 
+set vicmd="vim -b"
 set confirm-=delete
 
 " }}}
@@ -224,6 +220,12 @@ fileviewer *
     \ true,
 
 " }}}
+
+" }}}
+
+" {{{
+
+command! hardl :!ln %a %d
 
 " }}}
 
@@ -375,6 +377,8 @@ qmap W qw
 
 " alt backspace won't work
 cnoremap <M-h> <M-b><M-d>
+
+map rh :hardl %r"<CR>
 
 " }}}
 
