@@ -124,15 +124,15 @@ filetype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2
     \ {try unpacking archive}
     \ unarchive.sh %f,
 
-fileviewer *.zip,*.jar,*.tar,*.tgz,*.gz,*.xz,*.bz2,*.bz,*.lzma,,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
-    \ 7z l,
-fileviewer *.rar
-    \ unrar-free l,
-    \ unrar l,
 fileviewer *.zip,*.jar
     \ unzip -l,
 fileviewer *.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.tar.gz,*.tar.xz,*.tar.bz2,*.tar.bz3,*.tar.bz,*.tar.lz4,*.tar.zst
     \ tar tf,
+fileviewer *.rar
+    \ unrar-free l,
+    \ unrar l,
+fileviewer *.zip,*.jar,*.tar,*.tgz,*.gz,*.xz,*.bz2,*.bz,*.lzma,,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
+    \ 7z l,
 
 filextype *.pdf,*.epub,*.ps,*.djvu
     \ zathura %f %i,
