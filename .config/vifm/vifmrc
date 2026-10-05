@@ -188,12 +188,6 @@ fileviewer *.json,*.jsonc
 filetype *.md
     \ glow -w %pw -p %f,
 
-filetype *
-    \ {edit file if it is text}
-    \ edit-text.sh,
-fileviewer *
-    \ view-general.sh,
-
 filetype *.json,*.jsonc
     \ {view using jq}
     \ cat %f | jq -C | less -R,
@@ -204,6 +198,14 @@ fileviewer *.pdf
     \ pdftotext,
 fileviewer *.epub
     \ epub2txt,
+
+filetype *
+    \ {edit file if it is text}
+    \ edit-text.sh,
+    \ {view file if it is text}
+    \ view-general.sh,
+fileviewer *
+    \ view-general.sh,
 
 filetype *
     \ {check multimedia properties}

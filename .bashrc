@@ -258,7 +258,8 @@ if ! echo "$PATH" | grep "$HOME/.nix-profile" &>/dev/null ; then
         source_if_exists \
         "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
 fi
-append_path "/nix/var/nix/profiles/default/bin"
+[ -d "/nix/var/nix/profiles/default/bin" ] &&
+    append_path "/nix/var/nix/profiles/default/bin"
 
 # ... in two places
 # TODO is this correct
