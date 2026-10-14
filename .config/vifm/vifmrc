@@ -125,13 +125,15 @@ filetype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2
     \ unarchive.sh %f,
 
 fileviewer *.zip,*.jar
+    \ 7z l,
+fileviewer *.zip,*.jar
     \ unzip -l,
 fileviewer *.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.tar.gz,*.tar.xz,*.tar.bz2,*.tar.bz3,*.tar.bz,*.tar.lz4,*.tar.zst
     \ tar tf,
 fileviewer *.rar
     \ unrar-free l,
     \ unrar l,
-fileviewer *.zip,*.jar,*.tar,*.tgz,*.gz,*.xz,*.bz2,*.bz,*.lzma,,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
+fileviewer *.tar,*.tgz,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lzma,,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
     \ 7z l,
 
 filextype *.pdf,*.epub,*.ps,*.djvu
@@ -142,8 +144,11 @@ filextype *.pdf,*.epub,*.mobi,*.xps,*.ps
     \ mupdf %f %i,
 filextype *.pdf
     \ xpdf %f %i,
+    \ firefox %f %i,
+    \ librewolf %f %i,
+    \ brave %f %i,
+    \ chromium %f %i,
 
-" TODO more of those I guess
 filextype *.png,*.jpg,*.jpeg,*.svg,*.gif,*.bmp,*.tiff,*.avif,*.webp
     \ nsxiv -a %f %i,
     \ sxiv -a %f %i,
@@ -152,7 +157,8 @@ filextype *.png,*.jpg,*.jpeg,*.svg,*.gif,*.bmp,*.tiff,*.avif,*.webp
     \ gimp %f %i,
     \ pinta %f %i,
     \ krita %f %i,
-" TODO cli viewers
+filextype *.svg
+    \ inkscape %f %i,
 
 filextype *.mp3,*.ogg,*.opus,*.m4a,*.flac,*.aac,*.wav,*.aiff,*.oga
     \ mpv --player-operation-mode=pseudo-gui %f %i,
