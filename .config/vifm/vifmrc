@@ -231,9 +231,11 @@ fileviewer *
 
 " }}}
 
-" {{{
+" commands {{{
 
 command! hardl :!ln %a %d
+command! rsync :!rsync -azP %a %d
+command! brsync :!rsync -azP %a %d &
 
 " }}}
 
@@ -387,6 +389,10 @@ qmap W qw
 cnoremap <M-h> <M-b><M-d>
 
 map rh :hardl %r"<CR>
+map gc :rsync --partial %r"<CR>
+map gC :rsync %r"<CR>
+map gb :brsync --partial %r"<CR>
+map gB :brsync %r"<CR>
 
 " }}}
 
