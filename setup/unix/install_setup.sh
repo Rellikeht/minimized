@@ -1,29 +1,24 @@
 #!/usr/bin/env sh
 
-clean() {
-	cd -
-	rm -fr "$TEMP"
-}
+SDIR="$(readlink -f "$0")"
+SDIR="${SDIR%/*}"
+SRC="$(readlink -f "$SDIR/../..")"
+DEST="$1"
 
-TEMP=$(mktemp -d)
-cd "$TEMP"
-git clone "https://github.com/Rellikeht/minimized.git"
+if ! [ -d "$1" ]; then
+    echo "$1 isn't a directory"
+    exit 1
+fi
 
-for file in \
-	minimized/.config/nvim/init.lua \
-	minimized/.config/nvim/lua/code.lua \
-	minimized/.config/vifm/vifmrc \
-	minimized/bashrc
+for item in \
+	".config/nvim/init.lua" \
+	".config/vifm" \
+	".bashrc" \
+	".vimrc" \
+
 do
-	FPATH="$HOME/${file#*/}"
-	mkdir -p "${FPATH%/*}"
-    if [ "$1" = "-f" ]; then
-        cp --update=all "$file" "$FPATH"
-    elif [ "$1" = "-u" ]; then
-        cp --update=older "$file" "$FPATH"
-    else
-        cp --update=none "$file" "$FPATH"
-    fi
+    dirs="${item%/*}"
+    [ "$dirs" = "$item" ] && dirs=""
+    mkdir -p "${DEST}/${dirs}"
+    cp -rs --update=older "${SRC}/${item}" "${DEST}/${dirs}"
 done
-
-clean
