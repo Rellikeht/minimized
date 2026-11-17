@@ -97,6 +97,13 @@ else
 endif
 
 let g:grep_grepprg = "grep\\ -HInr"
+let g:grep_grepprg .= "\\ --exclude-dir\\ .git"
+let g:grep_grepprg .= "\\ --exclude-dir\\ .venv"
+let g:grep_grepprg .= "\\ --exclude-dir\\ __pycache__"
+let g:grep_grepprg .= "\\ --exclude-dir\\ node_modules"
+let g:grep_grepprg .= "\\ --exclude-dir\\ build"
+let g:grep_grepprg .= "\\ --exclude-dir\\ target"
+
 let g:rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S"
 let g:ag_grepprg = "ag\\ --vimgrep\\ --hidden\\ -S"
 let g:git_grepprg = "git\\ grep\\ -HInr"

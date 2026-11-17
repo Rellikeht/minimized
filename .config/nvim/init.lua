@@ -155,6 +155,18 @@ vim.o.grepformat = "%f:%l:%c:%m,%f:%l:%c,%f:%l%m,%f  %l%m"
 vim.g.ql_height = math.floor(2 * vim.o.lines / 5)
 
 vim.g.grep_grepprg = "grep\\ -HInr"
+for _, dir in pairs({
+  ".git",
+  ".venv",
+  "__pycache__",
+  "node_modules",
+  "build",
+  "target",
+}) do
+  vim.g.grep_grepprg =
+      vim.g.grep_grepprg .. "\\ --exclude-dir\\ " .. dir
+end
+
 vim.g.rg_grepprg = "rg\\ --vimgrep\\ --hidden\\ -S"
 vim.g.ag_grepprg = "ag\\ --vimgrep\\ --hidden\\ -S"
 vim.g.git_grepprg = "git\\ grep\\ -HInr"
