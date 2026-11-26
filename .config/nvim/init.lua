@@ -590,8 +590,8 @@ H.table_join(
     "NickeZ/epics.vim",
     "vifm/vifm.vim",
     "Rellikeht/nim.vim", -- because somehow syntax doesn't come built-in
+    "Rellikeht/vim-compiler-collection", -- because somehow syntax doesn't come built-in
 
-    -- TODO candidate for removal
     -- for some reason this doesn't work with `:Code`
     {
       "andymass/vim-matchup", --  {{{
@@ -1034,6 +1034,11 @@ else
 end --  }}}
 
 vim.keymap.set(
+  "n", "<Leader>dR", vim.diagnostic.reset,
+  { desc = "reset diagnostics (sometimes needed :()" }
+)
+
+vim.keymap.set(
   "n", "<Leader>de", vim.diagnostic.open_float,
   { desc = "show diagnostics under cursor" }
 )
@@ -1181,7 +1186,7 @@ vim.api.nvim_create_autocmd(
 -- small qol thing (mainly for git and quickfix)
 vim.api.nvim_create_autocmd(
 ---@diagnostic disable-next-line: param-type-mismatch
-  { "BufReadPost", "BufNew" }, {
+  { "BufReadPost", "BufNew", "CmdwinEnter" }, {
     pattern = "*",
     callback = function(_)
       local buftypes = { "nofile", "nowrite", "quickfix", "help" }
@@ -1297,6 +1302,7 @@ if vim.g.neovide then -- {{{
   vim.g.neovide_refresh_rate_idle = 5
   vim.g.neovide_cursor_hack = false
   vim.g.neovide_scale_factor = 0.95
+  vim.g.neovide_progress_bar_enabled = false
 
   vim.keymap.set("n", "<F11>", function()
     vim.g.neovide_fullscreen = not vim.g.neovide_fullscreen
