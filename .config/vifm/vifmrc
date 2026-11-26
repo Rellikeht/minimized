@@ -114,19 +114,19 @@ endif
 
 " filetypes {{{
 
-filextype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
+filextype *.zip,*.jar,*.war,*.apk,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.cab,*.7z,*.rar,*.deb,*.rpm
     \ xarchiver %f %i,
     \ lxqt-archiver %f %i,
     \ engrampa %f %i,
     \ peazip %f %i,
 
-filetype *.zip,*.jar,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.7z,*.rar
+filetype *.zip,*.jar,*.war,*.apk,*.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.gz,*.xz,*.bz2,*.bz3,*.bz,*.lz4,*.lzma,*.lz,*.lzo,*.zst,*.iso,*.lzip,*.arj,*.7z,*.rar
     \ {try unpacking archive}
-    \ unarchive.sh %f,
+    \ unarchive.sh %f %i,
 
-fileviewer *.zip,*.jar
+fileviewer *.zip,*.jar,*.war,*.apk
     \ 7z l,
-fileviewer *.zip,*.jar
+fileviewer *.zip,*.jar,*.war,*.apk
     \ unzip -l,
 fileviewer *.tar,*.tgz,*.tbz,*.tbz2,*.tbz3,*.txz,*.tzo,*.tar.gz,*.tar.xz,*.tar.bz2,*.tar.bz3,*.tar.bz,*.tar.lz4,*.tar.zst
     \ tar tf,
@@ -148,6 +148,8 @@ filextype *.pdf
     \ librewolf %f %i,
     \ brave %f %i,
     \ chromium %f %i,
+filextype *.cb
+    \ zathura %f %i,
 
 filextype *.png,*.jpg,*.jpeg,*.svg,*.gif,*.bmp,*.tiff,*.avif,*.webp
     \ nsxiv -a %f %i,
@@ -176,9 +178,9 @@ filetype *.mp3,*.ogg,*.opus,*.m4a,*.flac,*.aac,*.wav,*.aiff,*.oga
 filextype *.mp4,*.mkv,*.webm,*.avi,*.ogv,*.mov,*.flv,*.3gp,*.ogx,*.ts
     \ mpv %f %i,
     \ vlc %f %i,
-    \ ffplay %f,
     \ mplayer %f %i,
     \ smplayer %f %i,
+    \ ffplay %f,
     \ mpv %f,
     \ vlc %f,
 

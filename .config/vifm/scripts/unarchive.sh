@@ -63,7 +63,7 @@ case "$1" in
         $PROG "$@"
         ;;
 
-    *.zip) unzip "$@" ;;
+    *.zip | *.jar | *.war | *.apk) unzip "$@" ;;
     *.xz) unxz -T0 "$@" ;;
     *.7z) 7z x "$@" ;;
     *.bz3) bunzip3 "$@" ;;
